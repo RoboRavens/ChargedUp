@@ -1,0 +1,10 @@
+package frc.controls;
+
+public enum AxisCode {
+	LEFTSTICKX,
+	LEFTSTICKY,
+	RIGHTSTICKX,
+	RIGHTSTICKY,
+	LEFTTRIGGER,
+	RIGHTTRIGGER
+}
