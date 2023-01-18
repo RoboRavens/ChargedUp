@@ -24,6 +24,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -204,10 +205,15 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     ((WPI_TalonFX) m_backLeftModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay);
     ((WPI_TalonFX) m_backRightModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay);
 
-
-
     // _odometryFromKinematics = new SwerveDriveOdometry(m_kinematics, this.getGyroscopeRotation(), new Pose2d(0, 0, new Rotation2d()));
-    _odometryFromHardware = new SwerveDriveOdometry(m_kinematics, this.getGyroscopeRotation(), new Pose2d(0, 0, new Rotation2d()));
+    _odometryFromHardware = new SwerveDriveOdometry(
+      m_kinematics, this.getGyroscopeRotation(), 
+      new SwerveModulePosition[] {
+        m_frontLeftModule.getPosition(),
+        m_frontRightModule.getPosition(),
+        m_backLeftModule.getPosition(),
+        m_backRightModule.getPosition()
+      }, new Pose2d(0, 0, new Rotation2d()));
     // _diagnostics = new DrivetrainDiagnosticsShuffleboard();
     // _driveCharacteristics = new DriveCharacteristics();
   }
@@ -220,7 +226,14 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
   public void zeroGyroscope() {
     m_navx.zeroYaw();
     // _odometryFromKinematics.resetPosition(new Pose2d(0, 0, new Rotation2d()), this.getGyroscopeRotation());
-    _odometryFromHardware.resetPosition(this.getGyroscopeRotation(), new Pose2d(0, 0, new Rotation2d()));
+    _odometryFromHardware.resetPosition(
+      this.getGyroscopeRotation(), 
+      new SwerveModulePosition[] {
+        m_frontLeftModule.getPosition(),
+        m_frontRightModule.getPosition(),
+        m_backLeftModule.getPosition(),
+        m_backRightModule.getPosition()
+      }, new Pose2d(0, 0, new Rotation2d()));
     // _driveCharacteristics.reset();
   }
 
@@ -293,7 +306,14 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     statesHardware[3] = SwerveModuleConverter.ToSwerveModuleState(m_backRightModule, 0);
     
     // var odometryStates = DrivetrainSubsystem.adjustStatesForOdometry(statesHardware);
-    _odometryFromHardware.update(this.getGyroscopeRotation(), statesHardware);
+    _odometryFromHardware.update(
+      this.getGyroscopeRotation(), 
+      new SwerveModulePosition[] {
+        m_frontLeftModule.getPosition(),
+        m_frontRightModule.getPosition(),
+        m_backLeftModule.getPosition(),
+        m_backRightModule.getPosition()
+      });
     // _diagnostics.updateHardware(_odometryFromHardware, statesHardware);
 
     Deadband.adjustRotationWhenStopped(states, statesHardware);
@@ -327,7 +347,14 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
   private void resetOdometry(Pose2d pose, Rotation2d rotation) {
     var targetPose = new Pose2d(pose.getTranslation(), pose.getRotation());
     // _odometryFromKinematics.resetPosition(targetPose, this.getGyroscopeRotation());
-    _odometryFromHardware.resetPosition(targetPose, this.getGyroscopeRotation());
+    _odometryFromHardware.resetPosition(
+      this.getGyroscopeRotation(), 
+      new SwerveModulePosition[] {
+        m_frontLeftModule.getPosition(),
+        m_frontRightModule.getPosition(),
+        m_backLeftModule.getPosition(),
+        m_backRightModule.getPosition()
+      }, targetPose);
   }
 
   private void setModuleStates(SwerveModuleState[] moduleStates) {
