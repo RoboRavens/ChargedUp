@@ -28,12 +28,15 @@ public class DrivetrainDefaultCommand extends CommandBase {
         double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * -1; // Robot.JOYSTICK.getRawAxis(0); // Positive y is to your left when standing behind the alliance wall.
         double r; // The angular rate of the robot.
         Rotation2d a = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.
-
+        // System.out.println("x before deadband: " + x);
+        // System.out.println("y before deadband: " + y);
         x = Deadband.adjustValueToZero(x, Constants.JOYSTICK_DEADBAND);
         y = Deadband.adjustValueToZero(y, Constants.JOYSTICK_DEADBAND);
 
         double rightJoystickInput = Robot.GAMEPAD.getAxis(AxisCode.RIGHTSTICKX) * -1; // Robot.JOYSTICK.getRawAxis(2);
+        // System.out.println("rightJoystickInput before deadband: " + rightJoystickInput);
         rightJoystickInput = Deadband.adjustValueToZero(rightJoystickInput, Constants.JOYSTICK_DEADBAND);
+        // System.out.println("rightJoystickInput after deadband: " + rightJoystickInput);
 
         // SmartDashboard.putNumber("Drive Time", Timer.getFPGATimestamp());
         // SmartDashboard.putNumber("Drive X", x);
@@ -51,10 +54,10 @@ public class DrivetrainDefaultCommand extends CommandBase {
         if (Math.abs(rightJoystickInput) > 0.0){
             // _followLimelightPID.reset();
             r = rightJoystickInput * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
-        } else if (_autoSteer && Robot.DRIVE_TRAIN_SUBSYSTEM.powerIsCut() == false && (x != 0 || y != 0)) {
-            var angularDiff = this.getDegreesToMovementDirection(x, y, a.getDegrees());
-            double autoSteerRotationalVelocity = _autoSteerPID.calculate(angularDiff);
-            r = autoSteerRotationalVelocity;
+        // } else if (_autoSteer && Robot.DRIVE_TRAIN_SUBSYSTEM.powerIsCut() == false && (x != 0 || y != 0)) {
+        //    var angularDiff = this.getDegreesToMovementDirection(x, y, a.getDegrees());
+        //    double autoSteerRotationalVelocity = _autoSteerPID.calculate(angularDiff);
+        //    r = autoSteerRotationalVelocity;
         } else {
             r = 0.0;
         }
@@ -63,8 +66,13 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
         if (x == 0 && y == 0 && r == 0) {
             Robot.DRIVE_TRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
-            // Robot.DRIVE_TRAIN_SUBSYSTEM.holdPosition();
+            Robot.DRIVE_TRAIN_SUBSYSTEM.holdPosition();
+            // System.out.println("All zeroes");
         } else {
+            SmartDashboard.putNumber("x", x);
+            SmartDashboard.putNumber("y", y);
+            SmartDashboard.putNumber("r (rotation)", r);
+            SmartDashboard.putNumber("a (angle of the robot, degrees)", a.getDegrees());
             Robot.DRIVE_TRAIN_SUBSYSTEM.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                     x, // x translation
@@ -73,6 +81,10 @@ public class DrivetrainDefaultCommand extends CommandBase {
                     a // The angle of the robot as measured by a gyroscope.
                 )
             );
+            // System.out.println("x: " + x);
+            // System.out.println("y: " + y);
+            // System.out.println("r: " + r);
+            // System.out.println("a: " + a);
         }
     }
 

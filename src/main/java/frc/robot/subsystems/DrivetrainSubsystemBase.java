@@ -21,4 +21,5 @@ public abstract class DrivetrainSubsystemBase extends SubsystemBase {
     public abstract Command CreateFollowTrajectoryCommandSwerveOptimized(Trajectory trajectory);
     public abstract Command getMarkPositionCommand();
     public abstract Command getReturnToMarkedPositionCommand();
+    public abstract Rotation2d getGyroscopeRotation2dTest();
 }

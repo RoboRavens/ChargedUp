@@ -7,7 +7,7 @@ public class Deadband {
         if (value >= minimumValue || value <= (minimumValue * -1)) {
             return value;
         }
-
+        
         return 0.0d;
     }
 

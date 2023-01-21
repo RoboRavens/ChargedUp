@@ -34,9 +34,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants;
 import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
+import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.RobotMap.*;
 
@@ -105,9 +107,9 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
-  // private final SwerveDriveOdometry _odometryFromKinematics;
+  private final SwerveDriveOdometry _odometryFromKinematics;
   private final SwerveDriveOdometry  _odometryFromHardware;
-  // private final DrivetrainDiagnosticsShuffleboard _diagnostics;
+  private final DrivetrainDiagnosticsShuffleboard _diagnostics;
 
   // private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   private SwerveModuleState[] _moduleStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0,0,0));
@@ -154,6 +156,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     );
     */
 
+    SmartDashboard.putNumber("GearRatio L1 wheel diameter", GearRatio.L1.getConfiguration().getWheelDiameter());
+    SmartDashboard.putNumber("GearRatio L1 drive reduction", GearRatio.L1.getConfiguration().getDriveReduction());
 
     m_frontLeftModule = new MkSwerveModuleBuilder(moduleConfig)
     // .withGearRatio(MkSwerveModuleBuilder.GearRatio.L1)
@@ -205,7 +209,14 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     ((WPI_TalonFX) m_backLeftModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay);
     ((WPI_TalonFX) m_backRightModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay);
 
-    // _odometryFromKinematics = new SwerveDriveOdometry(m_kinematics, this.getGyroscopeRotation(), new Pose2d(0, 0, new Rotation2d()));
+    _odometryFromKinematics = new SwerveDriveOdometry(m_kinematics, this.getGyroscopeRotation(), 
+    new SwerveModulePosition[] {
+      m_frontLeftModule.getPosition(),
+      m_frontRightModule.getPosition(),
+      m_backLeftModule.getPosition(),
+      m_backRightModule.getPosition()
+    }, new Pose2d(0, 0, new Rotation2d()));
+
     _odometryFromHardware = new SwerveDriveOdometry(
       m_kinematics, this.getGyroscopeRotation(), 
       new SwerveModulePosition[] {
@@ -214,7 +225,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
         m_backLeftModule.getPosition(),
         m_backRightModule.getPosition()
       }, new Pose2d(0, 0, new Rotation2d()));
-    // _diagnostics = new DrivetrainDiagnosticsShuffleboard();
+    _diagnostics = new DrivetrainDiagnosticsShuffleboard();
     // _driveCharacteristics = new DriveCharacteristics();
   }
 
@@ -243,6 +254,17 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
   }
 
   private Rotation2d getGyroscopeRotation() {
+    if (m_navx.isMagnetometerCalibrated()) {
+      // We will only get valid fused headings if the magnetometer is calibrated
+      return Rotation2d.fromDegrees(m_navx.getFusedHeading());
+    }
+
+    // We have to invert the angle of the NavX so that rotating the robot counter-clockwise makes the angle increase.
+    return Rotation2d.fromDegrees(360.0 - m_navx.getAngle());
+  }
+
+  @Override
+  public Rotation2d getGyroscopeRotation2dTest() {
     if (m_navx.isMagnetometerCalibrated()) {
       // We will only get valid fused headings if the magnetometer is calibrated
       return Rotation2d.fromDegrees(m_navx.getFusedHeading());
@@ -296,15 +318,24 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     SwerveModuleState[] states = _moduleStates; // states and _modulestates still point to the same data
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-    // _odometryFromKinematics.update(this.getGyroscopeRotation(), states);
-    // _diagnostics.updateKinematics(_odometryFromKinematics, states);
+    _odometryFromKinematics.update(this.getGyroscopeRotation(), new SwerveModulePosition[] {
+      m_frontLeftModule.getPosition(),
+      m_frontRightModule.getPosition(),
+      m_backLeftModule.getPosition(),
+      m_backRightModule.getPosition()
+    });
+
+    SmartDashboard.putNumber("FL angle degrees", m_frontLeftModule.getPosition().angle.getDegrees());
+    SmartDashboard.putNumber("FL drive velocity", m_frontLeftModule.getDriveVelocity());
+
+    _diagnostics.updateKinematics(_odometryFromKinematics, states);
 
     var statesHardware = new SwerveModuleState[4];
     statesHardware[0] = SwerveModuleConverter.ToSwerveModuleState(m_frontLeftModule, 0);
     statesHardware[1] = SwerveModuleConverter.ToSwerveModuleState(m_frontRightModule, 0);
     statesHardware[2] = SwerveModuleConverter.ToSwerveModuleState(m_backLeftModule, 0);
     statesHardware[3] = SwerveModuleConverter.ToSwerveModuleState(m_backRightModule, 0);
-    
+
     // var odometryStates = DrivetrainSubsystem.adjustStatesForOdometry(statesHardware);
     _odometryFromHardware.update(
       this.getGyroscopeRotation(), 
@@ -314,9 +345,14 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
         m_backLeftModule.getPosition(),
         m_backRightModule.getPosition()
       });
-    // _diagnostics.updateHardware(_odometryFromHardware, statesHardware);
+
+    _diagnostics.updateHardware(_odometryFromHardware, statesHardware);
+    
+    SmartDashboard.putNumber("FL steer angle degrees (state)", states[0].angle.getDegrees());
+    SmartDashboard.putNumber("FL drive voltage (state)", states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE);
 
     Deadband.adjustRotationWhenStopped(states, statesHardware);
+    
     m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
