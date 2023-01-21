@@ -123,6 +123,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     MkModuleConfiguration moduleConfig = new MkModuleConfiguration();
         moduleConfig.setSteerCurrentLimit(30.0);
         moduleConfig.setDriveCurrentLimit(40.0);
+        moduleConfig.setSteerPID(0.2, 0.0, 0.1);
 
     /*
     m_frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -357,6 +358,9 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
+
+    SmartDashboard.putString("Control Mode", ((WPI_TalonFX) m_frontLeftModule.getSteerMotor()).getControlMode().name()); 
+    SmartDashboard.putNumber("Control Mode Value", ((WPI_TalonFX) m_frontLeftModule.getSteerMotor()).getSelectedSensorPosition());
 
     // _driveCharacteristics.update(_odometryFromHardware.getPoseMeters(), 360 - m_navx.getAngle());
   }
