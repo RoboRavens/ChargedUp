@@ -29,6 +29,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -38,11 +40,17 @@ import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.RobotMap.*;
 
 import java.util.List;
+import java.util.Map;
 
 // Template From: https://github.com/SwerveDriveSpecialties/swerve-template/blob/master/src/main/java/frc/robot/subsystems/DrivetrainSubsystem.java
 public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
@@ -111,6 +119,14 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   private final SwerveDriveOdometry  _odometryFromHardware;
   private final DrivetrainDiagnosticsShuffleboard _diagnostics;
 
+  private ShuffleboardTab PID = Shuffleboard.getTab("PID");
+   private GenericEntry inputAngle = PID.add("Input Angle", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", -35, "max", 35)).getEntry();
+   private GenericEntry pidCalc = PID.add("pid calculations based on input angle", 0).getEntry();
+   private GenericEntry kpEntry = PID.add("kP", 0).getEntry();
+   private GenericEntry kiEntry = PID.add("kI", 0).getEntry();
+   private GenericEntry kdEntry = PID.add("kD", 0).getEntry();
+   private GenericEntry setPoint = PID.add("setpoint", 0).getEntry();
+
   // private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   private SwerveModuleState[] _moduleStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0,0,0));
 
@@ -118,6 +134,12 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
   private Boolean _cutPower = false;
   private Pose2d _markedPosition = null;
+  private PIDController pid = new PIDController(0.1, 0.1, 0.1);
+
+  private double kp = -0.3;
+  private double ki = 0.36;
+  private double kd = 1.5;
+  private PIDController pid_test = new PIDController(kp, ki, kd);
 
   public DrivetrainSubsystem() {
     MkModuleConfiguration moduleConfig = new MkModuleConfiguration();
@@ -363,6 +385,17 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     SmartDashboard.putNumber("Control Mode Value", ((WPI_TalonFX) m_frontLeftModule.getSteerMotor()).getSelectedSensorPosition());
 
     // _driveCharacteristics.update(_odometryFromHardware.getPoseMeters(), 360 - m_navx.getAngle());
+
+    SmartDashboard.putNumber("Yaw: ", m_navx.getYaw());
+    SmartDashboard.putNumber("Pitch: ", m_navx.getPitch());
+    SmartDashboard.putNumber("Roll: ", m_navx.getRoll());
+
+    SmartDashboard.putNumber("Max Robot Speed", MAX_VELOCITY_METERS_PER_SECOND);
+    pid_test.setP(kpEntry.getDouble(0.0));
+    pid_test.setI(kiEntry.getDouble(0.0));
+    pid_test.setD(kdEntry.getDouble(0.0));
+    pidCalc.setDouble(pid_test.calculate(inputAngle.getDouble(0), setPoint.getDouble(0)));
+    // pidCalc.setDouble(inputAngle.getDouble(0));
   }
 
   /**
@@ -403,6 +436,11 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
   private void stop() {
     this.drive(new ChassisSpeeds(0,0,0));
+  }
+
+  @Override
+  public double getRoll() {
+    return m_navx.getRoll();
   }
 
   @Override
