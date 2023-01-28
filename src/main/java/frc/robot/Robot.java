@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
-    GAMEPAD.getButton(ButtonCode.A).onTrue(chargeStationBalancingCommand);
+    GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
   }
 
   /**
