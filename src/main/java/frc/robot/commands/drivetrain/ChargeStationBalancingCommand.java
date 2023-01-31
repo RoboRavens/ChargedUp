@@ -23,7 +23,7 @@ public class ChargeStationBalancingCommand extends CommandBase {
     public void execute() {
         // Calculates the drivetrain speed based on the roll of the robot
         double currentRoll = Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll();
-        double xVelocityCalculation = currentRoll / 60;
+        double xVelocityCalculation = currentRoll / 50;
         // Ensures that the above pid calculation does not exceed the maximum drivetrain velocity
         // This also eliminates any large outliers that occur frequently with this PID configuration
         if (Math.abs(xVelocityCalculation) <= DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND) {
