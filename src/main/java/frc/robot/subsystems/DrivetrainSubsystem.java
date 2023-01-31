@@ -38,6 +38,7 @@ import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.RobotMap.*;
@@ -228,6 +229,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
       }, new Pose2d(0, 0, new Rotation2d()));
     _diagnostics = new DrivetrainDiagnosticsShuffleboard();
     // _driveCharacteristics = new DriveCharacteristics();
+   
   }
 
   /**
