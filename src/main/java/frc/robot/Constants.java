@@ -5,6 +5,8 @@
 package frc.robot;
 
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
+
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 /**
@@ -16,6 +18,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final double kTrackwidthMeters = 0.0381; // The tread width is 1.5 inches
+  public static final DifferentialDriveKinematics kDriveKinematics =
+        new DifferentialDriveKinematics(kTrackwidthMeters);
+        
   // DRIVETRAIN PATHFINDING
   public static final double TRAJECTORY_CONFIG_MAX_VELOCITY_METERS_PER_SECOND = 1.5;
   public static final double TRAJECTORY_CONFIG_MAX_ACCELERATION_METERS_PER_SECOND = .6;
@@ -32,6 +39,8 @@ public final class Constants {
   public static final double SWERVE_ODOMETRY_MULTIPLIER =
     (SWERVE_WHEEL_DIAMETER - (SWERVE_WHEEL_DIAMETER_INCREMENT_5BALL * SWERVE_5BALL_INCHES_OFFSET)) / SWERVE_WHEEL_DIAMETER;
 
+  // Use this value when creating a PathWeaver project for our current robot
+  public static final double TRACK_WIDTH_METERS = 0.6096;
     
   // Constraint for the motion profilied robot angle controller
   public static final TrapezoidProfile.Constraints SWERVE_CONTROLLER_ANGULAR_CONSTRAINTS =
