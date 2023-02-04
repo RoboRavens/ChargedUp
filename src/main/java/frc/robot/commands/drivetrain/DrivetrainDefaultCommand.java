@@ -18,11 +18,13 @@ public class DrivetrainDefaultCommand extends CommandBase {
     private PIDController _autoSteerPID = new PIDController(.035, 0, 0);
 
     public DrivetrainDefaultCommand() {
+        SmartDashboard.putString("DriveTrainDefaultCommandState", "constructed");
         addRequirements(Robot.DRIVE_TRAIN_SUBSYSTEM);
     }
 
     @Override
     public void execute() {
+        SmartDashboard.putString("DriveTrainDefaultCommandState", "execute");
         // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
         double x = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKY) * -1; // Robot.JOYSTICK.getRawAxis(1); // Positive x is away from your alliance wall.
         double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * -1; // Robot.JOYSTICK.getRawAxis(0); // Positive y is to your left when standing behind the alliance wall.
@@ -91,6 +93,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         Robot.DRIVE_TRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        SmartDashboard.putString("end method", "end");
     }
 
     public void followLimelight() {
