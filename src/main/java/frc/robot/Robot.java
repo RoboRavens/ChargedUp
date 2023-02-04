@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import java.util.List;
 
@@ -20,7 +21,9 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
+import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
+import frc.robot.commands.UpdateRobotPoseCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
@@ -45,7 +48,8 @@ public class Robot extends TimedRobot {
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-
+  public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
+  public static final UpdateRobotPoseCommand UPDATE_ROBOT_POSE_COMMAND = new UpdateRobotPoseCommand();
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -56,25 +60,13 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
+   
+    GAMEPAD.getButton(ButtonCode.A).whileTrue(Robot.UPDATE_ROBOT_POSE_COMMAND);
+
+
+   } 
+
   
-    Field2d m_field = new Field2d();
-    // Create the trajectory to follow in autonomous. It is best to initialize
-        // trajectories here to avoid wasting time in autonomous.
-        Trajectory m_trajectory = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-                List.of(new Translation2d(4, 0), new Translation2d(6, 0)),
-                new Pose2d(6, 0, Rotation2d.fromDegrees(0)),
-                new TrajectoryConfig(Units.feetToMeters(1.0), Units.feetToMeters(1.0)));
-
-        // Create and push Field2d to SmartDashboard.
-        
-        ;
-        SmartDashboard.putData("field", m_field);
-
-        // Push the trajectory to Field2d.
-        m_field.getObject("traj").setTrajectory(m_trajectory);
-        
-  }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics

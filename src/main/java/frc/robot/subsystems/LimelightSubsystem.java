@@ -61,7 +61,6 @@ public class LimelightSubsystem {
 
   public Double getBotpose() {
     return botpose.getDouble(0.0);
-   
   }
 
   public double getDistance() {
