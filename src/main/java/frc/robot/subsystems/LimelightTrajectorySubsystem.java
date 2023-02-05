@@ -19,20 +19,31 @@ public class LimelightTrajectorySubsystem {
   Field2d m_field = new Field2d();
 
   public void generateTrajectory() {
+    // If we give our Starting POSE2D paramater a "Getbotpose" method from limelight
+    // subsystem directly, getBotpose it
+    // would be sending information to our trajectory generation file all the time
 
-    //var robotStartingPosition = new Pose2d(Units.feetToMeters(Robot.UPDATE_ROBOT_POSE_COMMAND.execute()),
-       // Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.getBotpose()),
-        //Rotation2d.fromDegrees(Robot.LIMELIGHT_SUBSYSTEM.getBotpose()));
+    // in robotinit we set a button to a command that enables/disables the robotpose
+    // function
+    // We want freedom to use other pipelines to track other objects like cubes and
+    // retroreflective tape but this is the better
+    // way to do it
+
+    /*var robotStartingPosition = new Pose2d(Units.feetToMeters(Robot.UPDATE_ROBOT_POSE_COMMAND.execute()),
+        Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.getBotpose()),
+        Rotation2d.fromDegrees(Robot.LIMELIGHT_SUBSYSTEM.getBotpose()));
+    */
+
     var coneTargetLocation = new Pose2d(Units.feetToMeters(5.56), Units.feetToMeters(5.14),
         Rotation2d.fromDegrees(64.80));
 
     TrajectoryConfig config = new TrajectoryConfig(Units.feetToMeters(12), Units.feetToMeters(12));
     config.setReversed(true);
 
-   //var trajectory = TrajectoryGenerator.generateTrajectory(
-       // robotStartingPosition,
-   //    null, coneTargetLocation,
-      //  config);
+    // var trajectory = TrajectoryGenerator.generateTrajectory(
+    // robotStartingPosition,
+    // null, coneTargetLocation,
+    // config);
 
   }
 }
