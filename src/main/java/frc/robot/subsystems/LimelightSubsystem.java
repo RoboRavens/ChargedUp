@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LimelightSubsystem {
 
-  LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
+  // LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
 
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry tx = table.getEntry("tx");
@@ -18,7 +18,8 @@ public class LimelightSubsystem {
   NetworkTableEntry ta = table.getEntry("ta");
   NetworkTableEntry ts = table.getEntry("ts");
   NetworkTableEntry tv = table.getEntry("tv");
-  NetworkTableEntry botpose = table.getEntry("botpose");
+  double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+
   int camMode = 0;
 
   // how many degrees back is your limelight rotated from perfectly vertical?
@@ -30,22 +31,6 @@ public class LimelightSubsystem {
   // distance from the target to the floor
   double goalHeightInches = 60.0;
 
-  /*
-   * public double limelightPipelineConfiguration() {
-   * 
-   * if (PIPELINEBUTTON0ISPRESSED) {
-   * int pipeline = 0;
-   * }
-   * 
-   * if (PIPELINEBUTTON1ISPRESSED) {
-   * int pipeline = 1;
-   * }
-   * 
-   * if (pipeline = 1 & LEFTTRIGGERISPULLED) {
-   * int ledMode = 3;
-   * }
-   * }
-   */
 
   public double getTx() {
     return tx.getDouble(0.0);
@@ -59,8 +44,9 @@ public class LimelightSubsystem {
     return ty.getDouble(0.0);
   }
 
-  public Double getBotpose() {
-    return botpose.getDouble(0.0);
+  public double[] getBotpose() {
+    SmartDashboard.putNumberArray("botpose",botpose);
+    return botpose;
   }
 
   public double getDistance() {

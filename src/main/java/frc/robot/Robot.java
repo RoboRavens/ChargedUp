@@ -29,6 +29,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
 import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.LimelightTrajectorySubsystem;
 import frc.robot.subsystems.TrajectoryTestingSubsystem;
 
 /**
