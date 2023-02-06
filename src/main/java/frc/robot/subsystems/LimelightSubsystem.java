@@ -34,6 +34,21 @@ public class LimelightSubsystem {
     return botpose;
   }
 
+  public double robotposeX() {
+    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+    return botpose[0];
+  }
+
+  public double robotPoseY() {
+    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+    return botpose[1];
+  }
+
+  public double robotPoseZ() {
+    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+    return botpose[2];
+  }
+
   // how many degrees back is your limelight rotated from perfectly vertical?
   double limelightMountAngleDegrees = 25.0;
 

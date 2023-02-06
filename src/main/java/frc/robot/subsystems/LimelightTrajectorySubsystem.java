@@ -29,9 +29,9 @@ public class LimelightTrajectorySubsystem {
     // retroreflective tape but this is the better
     // way to do it
 
-    //var robotStartingPosition = new Pose2d(Units.feetToMeters(Robot.UPDATE_ROBOT_POSE_COMMAND.execute()),
-        //Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.getBotpose()),
-       // Rotation2d.fromDegrees(Robot.LIMELIGHT_SUBSYSTEM.getBotpose()));
+    var robotStartingPosition = new Pose2d(Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotposeX()),
+        Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotPoseY()),
+        Rotation2d.fromDegrees(Robot.LIMELIGHT_SUBSYSTEM.robotPoseZ()));
     
 
     var coneTargetLocation = new Pose2d(Units.feetToMeters(5.56), Units.feetToMeters(5.14),
