@@ -21,6 +21,6 @@ public class UpdateRobotPoseCommand extends CommandBase {
 
     @Override
     public void execute() {
-        Robot.LIMELIGHT_SUBSYSTEM.getBotpose();
+        Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
     }
 }

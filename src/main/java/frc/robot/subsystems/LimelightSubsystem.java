@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -13,15 +15,19 @@ import frc.robot.LimelightHelpers;
 public class LimelightSubsystem {
 
   // LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry tx = table.getEntry("tx");
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
   NetworkTableEntry ts = table.getEntry("ts");
   NetworkTableEntry tv = table.getEntry("tv");
-  double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
- int camMode = 0;
+  int camMode = 0;
+
+  public double[] getRobotPose() {
+    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+    SmartDashboard.putNumberArray("limelightbotpose", botpose);
+    return botpose;
+  }
 
   // how many degrees back is your limelight rotated from perfectly vertical?
   double limelightMountAngleDegrees = 25.0;
@@ -42,11 +48,6 @@ public class LimelightSubsystem {
 
   public double getTy() {
     return ty.getDouble(0.0);
-  }
-
-  public double[] getBotpose() {
-    SmartDashboard.putNumberArray("botpose", botpose);
-    return botpose;
   }
 
   public double getDistance() {

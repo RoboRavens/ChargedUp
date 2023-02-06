@@ -63,8 +63,8 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
    
-    GAMEPAD.getButton(ButtonCode.A).whileTrue(Robot.UPDATE_ROBOT_POSE_COMMAND);
-
+    //GAMEPAD.getButton(ButtonCode.A).whileTrue(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
+    
 
    } 
 
