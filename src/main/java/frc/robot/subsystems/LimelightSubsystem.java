@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
+import frc.robot.LimelightHelpers;
 
 public class LimelightSubsystem {
 
@@ -19,8 +21,7 @@ public class LimelightSubsystem {
   NetworkTableEntry ts = table.getEntry("ts");
   NetworkTableEntry tv = table.getEntry("tv");
   double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
-
-  int camMode = 0;
+ int camMode = 0;
 
   // how many degrees back is your limelight rotated from perfectly vertical?
   double limelightMountAngleDegrees = 25.0;
@@ -30,7 +31,6 @@ public class LimelightSubsystem {
 
   // distance from the target to the floor
   double goalHeightInches = 60.0;
-
 
   public double getTx() {
     return tx.getDouble(0.0);
@@ -45,7 +45,7 @@ public class LimelightSubsystem {
   }
 
   public double[] getBotpose() {
-    SmartDashboard.putNumberArray("botpose",botpose);
+    SmartDashboard.putNumberArray("botpose", botpose);
     return botpose;
   }
 
