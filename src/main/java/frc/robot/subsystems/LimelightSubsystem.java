@@ -25,7 +25,12 @@ public class LimelightSubsystem {
 
   public double[] getRobotPose() {
     double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
-    SmartDashboard.putNumberArray("limelightbotpose", botpose);
+    SmartDashboard.putNumber("BotX", (botpose[0]));
+    SmartDashboard.putNumber("BotY", (botpose[1]));
+    SmartDashboard.putNumber("BotZ", (botpose[2]));
+    SmartDashboard.putNumber("Bot1", (botpose[3]));
+    SmartDashboard.putNumber("Bot2", (botpose[4]));
+    SmartDashboard.putNumber("Bot3", (botpose[5]));
     return botpose;
   }
 
