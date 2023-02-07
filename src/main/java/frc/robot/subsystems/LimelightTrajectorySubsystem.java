@@ -33,6 +33,9 @@ public class LimelightTrajectorySubsystem {
         Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotPoseY()),
         Rotation2d.fromDegrees(Robot.LIMELIGHT_SUBSYSTEM.robotPoseZ()));
     
+        var interiorWaypoints = new ArrayList<Translation2d>();
+        interiorWaypoints.add(new Translation2d(Units.feetToMeters(4.54), Units.feetToMeters(16.23)));
+        interiorWaypoints.add(new Translation2d(Units.feetToMeters(21.04), Units.feetToMeters(18.23)));
 
     var coneTargetLocation = new Pose2d(Units.feetToMeters(5.56), Units.feetToMeters(5.14),
         Rotation2d.fromDegrees(64.80));
@@ -40,10 +43,11 @@ public class LimelightTrajectorySubsystem {
     TrajectoryConfig config = new TrajectoryConfig(Units.feetToMeters(12), Units.feetToMeters(12));
     config.setReversed(true);
 
-    // var trajectory = TrajectoryGenerator.generateTrajectory(
-    // robotStartingPosition,
-    // null, coneTargetLocation,
-    // config);
+     var trajectory = TrajectoryGenerator.generateTrajectory(
+     robotStartingPosition,
+     interiorWaypoints, 
+     coneTargetLocation,
+     config);
 
   }
 }

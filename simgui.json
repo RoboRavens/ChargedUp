@@ -14,9 +14,15 @@
   },
   "NetworkTables": {
     "transitory": {
+      "FMSInfo": {
+        "open": true
+      },
       "SmartDashboard": {
         "open": true
       }
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
