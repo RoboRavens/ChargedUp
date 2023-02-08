@@ -15,11 +15,18 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 class LimelightTrajectorySubsystem {
+  
+  /*This code defines a LimelightTrajectorySubsystem in Java for a robot in the First Robotics Competition. 
+  It creates two different trajectories, one for the left side of the robot and one for the right side, based on selected endpoints in Shuffleboard. 
+  The trajectories are defined based on starting poses, interior waypoints, and selected endpoints, which are specified as Pose2d objects. 
+  The code uses the TrajectoryGenerator class to generate the trajectories, which are then pushed to SmartDashboard. The interior waypoints, endpoints, 
+  and starting poses are all specified in units of meters and the code converts units from feet to meters. */
+  
+  
   private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
   private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
   private NetworkTableEntry targetSelection = table.getEntry("Target Selection");
-  
-  
+
   public void generateTrajectoryLeft() {
 
     var robotposestart = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23),
@@ -68,15 +75,13 @@ class LimelightTrajectorySubsystem {
         selectedTarget,
         config);
 
-  
-        Field2d m_field = new Field2d();
-        SmartDashboard.putData(m_field);
-      
-        // Push the trajectory to Field2d.
-        m_field.getObject("trajectoryleft").setTrajectory(trajectoryleft);
-  
-  
-      }
+    Field2d m_field = new Field2d();
+    SmartDashboard.putData(m_field);
+
+    // Push the trajectory to Field2d.
+    m_field.getObject("trajectoryleft").setTrajectory(trajectoryleft);
+
+  }
 
   public void generateTrajectoryRight() {
     var robotposestart = new Pose2d(Units.feetToMeters(12.07), Units.feetToMeters(12.07),
@@ -125,19 +130,13 @@ class LimelightTrajectorySubsystem {
         interiorWaypoints,
         selectedTarget,
         config);
-  
-        
-        Field2d m_field = new Field2d();
-        SmartDashboard.putData(m_field);
-      
-        // Push the trajectory to Field2d.
-        m_field.getObject("trajectoryright").setTrajectory(trajectoryright);
-  
-  
-      }
 
- 
+    Field2d m_field = new Field2d();
+    SmartDashboard.putData(m_field);
 
+    // Push the trajectory to Field2d.
+    m_field.getObject("trajectoryright").setTrajectory(trajectoryright);
 
+  }
 
 }
