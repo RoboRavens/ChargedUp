@@ -25,8 +25,8 @@ class LimelightTrajectorySubsystem {
   
   private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
   private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
-  private NetworkTableEntry targetSelection = table.getEntry("Target Selection");
-
+  private NetworkTableEntry targetSelectionLeft = table.getEntry("Target Selection Left");
+  private NetworkTableEntry targetSelectionRight= table.getEntry("Target Selection Left");
   public void generateTrajectoryLeft() {
 
     var robotposestart = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23),
@@ -51,7 +51,7 @@ class LimelightTrajectorySubsystem {
     config.setReversed(true);
 
     // Get the selected endpoint from Shuffleboard.
-    int selectedEndpointLeft = (int) targetSelection.getDouble(0.0);
+    int selectedEndpointLeft = (int) targetSelectionLeft.getDouble(0.0);
 
     Pose2d selectedTarget = new Pose2d();
     switch (selectedEndpointLeft) {
@@ -106,7 +106,7 @@ class LimelightTrajectorySubsystem {
     config.setReversed(true);
 
     // Get the selected endpoint from Shuffleboard.
-    int selectedEndpointRight = (int) targetSelection.getDouble(0.0);
+    int selectedEndpointRight = (int) targetSelectionRight.getDouble(0.0);
 
     Pose2d selectedTarget = new Pose2d();
     switch (selectedEndpointRight) {
