@@ -11,37 +11,43 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 class LimelightTrajectorySubsystem {
   private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
   private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
   private NetworkTableEntry targetSelection = table.getEntry("Target Selection");
-
-  public void generateTrajectory() {
+  
+  
+  public void generateTrajectoryLeft() {
 
     var robotposestart = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23),
         Rotation2d.fromDegrees(-180));
 
     var interiorWaypoints = new ArrayList<Translation2d>();
-    interiorWaypoints.add(new Translation2d(Units.feetToMeters(3.90), Units.feetToMeters(4.71)));
-    interiorWaypoints.add(new Translation2d(Units.feetToMeters(3.88), Units.feetToMeters(4.76)));
+    interiorWaypoints.add(new Translation2d(Units.feetToMeters(16.89), Units.feetToMeters(2.23)));
+    interiorWaypoints.add(new Translation2d(Units.feetToMeters(8.36), Units.feetToMeters(2.23)));
 
     // Define the endpoints for the trajectories here.
-    var endpoint1 = new Pose2d(Units.feetToMeters(10), Units.feetToMeters(10),
+    var endpoint1 = new Pose2d(Units.feetToMeters(6.23), Units.feetToMeters(1.44),
         Rotation2d.fromDegrees(0));
-    var endpoint2 = new Pose2d(Units.feetToMeters(20), Units.feetToMeters(20),
+    var endpoint2 = new Pose2d(Units.feetToMeters(6.52), Units.feetToMeters(3.57),
         Rotation2d.fromDegrees(90));
-    var endpoint3 = new Pose2d(Units.feetToMeters(30), Units.feetToMeters(30),
+    var endpoint3 = new Pose2d(Units.feetToMeters(6.39), Units.feetToMeters(5.38),
         Rotation2d.fromDegrees(180));
 
-    TrajectoryConfig config = new TrajectoryConfig(Units.feetToMeters(12), Units.feetToMeters(12));
+    var endpoint4 = new Pose2d(Units.feetToMeters(5.38), Units.feetToMeters(7.08),
+        Rotation2d.fromDegrees(0));
+
+    TrajectoryConfig config = new TrajectoryConfig(Units.feetToMeters(6), Units.feetToMeters(6));
     config.setReversed(true);
 
     // Get the selected endpoint from Shuffleboard.
-    int selectedEndpoint = (int) targetSelection.getDouble(0.0);
+    int selectedEndpointLeft = (int) targetSelection.getDouble(0.0);
 
     Pose2d selectedTarget = new Pose2d();
-    switch (selectedEndpoint) {
+    switch (selectedEndpointLeft) {
       case 0:
         selectedTarget = endpoint1;
         break;
@@ -51,12 +57,87 @@ class LimelightTrajectorySubsystem {
       case 2:
         selectedTarget = endpoint3;
         break;
+      case 3:
+        selectedTarget = endpoint4;
+        break;
     }
 
-    var trajectory = TrajectoryGenerator.generateTrajectory(
+    var trajectoryleft = TrajectoryGenerator.generateTrajectory(
         robotposestart,
         interiorWaypoints,
         selectedTarget,
         config);
-  }
+
+  
+        Field2d m_field = new Field2d();
+        SmartDashboard.putData(m_field);
+      
+        // Push the trajectory to Field2d.
+        m_field.getObject("trajectoryleft").setTrajectory(trajectoryleft);
+  
+  
+      }
+
+  public void generateTrajectoryRight() {
+    var robotposestart = new Pose2d(Units.feetToMeters(12.07), Units.feetToMeters(12.07),
+        Rotation2d.fromDegrees(-180));
+
+    var interiorWaypoints = new ArrayList<Translation2d>();
+    interiorWaypoints.add(new Translation2d(Units.feetToMeters(12.07), Units.feetToMeters(15.35)));
+    interiorWaypoints.add(new Translation2d(Units.feetToMeters(8.36), Units.feetToMeters(15.97)));
+
+    // Define the endpoints for the trajectories here.
+    var endpoint1 = new Pose2d(Units.feetToMeters(6.36), Units.feetToMeters(8.98),
+        Rotation2d.fromDegrees(0));
+    var endpoint2 = new Pose2d(Units.feetToMeters(20), Units.feetToMeters(20),
+        Rotation2d.fromDegrees(0));
+    var endpoint3 = new Pose2d(Units.feetToMeters(30), Units.feetToMeters(30),
+        Rotation2d.fromDegrees(0));
+
+    var endpoint4 = new Pose2d(Units.feetToMeters(30), Units.feetToMeters(30),
+        Rotation2d.fromDegrees(0));
+
+    TrajectoryConfig config = new TrajectoryConfig(Units.feetToMeters(12), Units.feetToMeters(12));
+    config.setReversed(true);
+
+    // Get the selected endpoint from Shuffleboard.
+    int selectedEndpointRight = (int) targetSelection.getDouble(0.0);
+
+    Pose2d selectedTarget = new Pose2d();
+    switch (selectedEndpointRight) {
+      case 0:
+        selectedTarget = endpoint1;
+        break;
+      case 1:
+        selectedTarget = endpoint2;
+        break;
+      case 2:
+        selectedTarget = endpoint3;
+        break;
+
+      case 3:
+        selectedTarget = endpoint4;
+        break;
+    }
+
+    var trajectoryright = TrajectoryGenerator.generateTrajectory(
+        robotposestart,
+        interiorWaypoints,
+        selectedTarget,
+        config);
+  
+        
+        Field2d m_field = new Field2d();
+        SmartDashboard.putData(m_field);
+      
+        // Push the trajectory to Field2d.
+        m_field.getObject("trajectoryright").setTrajectory(trajectoryright);
+  
+  
+      }
+
+ 
+
+
+
 }
