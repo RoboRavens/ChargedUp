@@ -23,8 +23,8 @@ class LimelightTrajectorySubsystem {
         Rotation2d.fromDegrees(-180));
 
     var interiorWaypoints = new ArrayList<Translation2d>();
-    interiorWaypoints.add(new Translation2d(Units.feetToMeters(14.54), Units.feetToMeters(23.23)));
-    interiorWaypoints.add(new Translation2d(Units.feetToMeters(21.04), Units.feetToMeters(18.23)));
+    interiorWaypoints.add(new Translation2d(Units.feetToMeters(3.90), Units.feetToMeters(4.71)));
+    interiorWaypoints.add(new Translation2d(Units.feetToMeters(3.88), Units.feetToMeters(4.76)));
 
     // Define the endpoints for the trajectories here.
     var endpoint1 = new Pose2d(Units.feetToMeters(10), Units.feetToMeters(10),
