@@ -26,7 +26,7 @@ class LimelightTrajectorySubsystem {
   private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
   private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
   private NetworkTableEntry targetSelectionLeft = table.getEntry("Target Selection Left");
-  private NetworkTableEntry targetSelectionRight= table.getEntry("Target Selection Left");
+  private NetworkTableEntry targetSelectionRight= table.getEntry("Target Selection Right");
   public void generateTrajectoryLeft() {
 
     var robotposestart = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23),
