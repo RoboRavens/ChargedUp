@@ -88,6 +88,10 @@ public class DrivetrainDefaultCommand extends CommandBase {
             // System.out.println("r: " + r);
             // System.out.println("a: " + a);
         }
+
+        if (Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.CLAW_SUBSYSTEM.isOpen() == false && Robot.LIMELIGHT_SUBSYSTEM.isInAllianceCommunity()) {
+            // TODO: Implement auto aligning square with the field
+        }
     }
 
     @Override

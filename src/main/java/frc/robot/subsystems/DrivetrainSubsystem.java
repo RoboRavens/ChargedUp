@@ -438,6 +438,10 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     this.drive(new ChassisSpeeds(0,0,0));
   }
 
+  public boolean isRobotSquareWithField() {
+    return false;
+  }
+
   @Override
   public double getRoll() {
     return m_navx.getRoll();

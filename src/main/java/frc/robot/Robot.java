@@ -8,13 +8,22 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
+import frc.robot.commands.arm.AdjustArmToRetrievalPosition;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
+import frc.robot.subsystems.LimelightSubsystem;
+import frc.util.StateManagement;
+import frc.util.scoring_states.GamePieceState;
+import frc.util.scoring_states.PieceRetrievalState;
+import frc.util.scoring_states.RowSelectionState;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,7 +38,15 @@ public class Robot extends TimedRobot {
   public static final DrivetrainDefaultCommand drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
+  public static final Gamepad OP_PAD = new Gamepad(1);
   public static final ChargeStationBalancingCommand chargeStationBalancingCommand = new ChargeStationBalancingCommand();
+  public static GamePieceState gamePieceState = GamePieceState.CLEAR;
+  public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
+  public static PieceRetrievalState pieceRetrievalState = PieceRetrievalState.CLEAR;
+  public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
+  public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
+  public static final StateManagement STATE_MANAGEMENT = new StateManagement();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -41,7 +58,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
-    GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+    configureButtonBindings();
   }
 
   /**
@@ -60,6 +77,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
+    STATE_MANAGEMENT.manageStates();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -116,4 +134,17 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  private void configureButtonBindings() {
+    // AxisCode.LEFTTRIGGER and ButtonCode.B are being used in the ManageArmAndClawStateCommand
+    GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+    OP_PAD.getButton(ButtonCode.CUBE).toggleOnTrue(new InstantCommand(() -> gamePieceState = GamePieceState.CUBE));
+    OP_PAD.getButton(ButtonCode.CONE).toggleOnTrue(new InstantCommand(() -> gamePieceState = GamePieceState.CONE));
+    OP_PAD.getButton(ButtonCode.SCORE_LOW).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.LOW));
+    OP_PAD.getButton(ButtonCode.SCORE_MID).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.MID));
+    OP_PAD.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.HIGH));
+    OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> pieceRetrievalState = PieceRetrievalState.SUBSTATION));
+    OP_PAD.getButton(ButtonCode.FLOOR_INTAKE).toggleOnTrue(new InstantCommand(() -> pieceRetrievalState = PieceRetrievalState.FLOOR));
+    // Maybe include a button to clear all states?
+  }
 }
