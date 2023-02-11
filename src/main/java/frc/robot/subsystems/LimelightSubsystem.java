@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
@@ -9,14 +10,14 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.LimelightHelpers;
 
-public class LimelightSubsystem {
+public class LimelightSubsystem extends SubsystemBase {
 
   // LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-  double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
   NetworkTableEntry tx = table.getEntry("tx");
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
@@ -24,20 +25,32 @@ public class LimelightSubsystem {
   NetworkTableEntry tv = table.getEntry("tv");
   int camMode = 0;
 
-  
-  public double robotposeX() {
-    SmartDashboard.putNumber("botpose", botpose[0]);
-    return botpose[0];
+  public void periodic() {
+    Pose2d pose = getRobotPose();
+    if (pose != null) {
+      SmartDashboard.putNumber("PoseX", pose.getX());
+      SmartDashboard.putNumber("PoseY", pose.getY());
+      SmartDashboard.putNumber("Rotation", pose.getRotation().getDegrees());
+    }else {
+      SmartDashboard.putNumber("PoseX", 0);
+      SmartDashboard.putNumber("PoseY", 0);
+      SmartDashboard.putNumber("Rotation", 0);
+        
+    }
+   
   }
 
-  public double robotPoseY() {
-    SmartDashboard.putNumber("botpose", botpose[1]);
-    return botpose[1];
-  }
+  public Pose2d getRobotPose() {
 
-  public double robotPoseZ() {
-    SmartDashboard.putNumber("botpose", botpose[5]);
-    return botpose[5];
+    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+    if (botpose.length == 6) {
+      Translation2d translation = new Translation2d(botpose[0], botpose[1]);
+      Rotation2d rotation = new Rotation2d(botpose[5]);
+      Pose2d position = new Pose2d(translation, rotation);
+      return position;
+
+    }
+    return null;
   }
 
   // how many degrees back is your limelight rotated from perfectly vertical?

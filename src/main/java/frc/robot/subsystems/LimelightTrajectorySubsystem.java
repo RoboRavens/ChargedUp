@@ -28,8 +28,11 @@ public class LimelightTrajectorySubsystem {
   private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
   public void generateTrajectoryLeft() {
 
-    var robotposestart = new Pose2d(Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotposeX()), Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotPoseY()),
-        Rotation2d.fromDegrees(Robot.LIMELIGHT_SUBSYSTEM.robotPoseZ()));
+    var robotposestart = Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
+
+    if (robotposestart == null) {
+        return;
+    }
 
     var interiorWaypoints = new ArrayList<Translation2d>();
     interiorWaypoints.add(new Translation2d(Units.feetToMeters(16.89), Units.feetToMeters(2.23)));
@@ -52,7 +55,7 @@ public class LimelightTrajectorySubsystem {
    
     
 
-    var trajectoryleft = TrajectoryGenerator.generateTrajectory(
+     var trajectoryleft = TrajectoryGenerator.generateTrajectory(
         robotposestart,
         interiorWaypoints,
         endpoint1,
@@ -63,18 +66,23 @@ public class LimelightTrajectorySubsystem {
 
     // Push the trajectory to Field2d.
     LEFT_FIELD.getObject("trajectoryleft").setTrajectory(trajectoryleft);
-
-  } 
-
+    
+  
+  }
   public void generateTrajectoryRight() {
-    var robotposestart = new Pose2d(Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotposeX()), Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotPoseY()),
-        Rotation2d.fromDegrees(Robot.LIMELIGHT_SUBSYSTEM.robotPoseZ()));
+     
+
+    var limelightRobotPose = Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
+
+    if (limelightRobotPose == null) {
+        return;
+    }
 
     var interiorWaypoints = new ArrayList<Translation2d>();
     interiorWaypoints.add(new Translation2d(Units.feetToMeters(14.30), Units.feetToMeters(15.97)));
     interiorWaypoints.add(new Translation2d(Units.feetToMeters(7.31), Units.feetToMeters(16.24)));
 
-    //ADD COORECT INTERIORWAYPOINTS
+   
 
     // Define the endpoints for the trajectories here.
     var endpoint1 = new Pose2d(Units.feetToMeters(6.36), Units.feetToMeters(12.66),
@@ -95,7 +103,7 @@ public class LimelightTrajectorySubsystem {
     
 
     var trajectoryright = TrajectoryGenerator.generateTrajectory(
-        robotposestart,
+        limelightRobotPose,
         interiorWaypoints,
         endpoint1,
         config);
@@ -105,7 +113,48 @@ public class LimelightTrajectorySubsystem {
 
     // Push the trajectory to Field2d.
     m_field.getObject("trajectoryright").setTrajectory(trajectoryright);
-
+        
   }
+
+
+
+  
+  public void goToScoringPosition() {
+     
+
+    var limelightRobotPose = Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
+
+    if (limelightRobotPose == null) {
+        return;
+    }
+
+    var interiorWaypoints = new ArrayList<Translation2d>();
+    // Define the endpoints for the trajectories here.
+    var endpoint1 = new Pose2d(14.76, 2.76, Rotation2d.fromDegrees(180));
+
+    TrajectoryConfig config = new TrajectoryConfig(2,1);
+    config.setReversed(true);
+
+    var trajectory = TrajectoryGenerator.generateTrajectory(
+        limelightRobotPose,
+        interiorWaypoints,
+        endpoint1,
+        config);
+
+    Field2d m_field = new Field2d();
+    SmartDashboard.putData(m_field);
+
+
+    var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(trajectory)
+        .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(trajectory));
+
+        driveCommand.schedule();
+        
+  }
+
+
+
+
+
 
 }
