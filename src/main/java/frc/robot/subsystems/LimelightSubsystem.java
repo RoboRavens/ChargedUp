@@ -16,6 +16,7 @@ public class LimelightSubsystem {
 
   // LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+  double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
   NetworkTableEntry tx = table.getEntry("tx");
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
@@ -23,34 +24,19 @@ public class LimelightSubsystem {
   NetworkTableEntry tv = table.getEntry("tv");
   int camMode = 0;
 
-  public double[] getRobotPose() {
-    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
-    SmartDashboard.putNumber("botpos length", botpose.length);
-    if (botpose.length != 6) {
-      return botpose;
-    }
-    
-    SmartDashboard.putNumber("BotX", (botpose[0]));
-    SmartDashboard.putNumber("BotY", (botpose[1]));
-    SmartDashboard.putNumber("BotZ", (botpose[2]));
-    SmartDashboard.putNumber("Bot1", (botpose[3]));
-    SmartDashboard.putNumber("Bot2", (botpose[4]));
-    SmartDashboard.putNumber("Bot3", (botpose[5]));
-    return botpose;
-  }
-
+  
   public double robotposeX() {
-    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+    SmartDashboard.putNumber("botpose", botpose[0]);
     return botpose[0];
   }
 
   public double robotPoseY() {
-    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+    SmartDashboard.putNumber("botpose", botpose[1]);
     return botpose[1];
   }
 
   public double robotPoseZ() {
-    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+    SmartDashboard.putNumber("botpose", botpose[5]);
     return botpose[5];
   }
 
