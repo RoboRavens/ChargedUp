@@ -26,6 +26,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
+import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
@@ -52,7 +53,7 @@ public class Robot extends TimedRobot {
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
   public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
-  
+  public static final ChargeStationBalancingCommand chargeStationBalancingCommand = new ChargeStationBalancingCommand();
 
   
   /**
@@ -65,16 +66,8 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
-   
-    //GAMEPAD.getButton(ButtonCode.A).whileTrue(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
-    //Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.generateTrajectoryLeft();
-    
-    //GAMEPAD.getButton(ButtonCode.A).onTrue(new InstantCommand(() -> LIMELIGHT_TRAJECTORY_SUBSYSTEM.generateTrajectoryLeft()));
-    //GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> LIMELIGHT_TRAJECTORY_SUBSYSTEM.generateTrajectoryRight()));
-      GAMEPAD.getButton(ButtonCode.A).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition()));
-  } 
-
-  
+    GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+  }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
