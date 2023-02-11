@@ -25,6 +25,11 @@ public class LimelightSubsystem {
 
   public double[] getRobotPose() {
     double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+    SmartDashboard.putNumber("botpos length", botpose.length);
+    if (botpose.length != 6) {
+      return botpose;
+    }
+    
     SmartDashboard.putNumber("BotX", (botpose[0]));
     SmartDashboard.putNumber("BotY", (botpose[1]));
     SmartDashboard.putNumber("BotZ", (botpose[2]));
@@ -46,7 +51,7 @@ public class LimelightSubsystem {
 
   public double robotPoseZ() {
     double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
-    return botpose[2];
+    return botpose[5];
   }
 
   // how many degrees back is your limelight rotated from perfectly vertical?

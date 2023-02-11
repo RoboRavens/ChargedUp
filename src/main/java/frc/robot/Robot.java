@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import java.util.List;
@@ -20,6 +21,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
@@ -47,8 +50,8 @@ public class Robot extends TimedRobot {
   public static final DrivetrainDefaultCommand drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
-  public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
+  public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
   
 
   
@@ -65,8 +68,9 @@ public class Robot extends TimedRobot {
    
     //GAMEPAD.getButton(ButtonCode.A).whileTrue(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
     //Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.generateTrajectoryLeft();
-    Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.generateTrajectoryRight();
-   } 
+    GAMEPAD.getButton(ButtonCode.A).onTrue(new InstantCommand(() -> LIMELIGHT_TRAJECTORY_SUBSYSTEM.generateTrajectoryLeft()));
+    GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> LIMELIGHT_TRAJECTORY_SUBSYSTEM.generateTrajectoryRight()));
+  } 
 
   
 
@@ -86,6 +90,8 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
+    Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 
 public class LimelightTrajectorySubsystem {
   
@@ -25,12 +26,10 @@ public class LimelightTrajectorySubsystem {
   
   private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
   private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
-  private NetworkTableEntry targetSelectionLeft = table.getEntry("Target Selection Left");
-  private NetworkTableEntry targetSelectionRight= table.getEntry("Target Selection Right");
   public void generateTrajectoryLeft() {
 
-    var robotposestart = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23),
-        Rotation2d.fromDegrees(-180));
+    var robotposestart = new Pose2d(Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotposeX()), Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotPoseY()),
+        Rotation2d.fromDegrees(Robot.LIMELIGHT_SUBSYSTEM.robotPoseZ()));
 
     var interiorWaypoints = new ArrayList<Translation2d>();
     interiorWaypoints.add(new Translation2d(Units.feetToMeters(16.89), Units.feetToMeters(2.23)));
@@ -50,29 +49,13 @@ public class LimelightTrajectorySubsystem {
     TrajectoryConfig config = new TrajectoryConfig(Units.feetToMeters(6), Units.feetToMeters(6));
     config.setReversed(true);
 
-    // Get the selected endpoint from Shuffleboard.
-    int selectedEndpointLeft = (int) targetSelectionLeft.getDouble(0.0);
-
-    Pose2d selectedTarget = new Pose2d();
-    switch (selectedEndpointLeft) {
-      case 0:
-        selectedTarget = endpoint1;
-        break;
-      case 1:
-        selectedTarget = endpoint2;
-        break;
-      case 2:
-        selectedTarget = endpoint3;
-        break;
-      case 3:
-        selectedTarget = endpoint4;
-        break;
-    }
+   
+    
 
     var trajectoryleft = TrajectoryGenerator.generateTrajectory(
         robotposestart,
         interiorWaypoints,
-        selectedTarget,
+        endpoint1,
         config);
 
     Field2d LEFT_FIELD = new Field2d();
@@ -84,8 +67,8 @@ public class LimelightTrajectorySubsystem {
   } 
 
   public void generateTrajectoryRight() {
-    var robotposestart = new Pose2d(Units.feetToMeters(24.25), Units.feetToMeters(20.37),
-        Rotation2d.fromDegrees(180));
+    var robotposestart = new Pose2d(Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotposeX()), Units.feetToMeters(Robot.LIMELIGHT_SUBSYSTEM.robotPoseY()),
+        Rotation2d.fromDegrees(Robot.LIMELIGHT_SUBSYSTEM.robotPoseZ()));
 
     var interiorWaypoints = new ArrayList<Translation2d>();
     interiorWaypoints.add(new Translation2d(Units.feetToMeters(14.30), Units.feetToMeters(15.97)));
@@ -107,30 +90,14 @@ public class LimelightTrajectorySubsystem {
     TrajectoryConfig config = new TrajectoryConfig(Units.feetToMeters(12), Units.feetToMeters(12));
     config.setReversed(true);
 
-    // Get the selected endpoint from Shuffleboard.
-    int selectedEndpointRight = (int) targetSelectionRight.getDouble(0.0);
-
-    Pose2d selectedTarget = new Pose2d();
-    switch (selectedEndpointRight) {
-      case 0:
-        selectedTarget = endpoint1;
-        break;
-      case 1:
-        selectedTarget = endpoint2;
-        break;
-      case 2:
-        selectedTarget = endpoint3;
-        break;
-
-      case 3:
-        selectedTarget = endpoint4;
-        break;
-    }
+    
+  
+    
 
     var trajectoryright = TrajectoryGenerator.generateTrajectory(
         robotposestart,
         interiorWaypoints,
-        selectedTarget,
+        endpoint1,
         config);
 
     Field2d m_field = new Field2d();
