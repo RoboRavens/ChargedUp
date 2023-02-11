@@ -52,4 +52,7 @@ public final class Constants {
   // public static final double JOYSTICK_DEADBAND = .05;
   public static final double JOYSTICK_DEADBAND = .05;
   public static final double DRIVE_MAX_TURN_RADIANS_PER_SECOND = 3;
+
+  public static final double CONVEYANCE_ONE_FULL_SPEED = -1;
+  public static final double CONVEYANCE_ONE_STOP = 0;
 }

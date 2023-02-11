@@ -14,6 +14,7 @@ import frc.robot.commands.auto.TestAutoCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
+import frc.robot.subsystems.TempConveyanceSubystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot {
   public static final DrivetrainDefaultCommand drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
+  public static final TempConveyanceSubystem TEMP_CONVEYANCE_SUBYSTEM = new TempConveyanceSubystem();
 
   /**
    * This function is run when the robot is first started up and should be used for any

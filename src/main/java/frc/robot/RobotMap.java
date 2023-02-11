@@ -1,6 +1,9 @@
 package frc.robot;
 
 public class RobotMap {
+    //CONVEYANCE
+    public static final int CONVEYANCE_MOTOR = 41;
+    
     // DRIVETRAIN
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.5715; // The left-to-right distance between the drivetrain wheels
     public static final double DRIVETRAIN_WHEELBASE_METERS = 0.5715; // The front-to-back distance between the drivetrain wheels.

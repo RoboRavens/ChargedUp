@@ -73,5 +73,12 @@
   "maxVelocity": 0.5,
   "maxAcceleration": 1.0,
   "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 1.16,
+      "names": [
+        "Get Game Piece"
+      ]
+    }
+  ]
 }
