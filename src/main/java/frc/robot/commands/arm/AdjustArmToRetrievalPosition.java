@@ -11,4 +11,9 @@ public class AdjustArmToRetrievalPosition extends CommandBase {
         _pieceRetrievalState = pieceRetrievalState;
         addRequirements(Robot.ARM_SUBSYSTEM);
     }
+
+    // TODO: Implement this command
+    // Should handle all three states: FLOOR, SUBSTATION, and CLEAR
+    // The arm should adjust its position to retrieve game pieces from the selected state, and should retract if the CLEAR state is selected
+    // This should also update the piece retrieval state (e.g. from SUBSTATION to FLOOR)
 }

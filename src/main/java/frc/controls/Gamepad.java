@@ -104,7 +104,7 @@ public class Gamepad {
 		case SHOOTER_REV:
 			buttonNumber = 2;
 			break;
-		case TURRET_DISABLED_OVERRIDE:
+		case DRIVER_CONTROL_OVERRIDE:
 			buttonNumber = 4;
 			break;
 		case SHOOTER_OVERRIDE:

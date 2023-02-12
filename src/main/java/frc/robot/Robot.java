@@ -47,6 +47,7 @@ public class Robot extends TimedRobot {
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
   public static final StateManagement STATE_MANAGEMENT = new StateManagement();
+  public static boolean driverControlOverride = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -136,7 +137,7 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void configureButtonBindings() {
-    // AxisCode.LEFTTRIGGER and ButtonCode.B are being used in the ManageArmAndClawStateCommand
+    // AxisCode.LEFTTRIGGER and ButtonCode.B are being used in the StateManagement class
     GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
     OP_PAD.getButton(ButtonCode.CUBE).toggleOnTrue(new InstantCommand(() -> gamePieceState = GamePieceState.CUBE));
     OP_PAD.getButton(ButtonCode.CONE).toggleOnTrue(new InstantCommand(() -> gamePieceState = GamePieceState.CONE));
@@ -145,6 +146,7 @@ public class Robot extends TimedRobot {
     OP_PAD.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.HIGH));
     OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> pieceRetrievalState = PieceRetrievalState.SUBSTATION));
     OP_PAD.getButton(ButtonCode.FLOOR_INTAKE).toggleOnTrue(new InstantCommand(() -> pieceRetrievalState = PieceRetrievalState.FLOOR));
+    OP_PAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
     // Maybe include a button to clear all states?
   }
 }

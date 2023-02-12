@@ -7,4 +7,6 @@ public class CloseClawCommand extends CommandBase {
     public CloseClawCommand() {
         addRequirements(Robot.CLAW_SUBSYSTEM);
     }
+    
+    // TODO: Implement this command
 }

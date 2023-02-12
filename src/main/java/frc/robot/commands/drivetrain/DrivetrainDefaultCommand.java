@@ -53,7 +53,11 @@ public class DrivetrainDefaultCommand extends CommandBase {
         //     r = _followLimelightPID.calculate(limelightAngle.doubleValue());
         //     // SmartDashboard.putNumber("", r);
         // } 
-        if (Math.abs(rightJoystickInput) > 0.0){
+        if (Robot.STATE_MANAGEMENT.getAlignSquareWithField()) {
+            // TODO: adjust r value so robot aligns square with the field
+            r = 0; // Temporary to avoid errors in vscode
+        }
+        else if (Math.abs(rightJoystickInput) > 0.0){
             // _followLimelightPID.reset();
             r = rightJoystickInput * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
         // } else if (_autoSteer && Robot.DRIVE_TRAIN_SUBSYSTEM.powerIsCut() == false && (x != 0 || y != 0)) {
