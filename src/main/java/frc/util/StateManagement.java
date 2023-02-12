@@ -60,6 +60,7 @@ public class StateManagement {
         // If the robot does not detect a game piece
         else {
             // If the robot is either (1) in the loading zone and intends to load a piece or (2) not in any of the opponent's zones and intends to load a piece from the floor
+            // TODO: Make this set of conditions more readable
             if ((Robot.LIMELIGHT_SUBSYSTEM.isInAllianceLoadingZone() && Robot.pieceRetrievalState == PieceRetrievalState.SUBSTATION)
                 || (Robot.LIMELIGHT_SUBSYSTEM.isInOpponentCommunity() == false && Robot.LIMELIGHT_SUBSYSTEM.isInOpponentLoadingZone() == false && Robot.pieceRetrievalState == PieceRetrievalState.FLOOR)) {
                 // Adjust the arm to the selected intake position and open the claw
