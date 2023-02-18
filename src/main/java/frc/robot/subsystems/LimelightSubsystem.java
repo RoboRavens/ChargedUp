@@ -41,9 +41,7 @@ public class LimelightSubsystem extends SubsystemBase {
      else {
 
       Robot.DRIVE_TRAIN_SUBSYSTEM.resetOdometry(pose);
-
-
-    }
+  }
     
      /*else {
       SmartDashboard.putNumber("PoseX", 0);
