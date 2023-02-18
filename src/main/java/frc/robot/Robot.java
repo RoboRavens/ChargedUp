@@ -183,33 +183,36 @@ public class Robot extends TimedRobot {
     OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.HPS));
     OP_PAD.getButton(ButtonCode.FLOOR_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.GROUND));
     OP_PAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
-    OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING).andThen(new OpenClawCommand()));
+    OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING).andThen(new OpenClawCommand()).andThen(new InstantCommand(() -> overallState = OverallState.EMPTY_TRANSIT)));
   }
 
   private void setOverallStates() {
     if (overallState != OverallState.EJECTING) {
-      // LOADED load state is set in the claw subsystem
       if (loadState == LoadState.LOADED && LIMELIGHT_SUBSYSTEM.isInAllianceCommunity()) {
-        overallState = OverallState.PREPARING_TO_SCORE;
+        if (drivetrainState == DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN) {
+          overallState = OverallState.FINAL_SCORING_ALIGNMENT;
+        }
+        else if (drivetrainState == DrivetrainState.SCORING && armExtensionState == ArmExtensionState.ACTIVELY_SCORING) {
+          overallState = OverallState.SCORING;
+        }
+        else {
+          overallState = OverallState.PREPARING_TO_SCORE;
+        }
       }
       else if (loadState == LoadState.LOADED) {
         overallState = OverallState.LOADED_TRANSIT;
       }
-    }
-    // EMPTY load state is set in the claw subsystem
-    if (loadState == LoadState.EMPTY) {
-      overallState = OverallState.EMPTY_TRANSIT;
-    }
-    // GROUND load target state is set 
-    if (loadState == LoadState.EMPTY && loadTargetState == LoadTargetState.GROUND) {
-      overallState = OverallState.GROUND_PICKUP;
-    }
-    // OPEN claw state is set in the claw subsystem
-    if (loadState == LoadState.EMPTY && clawState == ClawState.OPEN) {
-      overallState = OverallState.LOADING;
-    }
-    if (drivetrainState == DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN) {
-      overallState = OverallState.FINAL_SCORING_ALIGNMENT;
-    }
+      else if (loadState == LoadState.EMPTY) {
+        if (armExtensionState == ArmExtensionState.COLLECT_GROUND) {
+          overallState = OverallState.GROUND_PICKUP;
+        }
+        else if (clawState == ClawState.OPEN && CLAW_SUBSYSTEM.detectsGamePiece()) {
+          overallState = OverallState.LOADING;
+        }
+        else {
+          overallState = OverallState.EMPTY_TRANSIT;
+        }
+      }
+    } 
   }
 }

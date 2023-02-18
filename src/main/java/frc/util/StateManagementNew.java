@@ -1,7 +1,7 @@
 package frc.util;
 
 public class StateManagementNew {
-    // TODO: set these states
+    // States set in Robot.java (mostly in the setOverallStates method)
     public enum OverallState {
         EMPTY_TRANSIT,
         LOADED_TRANSIT,
@@ -77,7 +77,7 @@ public class StateManagementNew {
         TAG_TRACKING,
         TAPE_TRACKING
     }
-    // TODO: set these states
+    // Set in configureButtonBindings() in Robot.java
     public enum ScoringTargetState {
         NONE,
         LOW,
