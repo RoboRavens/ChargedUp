@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
     // STATE_MANAGEMENT.manageStates();
     setOverallStates();
-    manageStates();
+    manageOverallStates();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -193,7 +193,7 @@ public class Robot extends TimedRobot {
   }
 
   // Schedules commands based on the overall states
-  private void manageStates() {
+  private void manageOverallStates() {
     if (overallState == OverallState.PREPARING_TO_SCORE) {
       new AdjustArmToRowPosition(Robot.scoringTargetState).andThen(new ExtendArmCommand()).schedule();
       Robot.LIMELIGHT_SUBSYSTEM.switchToScoringPipeline();
