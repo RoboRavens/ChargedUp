@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
 import frc.robot.commands.arm.AdjustArmToRetrievalPosition;
+import frc.robot.commands.claw.OpenClawCommand;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -20,7 +21,18 @@ import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.util.StateManagement;
+import frc.util.StateManagementNew;
+import frc.util.StateManagementNew.ArmExtensionState;
+import frc.util.StateManagementNew.ArmRotationState;
+import frc.util.StateManagementNew.ClawState;
+import frc.util.StateManagementNew.DrivetrainState;
+import frc.util.StateManagementNew.LimelightState;
+import frc.util.StateManagementNew.LoadState;
+import frc.util.StateManagementNew.LoadTargetState;
+import frc.util.StateManagementNew.OverallState;
+import frc.util.StateManagementNew.PieceState;
+import frc.util.StateManagementNew.ScoringTargetState;
+// import frc.util.StateManagement;
 import frc.util.scoring_states.GamePieceState;
 import frc.util.scoring_states.PieceRetrievalState;
 import frc.util.scoring_states.RowSelectionState;
@@ -40,14 +52,26 @@ public class Robot extends TimedRobot {
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final Gamepad OP_PAD = new Gamepad(1);
   public static final ChargeStationBalancingCommand chargeStationBalancingCommand = new ChargeStationBalancingCommand();
-  public static GamePieceState gamePieceState = GamePieceState.CLEAR;
-  public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
-  public static PieceRetrievalState pieceRetrievalState = PieceRetrievalState.CLEAR;
+  // public static GamePieceState gamePieceState = GamePieceState.CLEAR;
+  // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
+  // public static PieceRetrievalState pieceRetrievalState = PieceRetrievalState.CLEAR;
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-  public static final StateManagement STATE_MANAGEMENT = new StateManagement();
+  // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static boolean driverControlOverride = false;
+
+  // Sets the default robot mechanism states (may need to be changed)
+  public static OverallState overallState = OverallState.EMPTY_TRANSIT;
+  public static ArmRotationState armRotation = ArmRotationState.COLLECT_GROUND;
+  public static ArmExtensionState armExtensionState = ArmExtensionState.RETRACTED;
+  public static PieceState pieceState = PieceState.NONE;
+  public static LoadState loadState = LoadState.EMPTY;
+  public static LoadTargetState loadTargetState = LoadTargetState.GROUND;
+  public static DrivetrainState drivetrainState = DrivetrainState.FREEHAND;
+  public static ClawState clawState = ClawState.CLOSED;
+  public static LimelightState limelightState = LimelightState.TAG_TRACKING;
+  public static ScoringTargetState scoringTargetState = ScoringTargetState.NONE;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -78,7 +102,8 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
-    STATE_MANAGEMENT.manageStates();
+    // STATE_MANAGEMENT.manageStates();
+    setOverallStates();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -138,15 +163,53 @@ public class Robot extends TimedRobot {
 
   private void configureButtonBindings() {
     // AxisCode.LEFTTRIGGER and ButtonCode.B are being used in the StateManagement class
-    GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
-    OP_PAD.getButton(ButtonCode.CUBE).toggleOnTrue(new InstantCommand(() -> gamePieceState = GamePieceState.CUBE));
-    OP_PAD.getButton(ButtonCode.CONE).toggleOnTrue(new InstantCommand(() -> gamePieceState = GamePieceState.CONE));
-    OP_PAD.getButton(ButtonCode.SCORE_LOW).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.LOW));
-    OP_PAD.getButton(ButtonCode.SCORE_MID).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.MID));
-    OP_PAD.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.HIGH));
-    OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> pieceRetrievalState = PieceRetrievalState.SUBSTATION));
-    OP_PAD.getButton(ButtonCode.FLOOR_INTAKE).toggleOnTrue(new InstantCommand(() -> pieceRetrievalState = PieceRetrievalState.FLOOR));
-    OP_PAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
+    // GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+    // OP_PAD.getButton(ButtonCode.CUBE).toggleOnTrue(new InstantCommand(() -> gamePieceState = GamePieceState.CUBE));
+    // OP_PAD.getButton(ButtonCode.CONE).toggleOnTrue(new InstantCommand(() -> gamePieceState = GamePieceState.CONE));
+    // OP_PAD.getButton(ButtonCode.SCORE_LOW).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.LOW));
+    // OP_PAD.getButton(ButtonCode.SCORE_MID).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.MID));
+    // OP_PAD.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> rowSelectionState = RowSelectionState.HIGH));
+    // OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> pieceRetrievalState = PieceRetrievalState.SUBSTATION));
+    // OP_PAD.getButton(ButtonCode.FLOOR_INTAKE).toggleOnTrue(new InstantCommand(() -> pieceRetrievalState = PieceRetrievalState.FLOOR));
+    // OP_PAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
     // Maybe include a button to clear all states?
+
+    GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+    OP_PAD.getButton(ButtonCode.CUBE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CUBE));
+    OP_PAD.getButton(ButtonCode.CONE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CONE));
+    OP_PAD.getButton(ButtonCode.SCORE_LOW).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
+    OP_PAD.getButton(ButtonCode.SCORE_MID).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
+    OP_PAD.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
+    OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.HPS));
+    OP_PAD.getButton(ButtonCode.FLOOR_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.GROUND));
+    OP_PAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
+    OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING).andThen(new OpenClawCommand()));
+  }
+
+  private void setOverallStates() {
+    if (overallState != OverallState.EJECTING) {
+      // LOADED load state is set in the claw subsystem
+      if (loadState == LoadState.LOADED && LIMELIGHT_SUBSYSTEM.isInAllianceCommunity()) {
+        overallState = OverallState.PREPARING_TO_SCORE;
+      }
+      else if (loadState == LoadState.LOADED) {
+        overallState = OverallState.LOADED_TRANSIT;
+      }
+    }
+    // EMPTY load state is set in the claw subsystem
+    if (loadState == LoadState.EMPTY) {
+      overallState = OverallState.EMPTY_TRANSIT;
+    }
+    // GROUND load target state is set 
+    if (loadState == LoadState.EMPTY && loadTargetState == LoadTargetState.GROUND) {
+      overallState = OverallState.GROUND_PICKUP;
+    }
+    // OPEN claw state is set in the claw subsystem
+    if (loadState == LoadState.EMPTY && clawState == ClawState.OPEN) {
+      overallState = OverallState.LOADING;
+    }
+    if (drivetrainState == DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN) {
+      overallState = OverallState.FINAL_SCORING_ALIGNMENT;
+    }
   }
 }

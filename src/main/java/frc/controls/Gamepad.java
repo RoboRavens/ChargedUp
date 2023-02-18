@@ -138,7 +138,7 @@ public class Gamepad {
 		case TOGGLE_COLOR_SENSING_FEATURES:
 			buttonNumber = 4;
 			break;
-		case TURRET_HOME:
+		case EJECT_PIECE:
 			buttonNumber = 3;
 			break;
 		default:

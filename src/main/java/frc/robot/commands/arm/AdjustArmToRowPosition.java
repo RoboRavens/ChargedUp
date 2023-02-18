@@ -2,13 +2,11 @@ package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
-import frc.util.scoring_states.RowSelectionState;
+import frc.util.StateManagementNew.ScoringTargetState;
 
 public class AdjustArmToRowPosition extends CommandBase {
-    private RowSelectionState _rowSelectionState;
 
-    public AdjustArmToRowPosition(RowSelectionState rowSelectionState) {
-        _rowSelectionState = rowSelectionState;
+    public AdjustArmToRowPosition(ScoringTargetState scoringTargetState) {
         addRequirements(Robot.ARM_SUBSYSTEM);
     }
 

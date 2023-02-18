@@ -10,6 +10,8 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
+import frc.util.StateManagementNew.DrivetrainState;
+import frc.util.StateManagementNew.OverallState;
 
 public class DrivetrainDefaultCommand extends CommandBase {
     private boolean _followLimelight = false;
@@ -53,7 +55,8 @@ public class DrivetrainDefaultCommand extends CommandBase {
         //     r = _followLimelightPID.calculate(limelightAngle.doubleValue());
         //     // SmartDashboard.putNumber("", r);
         // } 
-        if (Robot.STATE_MANAGEMENT.getAlignSquareWithField()) {
+        if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
+            Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
             // TODO: adjust r value so robot aligns square with the field
             r = 0; // Temporary to avoid errors in vscode
         }
@@ -93,7 +96,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
             // System.out.println("a: " + a);
         }
 
-        if (Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.CLAW_SUBSYSTEM.isOpen() == false && Robot.LIMELIGHT_SUBSYSTEM.isInAllianceCommunity()) {
+        if (Robot.drivetrainState == DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN) {
             // TODO: Implement auto aligning square with the field
         }
     }

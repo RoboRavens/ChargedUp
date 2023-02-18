@@ -417,6 +417,10 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     return _odometryFromHardware.getPoseMeters();
   }
 
+  public void resetOdometryCurrentPosition() {
+    resetOdometry(getPose(), getPose().getRotation());
+  }
+
   private void resetOdometry(Pose2d pose, Rotation2d rotation) {
     var targetPose = new Pose2d(pose.getTranslation(), pose.getRotation());
     // _odometryFromKinematics.resetPosition(targetPose, this.getGyroscopeRotation());
