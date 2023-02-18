@@ -403,7 +403,15 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
   private void setDrivetrainStates() {
     // TODO: Set the Robot.drivetrainStates
-    // This should be based on the actual drivetrain state as much as possible, but may require checking the
+    // The state of the drivetrain is reflected by its position on the field
+    // For example, you might think of the state as "what the drivetrain is in the position to do"
+    // DrivetrainState.SCORING -> is the drivetrain positioned in front of a node?
+    // DrivetrainState.FINAL_SCORING_ROTATION_LOCK -> does the drivetrain have permission from the driver to auto align (holding the trigger)?
+    // DrivetrainState.FREEHAND_WITH_ROTATION_LOCK -> is the drivetrain in the alliance community and is the driver override off?
+    // DrivetrainState.ACTIVELY_LOADING -> is the claw/arm actively loading? Maybe this drivetrain state is not necessary
+    // DrivetrainState.HPS_ALIGN ->
+    // DrivetrainState.FREEHAND ->
+    // Based on these states, commands will be issued to the drivetrain and other relevant subsystems
   }
 
   /**

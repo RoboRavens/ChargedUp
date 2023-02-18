@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
 import frc.robot.commands.arm.AdjustArmToRetrievalPosition;
+import frc.robot.commands.arm.AdjustArmToRowPosition;
+import frc.robot.commands.arm.ExtendArmCommand;
 import frc.robot.commands.claw.OpenClawCommand;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
@@ -104,6 +106,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
     // STATE_MANAGEMENT.manageStates();
     setOverallStates();
+    manageStates();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -186,6 +189,18 @@ public class Robot extends TimedRobot {
     OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING).andThen(new OpenClawCommand()).andThen(new InstantCommand(() -> overallState = OverallState.EMPTY_TRANSIT)));
   }
 
+  // Schedules commands based on the overall states
+  private void manageStates() {
+    if (overallState == OverallState.PREPARING_TO_SCORE) {
+      new AdjustArmToRowPosition(Robot.scoringTargetState).andThen(new ExtendArmCommand()).schedule();
+      Robot.LIMELIGHT_SUBSYSTEM.switchToScoringPipeline();
+      // square align with the field (lock rotation)
+    }
+    else if (overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
+
+    }
+  }
+
   private void setOverallStates() {
     if (overallState != OverallState.EJECTING) {
       if (loadState == LoadState.LOADED && LIMELIGHT_SUBSYSTEM.isInAllianceCommunity()) {
@@ -195,7 +210,7 @@ public class Robot extends TimedRobot {
         else if (drivetrainState == DrivetrainState.SCORING && armExtensionState == ArmExtensionState.ACTIVELY_SCORING) {
           overallState = OverallState.SCORING;
         }
-        else {
+        else if (drivetrainState == DrivetrainState.FREEHAND_WITH_ROTATION_LOCK) {
           overallState = OverallState.PREPARING_TO_SCORE;
         }
       }

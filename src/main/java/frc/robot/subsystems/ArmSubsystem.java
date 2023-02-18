@@ -13,10 +13,6 @@ public class ArmSubsystem extends SubsystemBase {
     
     @Override
     public void periodic() {
-        if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
-            new AdjustArmToRowPosition(Robot.scoringTargetState).andThen(new ExtendArmCommand()).schedule();
-        }
-
         setArmRotationState();
         setArmExtensionState();
     }
