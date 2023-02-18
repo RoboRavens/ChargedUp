@@ -31,8 +31,7 @@ public class ClawSubsystem extends SubsystemBase {
         Robot.clawState = ClawState.CLOSING;
     }
 
-    @Override
-    public void periodic() {
+    private void setClawStates() {
         // Sets the claw state
         if (isOpen()) {
             Robot.clawState = ClawState.OPEN;
@@ -47,5 +46,10 @@ public class ClawSubsystem extends SubsystemBase {
         else {
             Robot.loadState = LoadState.EMPTY;
         }
+    }
+
+    @Override
+    public void periodic() {
+        setClawStates();
     }
 }

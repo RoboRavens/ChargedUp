@@ -397,6 +397,13 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     pid_test.setD(kdEntry.getDouble(0.0));
     pidCalc.setDouble(pid_test.calculate(inputAngle.getDouble(0), setPoint.getDouble(0)));
     // pidCalc.setDouble(inputAngle.getDouble(0));
+
+    setDrivetrainStates();
+  }
+
+  private void setDrivetrainStates() {
+    // TODO: Set the Robot.drivetrainStates
+    // This should be based on the actual drivetrain state as much as possible, but may require checking the
   }
 
   /**

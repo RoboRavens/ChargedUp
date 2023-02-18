@@ -12,7 +12,7 @@ public class StateManagementNew {
         PREPARING_TO_SCORE, // When the robot is loaded and in the alliance community
         FINAL_SCORING_ALIGNMENT // When the robot is
     }
-    // TODO: set these states
+    // Set in the arm subsystem
     public enum ArmRotationState {
         UP,
         HPS,
@@ -26,7 +26,7 @@ public class StateManagementNew {
         ACTIVELY_SCORING,
         ACTIVELY_EJECTING
     }
-    // TODO: set these states
+    // Set in the arm subsystem
     public enum ArmExtensionState {
         RETRACTED,
         HPS,
@@ -56,7 +56,7 @@ public class StateManagementNew {
         HPS,
         GROUND
     }
-    // TODO: set these states
+    // Set in the drivetrain subsystem
     public enum DrivetrainState {
         FREEHAND,
         HPS_ALIGN,
@@ -72,7 +72,7 @@ public class StateManagementNew {
         OPENING,
         CLOSING
     }
-    // TODO: set these states
+    // TODO: set these states in the limelight subsystem
     public enum LimelightState {
         TAG_TRACKING,
         TAPE_TRACKING

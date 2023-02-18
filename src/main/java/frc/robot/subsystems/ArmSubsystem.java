@@ -16,5 +16,19 @@ public class ArmSubsystem extends SubsystemBase {
         if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
             new AdjustArmToRowPosition(Robot.scoringTargetState).andThen(new ExtendArmCommand()).schedule();
         }
+
+        setArmRotationState();
+        setArmExtensionState();
     }
+
+    private void setArmRotationState() {
+        // TODO: set Robot.armRotationState
+        // This should reflect the actual state of the arm (its current rotation), NOT what the driver intends to do with the arm
+    }
+
+    private void setArmExtensionState() {
+        // TODO: set Robot.armExtensionState
+        // This should reflect the actual state of the arm (its current position), NOT what the driver intends to do with the arm
+    }
+
 }
