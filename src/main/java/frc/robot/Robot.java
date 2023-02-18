@@ -15,9 +15,12 @@ import frc.controls.Gamepad;
 import frc.robot.commands.arm.AdjustArmToRetrievalPosition;
 import frc.robot.commands.arm.AdjustArmToRowPosition;
 import frc.robot.commands.arm.ExtendArmCommand;
+import frc.robot.commands.arm.RetractArmCommand;
+import frc.robot.commands.claw.CloseClawCommand;
 import frc.robot.commands.claw.OpenClawCommand;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.commands.groups.ScoreGamePieceCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -194,11 +197,33 @@ public class Robot extends TimedRobot {
     if (overallState == OverallState.PREPARING_TO_SCORE) {
       new AdjustArmToRowPosition(Robot.scoringTargetState).andThen(new ExtendArmCommand()).schedule();
       Robot.LIMELIGHT_SUBSYSTEM.switchToScoringPipeline();
-      // square align with the field (lock rotation)
+      // In the DrivetrainDefualtCommand, the drivetrain auto aligns with the field (locking rotation)
     }
     else if (overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
-
+      // In the DrivetrainDefaultCommand, the drivetrain auto aligns with a scoring node (locking rotation and horizontal translation)
     }
+    else if (overallState == OverallState.SCORING) {
+      new ScoreGamePieceCommand().schedule();
+      clearStates();
+    }
+    else if (overallState == OverallState.LOADED_TRANSIT) {
+      new RetractArmCommand().schedule();
+    }
+    else if (overallState == OverallState.LOADING) {
+      new CloseClawCommand().schedule();
+    }
+    else if (overallState == OverallState.GROUND_PICKUP || overallState == OverallState.HPS_PICKUP) {
+      new AdjustArmToRetrievalPosition(Robot.armRotationState).andThen(new ExtendArmCommand()).schedule();
+      new OpenClawCommand().schedule();
+    }
+    else if (overallState == OverallState.EMPTY_TRANSIT) {
+      new RetractArmCommand().schedule();
+    }
+  }
+
+  private void clearStates() {
+    // TODO: implement clearing robot states
+
   }
 
   private void setOverallStates() {
@@ -218,11 +243,14 @@ public class Robot extends TimedRobot {
         overallState = OverallState.LOADED_TRANSIT;
       }
       else if (loadState == LoadState.EMPTY) {
-        if (armExtensionState == ArmExtensionState.COLLECT_GROUND) {
-          overallState = OverallState.GROUND_PICKUP;
-        }
-        else if (clawState == ClawState.OPEN && CLAW_SUBSYSTEM.detectsGamePiece()) {
+        if (clawState == ClawState.OPEN && CLAW_SUBSYSTEM.detectsGamePiece()) {
           overallState = OverallState.LOADING;
+        }
+        else if (armExtensionState == ArmExtensionState.HPS) {
+          overallState = OverallState.HPS_PICKUP;
+        }
+        else if (armExtensionState == ArmExtensionState.COLLECT_GROUND) {
+          overallState = OverallState.GROUND_PICKUP;
         }
         else {
           overallState = OverallState.EMPTY_TRANSIT;

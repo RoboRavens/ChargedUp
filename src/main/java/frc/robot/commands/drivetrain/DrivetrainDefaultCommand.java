@@ -95,7 +95,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
             // System.out.println("a: " + a);
         }
 
-        if (Robot.drivetrainState == DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN) {
+        if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
             // TODO: Implement auto aligning square with the field
         }
     }

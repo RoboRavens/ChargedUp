@@ -6,6 +6,7 @@ public class StateManagementNew {
         EMPTY_TRANSIT,
         LOADED_TRANSIT,
         GROUND_PICKUP,
+        HPS_PICKUP,
         LOADING, // When the robot does not have a piece but detects one
         SCORING, // When the robot has a piece, the robot is positioned to score, and the driver intends to release it
         EJECTING, // When the robot has a piece and the driver intends to release it
