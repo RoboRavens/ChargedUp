@@ -26,7 +26,6 @@ import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.util.StateManagementNew;
 import frc.util.StateManagementNew.ArmExtensionState;
 import frc.util.StateManagementNew.ArmRotationState;
 import frc.util.StateManagementNew.ClawState;
@@ -222,8 +221,8 @@ public class Robot extends TimedRobot {
   }
 
   private void clearStates() {
-    // TODO: implement clearing robot states
-
+    pieceState = PieceState.NONE;
+    scoringTargetState = ScoringTargetState.NONE;
   }
 
   private void setOverallStates() {
