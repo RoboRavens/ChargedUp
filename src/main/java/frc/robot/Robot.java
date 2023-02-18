@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
 
   // Sets the default robot mechanism states (may need to be changed)
   public static OverallState overallState = OverallState.EMPTY_TRANSIT;
-  public static ArmRotationState armRotation = ArmRotationState.COLLECT_GROUND;
+  public static ArmRotationState armRotationState = ArmRotationState.COLLECT_GROUND;
   public static ArmExtensionState armExtensionState = ArmExtensionState.RETRACTED;
   public static PieceState pieceState = PieceState.NONE;
   public static LoadState loadState = LoadState.EMPTY;

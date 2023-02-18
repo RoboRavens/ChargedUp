@@ -56,7 +56,6 @@ public class DrivetrainDefaultCommand extends CommandBase {
         //     // SmartDashboard.putNumber("", r);
         // } 
         if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
-            Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
             // TODO: adjust r value so robot aligns square with the field
             r = 0; // Temporary to avoid errors in vscode
         }
