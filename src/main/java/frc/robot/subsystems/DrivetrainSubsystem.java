@@ -34,12 +34,16 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.controls.AxisCode;
+import frc.controls.ButtonCode;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
 import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
+import frc.util.StateManagementNew.ClawState;
+import frc.util.StateManagementNew.DrivetrainState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -406,12 +410,27 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     // The state of the drivetrain is reflected by its position on the field
     // For example, you might think of the state as "what the drivetrain is in the position to do"
     // DrivetrainState.SCORING -> is the drivetrain positioned in front of a node, and is the driver pressing the release button?
-    // DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN -> does the drivetrain have permission from the driver to auto align (holding the trigger)?
-    // DrivetrainState.FREEHAND_WITH_ROTATION_LOCK -> is the drivetrain in the alliance community, the robot square with the field, and the driver override off?
-    // DrivetrainState.ACTIVELY_LOADING -> is the claw/arm actively loading? Maybe this drivetrain state is not necessary
-    // DrivetrainState.HPS_ALIGN ->
+    if (Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode() && Robot.OP_PAD.getButtonValue(ButtonCode.B)) {
+      Robot.drivetrainState = DrivetrainState.SCORING;
+    }
+    else if (Robot.LIMELIGHT_SUBSYSTEM.isInAllianceCommunity() && Robot.DRIVE_TRAIN_SUBSYSTEM.isRobotSquareWithField() && Robot.driverControlOverride == false) {
+      // DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN -> does the drivetrain have permission from the driver to auto align (holding the trigger)?
+      if (Robot.GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) {
+        Robot.drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;
+      }
+      // DrivetrainState.FREEHAND_WITH_ROTATION_LOCK -> is the drivetrain in the alliance community, the robot square with the field, and the driver override off?
+      else {
+        Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
+      }
+    }
+    /* TODO:
+        DrivetrainState.ACTIVELY_LOADING -> is the claw/arm actively loading? Maybe this drivetrain state is not necessary
+        DrivetrainState.HPS_ALIGN ->
+    */ 
     // DrivetrainState.FREEHAND ->
-    // Based on these states, commands will be issued to the drivetrain and other relevant subsystems
+    else {
+      Robot.drivetrainState = DrivetrainState.FREEHAND;
+    }
   }
 
   /**
