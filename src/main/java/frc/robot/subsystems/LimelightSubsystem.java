@@ -2,9 +2,13 @@ package frc.robot.subsystems;
 
 import javax.swing.text.Position;
 
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.NetworkTable;
@@ -27,6 +31,7 @@ public class LimelightSubsystem extends SubsystemBase {
   NetworkTableEntry tv = table.getEntry("tv");
   int camMode = 0;
 
+
   public void periodic() {
     Pose2d pose = getRobotPose();
     if (pose != null) {
@@ -34,6 +39,10 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("PoseY", pose.getY());
       SmartDashboard.putNumber("Rotation", pose.getRotation().getDegrees());
     }
+    
+    if (Math.abs(getTx()) > 20) {
+      return;
+    } 
     
     if (pose.getX() == 0 && pose.getY() == 0) {
       return;
@@ -49,6 +58,7 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Rotation", 0);
         
     }*/
+
    
     
   
@@ -76,6 +86,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
   // distance from the target to the floor
   double goalHeightInches = 60.0;
+
 
   public double getTx() {
     return tx.getDouble(0.0);

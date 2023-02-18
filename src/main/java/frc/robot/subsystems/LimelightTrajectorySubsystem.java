@@ -60,10 +60,10 @@ public class LimelightTrajectorySubsystem {
 
         // Push the trajectory to Field2d.
 
-        var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(trajectory)
-                .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(trajectory));
+       // var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(trajectory)
+               // .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(trajectory));
 
-        driveCommand.schedule();
+       // driveCommand.schedule();
 
         Field2d TRAJECTORY_FIELD = new Field2d();
         SmartDashboard.putData("trajectory", TRAJECTORY_FIELD);
