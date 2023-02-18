@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
+import javax.swing.text.Position;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -26,6 +28,9 @@ public class LimelightTrajectorySubsystem {
   
   private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
   private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
+  
+  
+  
   public void generateTrajectoryLeft() {
 
     var robotposestart = Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
@@ -122,7 +127,7 @@ public class LimelightTrajectorySubsystem {
   public void goToScoringPosition() {
      
 
-    var limelightRobotPose = Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
+    var limelightRobotPose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
 
     if (limelightRobotPose == null) {
         return;
@@ -130,7 +135,7 @@ public class LimelightTrajectorySubsystem {
 
     var interiorWaypoints = new ArrayList<Translation2d>();
     // Define the endpoints for the trajectories here.
-    var endpoint1 = new Pose2d(14.76, 2.76, Rotation2d.fromDegrees(180));
+    var endpoint1 = new Pose2d(14.76, 2.76, Rotation2d.fromDegrees(0));
 
     TrajectoryConfig config = new TrajectoryConfig(2,1);
     config.setReversed(true);
@@ -141,15 +146,20 @@ public class LimelightTrajectorySubsystem {
         endpoint1,
         config);
 
-    Field2d m_field = new Field2d();
-    SmartDashboard.putData(m_field);
-
+   
+    
+    // Push the trajectory to Field2d.
+    
+        
 
     var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(trajectory)
         .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(trajectory));
 
         driveCommand.schedule();
-        
+
+        Field2d TRAJECTORY_FIELD = new Field2d();
+        SmartDashboard.putData("trajectory",TRAJECTORY_FIELD);
+        TRAJECTORY_FIELD.getObject("trajectory").setTrajectory(trajectory);
   }
 
 

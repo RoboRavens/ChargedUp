@@ -70,4 +70,10 @@ public class DrivetrainSubsystemMock extends DrivetrainSubsystemBase {
        return new Rotation2d();
         
     }
+
+    @Override
+    public double getRoll() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }
