@@ -43,8 +43,8 @@ public class LimelightSubsystem extends SubsystemBase {
     if (Math.abs(getTx()) > 20) {
       return;
     } 
-    
-    if (pose.getX() == 0 && pose.getY() == 0) {
+
+    if (pose.getX() == 0 && pose.getY() == 0 && getTv() == 0 && getTa() == 0.2) {
       return;
     }
      else {
@@ -98,6 +98,10 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public double getTy() {
     return ty.getDouble(0.0);
+  }
+
+  public double getTv() {
+    return tv.getDouble(0);
   }
 
   public double getDistance() {
