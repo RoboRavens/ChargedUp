@@ -179,31 +179,43 @@ public class Robot extends TimedRobot {
     // OP_PAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
     // Maybe include a button to clear all states?
 
+    // Driver controller
     GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.GROUND_PICKUP).andThen(new InstantCommand(() -> loadTargetState = LoadTargetState.GROUND)));
+    // When the floor intake button is released, the state needs to be updated:
+    //  If it was released without a successful ground pickup, state goes back to empty transit
+    //  If it was released AFTER a successful ground pickup, state goes to loaded transit or preparing to score
+    //  Pickup target changes to HPS either way
+
+    // This should likely be part of driver control as well, but have to think about which button...
+    GAMEPAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
+
     OP_PAD.getButton(ButtonCode.CUBE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CUBE));
     OP_PAD.getButton(ButtonCode.CONE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CONE));
     OP_PAD.getButton(ButtonCode.SCORE_LOW).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
     OP_PAD.getButton(ButtonCode.SCORE_MID).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
     OP_PAD.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
     OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.HPS));
-    OP_PAD.getButton(ButtonCode.FLOOR_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.GROUND));
-    OP_PAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
+
+    // This looks correct to me but the ejection process is likely a bit more complicated than simply opening the claw; if the piece falls in the wrong spot, it could be bad.
+    // We probably want a command group that handles piece ejection. This could include rotating the robot and/or the arm to ensure the piece falls neither inside the robot,
+    // or directly in front of the drivetrain.
     OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING).andThen(new OpenClawCommand()).andThen(new InstantCommand(() -> overallState = OverallState.EMPTY_TRANSIT)));
   }
 
-  // Schedules commands based on the overall states
+  // Schedules commands based on the overall states.
   private void manageOverallStates() {
     if (overallState == OverallState.PREPARING_TO_SCORE) {
       new AdjustArmToRowPosition(Robot.scoringTargetState).andThen(new ExtendArmCommand()).schedule();
       Robot.LIMELIGHT_SUBSYSTEM.switchToScoringPipeline();
-      // In the DrivetrainDefualtCommand, the drivetrain auto aligns with the field (locking rotation)
+      // In the DrivetrainDefaultCommand, the drivetrain auto aligns with the field (locking rotation)
     }
     else if (overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
       // In the DrivetrainDefaultCommand, the drivetrain auto aligns with a scoring node (locking rotation and horizontal translation)
     }
     else if (overallState == OverallState.SCORING) {
       new ScoreGamePieceCommand().schedule();
-      clearStates();
+      // clearStates();
     }
     else if (overallState == OverallState.LOADED_TRANSIT) {
       new RetractArmCommand().schedule();
