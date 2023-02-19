@@ -44,7 +44,7 @@ public class LimelightSubsystem extends SubsystemBase {
       return;
     } 
 
-    if (pose.getX() == 0 && pose.getY() == 0 && getTv() == 0 && getTa() == 0.2) {
+    if (pose.getX() == 0 && pose.getY() == 0 && getTv() == 0 && getTa() < 0.2) {
       return;
     }
      else {
