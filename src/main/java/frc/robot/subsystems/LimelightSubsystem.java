@@ -31,7 +31,6 @@ public class LimelightSubsystem extends SubsystemBase {
   NetworkTableEntry tv = table.getEntry("tv");
   int camMode = 0;
 
-
   public void periodic() {
     Pose2d pose = getRobotPose();
     if (pose != null) {
@@ -39,29 +38,23 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("PoseY", pose.getY());
       SmartDashboard.putNumber("Rotation", pose.getRotation().getDegrees());
     }
-    
-    if (Math.abs(getTx()) > 20) {
-      return;
-    } 
 
     if (pose.getX() == 0 && pose.getY() == 0 && getTv() == 0 && getTa() < 0.2) {
       return;
-    }
-     else {
+    } else {
 
       Robot.DRIVE_TRAIN_SUBSYSTEM.resetOdometry(pose);
-  }
-    
-     /*else {
-      SmartDashboard.putNumber("PoseX", 0);
-      SmartDashboard.putNumber("PoseY", 0);
-      SmartDashboard.putNumber("Rotation", 0);
-        
-    }*/
+    }
 
-   
-    
-  
+    /*
+     * else {
+     * SmartDashboard.putNumber("PoseX", 0);
+     * SmartDashboard.putNumber("PoseY", 0);
+     * SmartDashboard.putNumber("Rotation", 0);
+     * 
+     * }
+     */
+
   }
 
   public Pose2d getRobotPose() {
@@ -86,7 +79,6 @@ public class LimelightSubsystem extends SubsystemBase {
 
   // distance from the target to the floor
   double goalHeightInches = 60.0;
-
 
   public double getTx() {
     return tx.getDouble(0.0);
