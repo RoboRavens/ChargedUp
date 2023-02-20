@@ -38,18 +38,15 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("PoseY", pose.getY());
       SmartDashboard.putNumber("Rotation", pose.getRotation().getDegrees());
     } else
-    SmartDashboard.putNumber("PoseX", 0);
+      SmartDashboard.putNumber("PoseX", 0);
     SmartDashboard.putNumber("PoseY", 0);
     SmartDashboard.putNumber("Rotation", 0);
-  
-  
-    if ((pose.getX() == 0 && pose.getY() == 0) && getTa() >= 0.2) {
+
+    if ((pose.getX() > 0 && pose.getY() > 0) && getTa() >= 0.2) {
       Robot.DRIVE_TRAIN_SUBSYSTEM.resetOdometry(pose);
     }
-  
-  }
 
-  
+  }
 
   public Pose2d getRobotPose() {
 
