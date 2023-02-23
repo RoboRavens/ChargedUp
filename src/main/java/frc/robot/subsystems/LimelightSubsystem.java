@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.sql.Driver;
+
 import javax.swing.text.Position;
 
 import edu.wpi.first.math.Nat;
@@ -15,6 +17,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -49,17 +53,42 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public Pose2d getRobotPose() {
+    Pose2d poseBlueAlliance = getRobotPoseBlueAlliance();
+    Pose2d poseRedAlliance = getRobotPoseRedAlliance();
+    if(DriverStation.getAlliance() == Alliance.Blue) {
+      getRobotPoseBlueAlliance();
+      return poseBlueAlliance;
+    } else {
+      getRobotPoseRedAlliance();
+      return poseRedAlliance;
+    }
+  }
 
-    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue")
+  public Pose2d getRobotPoseBlueAlliance() {
+
+    double[] botpose_blueAlliance = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue")
         .getDoubleArray(new double[6]);
-    if (botpose.length == 6) {
-      Translation2d translation = new Translation2d(botpose[0], botpose[1]);
-      Rotation2d rotation = new Rotation2d(Math.toRadians(botpose[5]));
+    if (botpose_blueAlliance.length == 6) {
+      Translation2d translation = new Translation2d(botpose_blueAlliance[0], botpose_blueAlliance[1]);
+      Rotation2d rotation = new Rotation2d(Math.toRadians(botpose_blueAlliance[5]));
       Pose2d position = new Pose2d(translation, rotation);
       return position;
+    } else {
+      return null;
+    }  
+  }
 
+  public Pose2d getRobotPoseRedAlliance() {
+    double[] botpose_redAlliance = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpired")
+    .getDoubleArray(new double[6]);
+    if (botpose_redAlliance.length == 6) {
+      Translation2d translation = new Translation2d(botpose_redAlliance[0], botpose_redAlliance[1]);
+      Rotation2d rotation = new Rotation2d(Math.toRadians(botpose_redAlliance[5]));
+      Pose2d position = new Pose2d(translation, rotation);
+      return position;
+    } else {
+      return null;
     }
-    return null;
   }
 
   // how many degrees back is your limelight rotated from perfectly vertical?
