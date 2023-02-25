@@ -403,35 +403,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     pidCalc.setDouble(pid_test.calculate(inputAngle.getDouble(0), setPoint.getDouble(0)));
     // pidCalc.setDouble(inputAngle.getDouble(0));
 
-    setDrivetrainStates();
-  }
-
-  private void setDrivetrainStates() {
-    // TODO: Set the Robot.drivetrainState
-    // The state of the drivetrain is reflected by its position on the field
-    // For example, you might think of the state as "what the drivetrain is in the position to do"
-    // DrivetrainState.SCORING -> is the drivetrain positioned in front of a node, and is the driver pressing the release button?
-    if (Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode() && Robot.OP_PAD.getButtonValue(ButtonCode.B)) {
-      Robot.drivetrainState = DrivetrainState.SCORING;
-    }
-    else if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.DRIVE_TRAIN_SUBSYSTEM.isRobotSquareWithField() && Robot.driverControlOverride == false) {
-      // DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN -> does the drivetrain have permission from the driver to auto align (holding the trigger)?
-      if (Robot.GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) {
-        Robot.drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;
-      }
-      // DrivetrainState.FREEHAND_WITH_ROTATION_LOCK -> is the drivetrain in the alliance community, the robot square with the field, and the driver override off?
-      else {
-        Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
-      }
-    }
-    /* TODO:
-        DrivetrainState.ACTIVELY_LOADING -> is the claw/arm actively loading? Maybe this drivetrain state is not necessary
-        DrivetrainState.HPS_ALIGN ->
-    */ 
-    // DrivetrainState.FREEHAND ->
-    else {
-      Robot.drivetrainState = DrivetrainState.FREEHAND;
-    }
+    setRobotZoneFromOdometry();
   }
 
   /**
@@ -451,6 +423,10 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
   private Pose2d getPose() {
     return _odometryFromHardware.getPoseMeters();
+  }
+
+  private void setRobotZoneFromOdometry() {
+    // TODO: implement this method so it sets Robot.zoneState
   }
 
   public void resetOdometryCurrentPosition() {

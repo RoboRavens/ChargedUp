@@ -9,4 +9,5 @@ public class OpenClawCommand extends CommandBase {
     }
     
     // TODO: Implement this command
+    // Remember to update claw state
 }

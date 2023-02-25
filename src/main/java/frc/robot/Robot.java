@@ -18,6 +18,7 @@ import frc.robot.commands.arm.ExtendArmCommand;
 import frc.robot.commands.arm.RetractArmCommand;
 import frc.robot.commands.claw.CloseClawCommand;
 import frc.robot.commands.claw.OpenClawCommand;
+import frc.robot.commands.drivetrain.AlignRobotByScoringNode;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.groups.EjectPieceCommand;
@@ -171,10 +172,22 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void configureButtonBindings() {
-    // AxisCode.LEFTTRIGGER and ButtonCode.B are being used in the StateManagement class
-    // TODO: Transfer the above driver inputs to this method
-
     // Driver controller
+    // If the release button is pressed and the robot is aligned with a scoring node, score the piece
+    GAMEPAD.getButton(ButtonCode.B).and((() -> Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode())).toggleOnTrue(new ScorePieceCommand());
+    // While the left bumper is held, check if the robot is square with the field. If it is, proceed with aligning the robot with a node
+    // Otherwise, square the robot with the field first
+    // I'm not entirely sure this will work (scheduling a command within a command), but I can't see why not atm
+    GAMEPAD.getButton(ButtonCode.LEFTBUMPER).whileTrue(new InstantCommand(() -> {
+      if (Robot.DRIVE_TRAIN_SUBSYSTEM.isRobotSquareWithField()) {
+        // DrivetrainDefaultCommand handles this state
+        drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;
+        overallState = OverallState.FINAL_SCORING_ALIGNMENT;
+      }
+      else {
+        overallState = OverallState.PREPARING_TO_SCORE;
+      }
+    }));
     GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;

@@ -15,6 +15,7 @@ import frc.util.StateManagementNew.ScoringTargetState;
 public class ScorePieceCommand extends SequentialCommandGroup {
     public ScorePieceCommand() {
         addCommands(
+            new InstantCommand(() -> Robot.overallState = OverallState.SCORING),
             new OpenClawCommand(),
             new WaitCommand(0.25),
             new ParallelCommandGroup(
