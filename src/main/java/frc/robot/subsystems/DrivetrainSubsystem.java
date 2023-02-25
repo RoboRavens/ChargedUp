@@ -44,6 +44,7 @@ import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
 import frc.util.StateManagementNew.ClawState;
 import frc.util.StateManagementNew.DrivetrainState;
+import frc.util.StateManagementNew.ZoneState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -413,7 +414,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     if (Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode() && Robot.OP_PAD.getButtonValue(ButtonCode.B)) {
       Robot.drivetrainState = DrivetrainState.SCORING;
     }
-    else if (Robot.LIMELIGHT_SUBSYSTEM.isInAllianceCommunity() && Robot.DRIVE_TRAIN_SUBSYSTEM.isRobotSquareWithField() && Robot.driverControlOverride == false) {
+    else if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.DRIVE_TRAIN_SUBSYSTEM.isRobotSquareWithField() && Robot.driverControlOverride == false) {
       // DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN -> does the drivetrain have permission from the driver to auto align (holding the trigger)?
       if (Robot.GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) {
         Robot.drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;

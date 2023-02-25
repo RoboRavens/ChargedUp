@@ -94,4 +94,13 @@ public class StateManagementNew {
         MID,
         HIGH
     }
+
+    public enum ZoneState {
+        ALLIANCE_COMMUNITY,
+        ALLIANCE_BRIDGE,
+        NEUTRAL,
+        OPPONENT_LOADING_ZONE,
+        OPPONENT_COMMUNITY,
+        OPPONENT_BRIDGE
+    }
 }

@@ -12,8 +12,8 @@ import frc.util.StateManagementNew.OverallState;
 import frc.util.StateManagementNew.PieceState;
 import frc.util.StateManagementNew.ScoringTargetState;
 
-public class ScoreGamePieceCommand extends SequentialCommandGroup {
-    public ScoreGamePieceCommand() {
+public class ScorePieceCommand extends SequentialCommandGroup {
+    public ScorePieceCommand() {
         addCommands(
             new OpenClawCommand(),
             new WaitCommand(0.25),
