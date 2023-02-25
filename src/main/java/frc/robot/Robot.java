@@ -111,9 +111,6 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
-    // STATE_MANAGEMENT.manageStates();
-    setOverallStates();
-    manageOverallStates();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -173,6 +170,9 @@ public class Robot extends TimedRobot {
 
   private void configureButtonBindings() {
     // Driver controller
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).whileTrue(new InstantCommand(() -> {
+      Robot.overallState = OverallState.HPS_PICKUP;
+    }));
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece
     GAMEPAD.getButton(ButtonCode.B).and((() -> Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode())).toggleOnTrue(new ScorePieceCommand());
     // While the left bumper is held, check if the robot is square with the field. If it is, proceed with aligning the robot with a node
@@ -189,7 +189,8 @@ public class Robot extends TimedRobot {
       }
     }));
     GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
-    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnTrue(new InstantCommand(() -> {
+    // When the floor intake button is pressed, update the states
+    GAMEPAD.getButton(ButtonCode.X).toggleOnTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;
       loadTargetState = LoadTargetState.GROUND;
     }));
@@ -197,7 +198,7 @@ public class Robot extends TimedRobot {
     //  If it was released without a successful ground pickup, state goes back to empty transit
     //  If it was released AFTER a successful ground pickup, state goes to loaded transit or preparing to score
     //  Pickup target changes to HPS either way
-    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnFalse(new InstantCommand(() -> {
+    GAMEPAD.getButton(ButtonCode.X).toggleOnFalse(new InstantCommand(() -> {
       if (loadState == LoadState.EMPTY) {
         overallState = OverallState.EMPTY_TRANSIT;
       }
@@ -221,72 +222,5 @@ public class Robot extends TimedRobot {
     // We probably want a command group that handles piece ejection. This could include rotating the robot and/or the arm to ensure the piece falls neither inside the robot,
     // or directly in front of the drivetrain.
     OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new EjectPieceCommand());
-  }
-
-  // Schedules commands based on the overall states.
-  private void manageOverallStates() {
-    if (overallState == OverallState.PREPARING_TO_SCORE) {
-      new AdjustArmToRowPosition(Robot.scoringTargetState).andThen(new ExtendArmCommand()).schedule();
-      Robot.LIMELIGHT_SUBSYSTEM.switchToScoringPipeline();
-      // In the DrivetrainDefaultCommand, the drivetrain auto aligns with the field (locking rotation)
-    }
-    else if (overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
-      // In the DrivetrainDefaultCommand, the drivetrain auto aligns with a scoring node (locking rotation and horizontal translation)
-    }
-    else if (overallState == OverallState.SCORING) {
-      new ScorePieceCommand().schedule();
-      // clearStates();
-    }
-    else if (overallState == OverallState.LOADED_TRANSIT) {
-      new RetractArmCommand().schedule();
-    }
-    else if (overallState == OverallState.LOADING) {
-      new CloseClawCommand().schedule();
-    }
-    else if (overallState == OverallState.GROUND_PICKUP || overallState == OverallState.HPS_PICKUP) {
-      new AdjustArmToRetrievalPosition(Robot.armRotationState).andThen(new ExtendArmCommand()).schedule();
-      new OpenClawCommand().schedule();
-    }
-    else if (overallState == OverallState.EMPTY_TRANSIT) {
-      new RetractArmCommand().schedule();
-    }
-  }
-
-  private void clearStates() {
-    pieceState = PieceState.NONE;
-    scoringTargetState = ScoringTargetState.NONE;
-  }
-
-  private void setOverallStates() {
-    if (overallState != OverallState.EJECTING) {
-      if (loadState == LoadState.LOADED && zoneState == ZoneState.ALLIANCE_COMMUNITY) {
-        if (drivetrainState == DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN) {
-          overallState = OverallState.FINAL_SCORING_ALIGNMENT;
-        }
-        else if (drivetrainState == DrivetrainState.SCORING && armExtensionState == ArmExtensionState.ACTIVELY_SCORING) {
-          overallState = OverallState.SCORING;
-        }
-        else if (drivetrainState == DrivetrainState.FREEHAND_WITH_ROTATION_LOCK) {
-          overallState = OverallState.PREPARING_TO_SCORE;
-        }
-      }
-      else if (loadState == LoadState.LOADED) {
-        overallState = OverallState.LOADED_TRANSIT;
-      }
-      else if (loadState == LoadState.EMPTY) {
-        if (clawState == ClawState.OPEN && CLAW_SUBSYSTEM.detectsGamePiece()) {
-          overallState = OverallState.LOADING;
-        }
-        else if (armExtensionState == ArmExtensionState.HPS) {
-          overallState = OverallState.HPS_PICKUP;
-        }
-        else if (armExtensionState == ArmExtensionState.COLLECT_GROUND) {
-          overallState = OverallState.GROUND_PICKUP;
-        }
-        else {
-          overallState = OverallState.EMPTY_TRANSIT;
-        }
-      }
-    } 
   }
 }
