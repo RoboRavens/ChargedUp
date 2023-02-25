@@ -11,7 +11,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     private void setAndManageArmStates() {
-        // TODO: Implement this command
+        // TODO: Implement this method
         // Set the arm states and schedule arm rotation/extension commands based on overall state of the robot
     }
 }
