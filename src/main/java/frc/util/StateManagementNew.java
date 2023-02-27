@@ -96,6 +96,7 @@ public class StateManagementNew {
     }
 
     public enum ZoneState {
+        ALLIANCE_LOADING_ZONE,
         ALLIANCE_COMMUNITY,
         ALLIANCE_BRIDGE,
         NEUTRAL,

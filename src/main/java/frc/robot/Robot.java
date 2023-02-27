@@ -214,6 +214,7 @@ public class Robot extends TimedRobot {
     // This looks correct to me but the ejection process is likely a bit more complicated than simply opening the claw; if the piece falls in the wrong spot, it could be bad.
     // We probably want a command group that handles piece ejection. This could include rotating the robot and/or the arm to ensure the piece falls neither inside the robot,
     // or directly in front of the drivetrain.
-    OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new EjectPieceCommand());
+    // The EJECTING state is handled in the arm subsystem
+    OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
   }
 }
