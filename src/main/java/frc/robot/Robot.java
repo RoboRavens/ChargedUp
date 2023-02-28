@@ -173,8 +173,6 @@ public class Robot extends TimedRobot {
     // I'm not entirely sure this will work (scheduling a command within a command), but I can't see why not atm
     GAMEPAD.getButton(ButtonCode.LEFTBUMPER).whileTrue(new InstantCommand(() -> {
       if (Robot.DRIVE_TRAIN_SUBSYSTEM.isRobotSquareWithField()) {
-        // DrivetrainDefaultCommand handles this state
-        drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;
         overallState = OverallState.FINAL_SCORING_ALIGNMENT;
       }
       else {

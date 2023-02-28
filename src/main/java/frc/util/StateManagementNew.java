@@ -10,6 +10,7 @@ public class StateManagementNew {
         LOADING, // When the robot does not have a piece but detects one (while claw is closing.)
         SCORING, // When the robot has a piece, the robot is positioned to score, and the driver intends to release it (while claw opens.)
         EJECTING, // When the robot has a piece and the driver intends to release it (while any ejection actions happen, such as the claw opening.)
+        // Preparing to score state needs to be updated in code
         PREPARING_TO_SCORE, // When the robot is loaded and in the alliance community.
         FINAL_SCORING_ALIGNMENT // When the robot is checking final scoring conditions. If met, the game piece is ready to be released.
     }

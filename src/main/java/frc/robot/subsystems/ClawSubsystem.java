@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.commands.claw.CloseClawCommand;
 import frc.util.StateManagementNew.ClawState;
 import frc.util.StateManagementNew.LoadState;
+import frc.util.StateManagementNew.OverallState;
 
 // TODO: Implement Claw Subsystem
 public class ClawSubsystem extends SubsystemBase {
@@ -45,7 +47,13 @@ public class ClawSubsystem extends SubsystemBase {
             Robot.loadState = LoadState.LOADED;
         }
         else if (detectsGamePiece()) {
-            new CloseClawCommand().schedule();
+            new InstantCommand(() -> Robot.overallState = OverallState.LOADING).andThen(new CloseClawCommand()).andThen(new InstantCommand(() -> {
+                // Check if the game piece was loaded successfully
+                if (detectsGamePiece() && isClosed()) {
+                    Robot.overallState = OverallState.LOADED_TRANSIT;
+                }
+            })).schedule();
+            
         }
         else {
             Robot.loadState = LoadState.EMPTY;
