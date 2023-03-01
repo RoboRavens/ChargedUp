@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import javax.swing.text.Position;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.KalmanFilter;
@@ -30,9 +31,11 @@ public class LimelightSubsystem extends SubsystemBase {
   NetworkTableEntry ts = table.getEntry("ts");
   NetworkTableEntry tv = table.getEntry("tv");
   int camMode = 0;
+  
 
   public void periodic() {
     Pose2d pose = getRobotPose();
+    double aprilTagId = getAprilTagData();
     if (pose != null) {
       SmartDashboard.putNumber("PoseX", pose.getX());
       SmartDashboard.putNumber("PoseY", pose.getY());
@@ -42,10 +45,17 @@ public class LimelightSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("PoseY", 0);
     SmartDashboard.putNumber("Rotation", 0);
 
-    if ((pose.getX() > 0 && pose.getY() > 0) && getTa() >= 0.2) {
+    
+    if ((pose.getX() > 0 && pose.getY() > 0) && getTv() == 1 | aprilTagId < 8) {
       Robot.DRIVE_TRAIN_SUBSYSTEM.resetOdometry(pose);
     }
 
+    
+  }
+
+  public double getAprilTagData(){
+    double[] tid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tid").getDoubleArray(new double[6]);
+    return tid[1];
   }
 
   public Pose2d getRobotPose() {
@@ -84,7 +94,7 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public double getTv() {
-    return tv.getDouble(0);
+    return tv.getDouble(0.0);
   }
 
   public double getDistance() {
