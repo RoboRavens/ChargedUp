@@ -14,13 +14,6 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/field": "Field2d"
-    },
-    "windows": {
-      "/SmartDashboard/field": {
-        "window": {
-          "visible": true
-        }
-      }
     }
   },
   "NetworkTables Info": {
@@ -31,6 +24,24 @@
       "open": true
     },
     "Server": {
+      "open": true
+    },
+    "glass": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
+      "open": true
+    },
+    "glass@1": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
       "open": true
     },
     "visible": true

@@ -35,6 +35,12 @@ public class LimelightTrajectorySubsystem {
     private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
 
+    public LimelightTrajectorySubsystem() {
+        
+        Field2d DASHBOARD_Field2d = new Field2d();
+        SmartDashboard.putData("trajectory", DASHBOARD_Field2d);
+        
+    }
 
 
     public void goToScoringPosition() {
@@ -65,9 +71,8 @@ public class LimelightTrajectorySubsystem {
 
        // driveCommand.schedule();
 
-        Field2d TRAJECTORY_FIELD = new Field2d();
-        SmartDashboard.putData("trajectory", TRAJECTORY_FIELD);
-        TRAJECTORY_FIELD.getObject("trajectory").setTrajectory(trajectory);
+       DASHBOARD_Field2d.getObject("trajectory").setTrajectory(trajectory);
+
     }
 
 }

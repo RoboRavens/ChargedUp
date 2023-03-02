@@ -46,7 +46,7 @@ public class LimelightSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Rotation", 0);
 
     
-    if ((pose.getX() > 0 && pose.getY() > 0) && getTv() == 1 | aprilTagId < 8) {
+    if ((pose.getX() > 0 && pose.getY() > 0) && getTv() == 1 | aprilTagId <= 8) {
       Robot.DRIVE_TRAIN_SUBSYSTEM.resetOdometry(pose);
     }
 
@@ -55,7 +55,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public double getAprilTagData(){
     double[] tid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tid").getDoubleArray(new double[6]);
-    return tid[1];
+    return tid[0];
   }
 
   public Pose2d getRobotPose() {
