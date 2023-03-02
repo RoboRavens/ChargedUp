@@ -76,4 +76,9 @@ public class DrivetrainSubsystemMock extends DrivetrainSubsystemBase {
         // TODO Auto-generated method stub
         return 0;
     }
+
+    @Override
+    public boolean isRobotSquareWithField() {
+        return false;
+    }
 }

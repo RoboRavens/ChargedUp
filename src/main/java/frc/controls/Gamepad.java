@@ -104,40 +104,41 @@ public class Gamepad {
 		case SHOOTER_REV:
 			buttonNumber = 2;
 			break;
-		case TURRET_DISABLED_OVERRIDE:
+		case DRIVER_CONTROL_OVERRIDE:
 			buttonNumber = 4;
 			break;
 		case SHOOTER_OVERRIDE:
 			buttonNumber = 7;
 			break;
-		case SHOOTER_LAUNCH_PAD_SHOT:
+		// Button locations will need to be tested and changed.
+		case SUBSTATION_INTAKE:
 			buttonNumber = 9;
 			break;
-		case SHOOTER_TARMAC_SHOT:
+		case FLOOR_INTAKE:
 			buttonNumber = 10;
 			break;
-		case SHOOTER_LOW_GOAL_SHOT:
+		case SCORE_HIGH:
 			buttonNumber = 11;
 			break;
-		case SHOOTER_AUTO_RADIUS_SHOT:
+		case SCORE_MID:
 			buttonNumber = 12;
 			break;
-		case FEEDER_WHEEL_REVERSE:
+		case SCORE_LOW:
 			buttonNumber = 6;
 			break;
-		case CLIMBER_EXTEND:
+		case CUBE:
 			buttonNumber = 1;
 			break;
-		case CLIMBER_RETRACT:
+		case CONE:
 			buttonNumber = 2;
 			break;
-		case CLIMBER_OVERRIDE:
+		case SCORE_PIECE:
 			buttonNumber = 3;
 			break;
 		case TOGGLE_COLOR_SENSING_FEATURES:
 			buttonNumber = 4;
 			break;
-		case TURRET_HOME:
+		case EJECT_PIECE:
 			buttonNumber = 3;
 			break;
 		default:
