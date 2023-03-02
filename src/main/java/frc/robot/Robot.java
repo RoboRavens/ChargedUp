@@ -11,9 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-
 import java.util.List;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -28,8 +26,25 @@ import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.commands.groups.EjectPieceCommand;
+import frc.robot.commands.groups.ScorePieceCommand;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
+import frc.robot.subsystems.LimelightSubsystem;
+import frc.util.StateManagementNew.ArmExtensionState;
+import frc.util.StateManagementNew.ArmRotationState;
+import frc.util.StateManagementNew.ClawState;
+import frc.util.StateManagementNew.ZoneState;
+import frc.util.StateManagementNew.DrivetrainState;
+import frc.util.StateManagementNew.LimelightState;
+import frc.util.StateManagementNew.LoadState;
+import frc.util.StateManagementNew.LoadTargetState;
+import frc.util.StateManagementNew.OverallState;
+import frc.util.StateManagementNew.PieceState;
+import frc.util.StateManagementNew.ScoringTargetState;
+import frc.util.StateManagementNew.ZoneState;
 import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.LimelightTrajectorySubsystem;
@@ -51,9 +66,31 @@ public class Robot extends TimedRobot {
   public static final DrivetrainDefaultCommand drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
+  public static final Gamepad OP_PAD = new Gamepad(1);
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
   public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
   public static final ChargeStationBalancingCommand chargeStationBalancingCommand = new ChargeStationBalancingCommand();
+  // public static GamePieceState gamePieceState = GamePieceState.CLEAR;
+  // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
+  // public static PieceRetrievalState pieceRetrievalState = PieceRetrievalState.CLEAR;
+  public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
+  public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
+  // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
+  public static boolean driverControlOverride = false;
+
+  // Sets the default robot mechanism states (may need to be changed)
+  public static OverallState overallState = OverallState.EMPTY_TRANSIT;
+  public static ArmRotationState armRotationState = ArmRotationState.COLLECT_GROUND;
+  public static ArmExtensionState armExtensionState = ArmExtensionState.RETRACTED;
+  public static PieceState pieceState = PieceState.NONE;
+  public static LoadState loadState = LoadState.EMPTY;
+  public static LoadTargetState loadTargetState = LoadTargetState.GROUND;
+  public static DrivetrainState drivetrainState = DrivetrainState.FREEHAND;
+  public static ClawState clawState = ClawState.CLOSED;
+  public static LimelightState limelightState = LimelightState.TAG_TRACKING;
+  public static ScoringTargetState scoringTargetState = ScoringTargetState.NONE;
+  public static ZoneState zoneState = ZoneState.NEUTRAL;
 
   
   /**
@@ -66,7 +103,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
-    GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+    configureButtonBindings();
     GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition()));
   }
 
@@ -86,6 +123,11 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
+    // Sets the robot state to PREPARING_TO_SCORE only once when the robot has a piece and is in the alliance community.
+    // This conditional is designed as such so it does not continuously set itself when a different overall state such as FINAL_SCORING_ALIGNMENT or SCORING is set.
+    if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.overallState == OverallState.LOADED_TRANSIT) {
+      Robot.overallState = OverallState.PREPARING_TO_SCORE;
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -142,4 +184,52 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  private void configureButtonBindings() {
+    // Driver controller
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).whileTrue(new InstantCommand(() -> {
+      Robot.overallState = OverallState.HPS_PICKUP;
+    }));
+    // If the release button is pressed and the robot is aligned with a scoring node, score the piece
+    GAMEPAD.getButton(ButtonCode.Y).and((() -> Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode())).toggleOnTrue(new ScorePieceCommand());
+    // While the left bumper is held, set the overall state to final scoring alignment
+    GAMEPAD.getButton(ButtonCode.LEFTBUMPER).whileTrue(new InstantCommand(() -> {
+      overallState = OverallState.FINAL_SCORING_ALIGNMENT;
+    }));
+    GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+    // When the floor intake button is pressed, update the states
+    GAMEPAD.getButton(ButtonCode.X).toggleOnTrue(new InstantCommand(() -> {
+      overallState = OverallState.GROUND_PICKUP;
+      loadTargetState = LoadTargetState.GROUND;
+    }));
+    // When the floor intake button is released, the state needs to be updated:
+    //  If it was released without a successful ground pickup, state goes back to empty transit
+    //  If it was released AFTER a successful ground pickup, state goes to loaded transit or preparing to score
+    //  Pickup target changes to HPS either way
+    GAMEPAD.getButton(ButtonCode.X).toggleOnFalse(new InstantCommand(() -> {
+      if (loadState == LoadState.EMPTY) {
+        overallState = OverallState.EMPTY_TRANSIT;
+      }
+      else {
+        overallState = OverallState.LOADED_TRANSIT;
+      }
+      loadTargetState = LoadTargetState.HPS;
+    }));
+
+    // This should likely be part of driver control as well, but have to think about which button...
+    GAMEPAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
+
+    OP_PAD.getButton(ButtonCode.CUBE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CUBE));
+    OP_PAD.getButton(ButtonCode.CONE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CONE));
+    OP_PAD.getButton(ButtonCode.SCORE_LOW).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
+    OP_PAD.getButton(ButtonCode.SCORE_MID).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
+    OP_PAD.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
+    OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.HPS));
+
+    // This looks correct to me but the ejection process is likely a bit more complicated than simply opening the claw; if the piece falls in the wrong spot, it could be bad.
+    // We probably want a command group that handles piece ejection. This could include rotating the robot and/or the arm to ensure the piece falls neither inside the robot,
+    // or directly in front of the drivetrain.
+    // The EJECTING state is handled in the arm subsystem
+    OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
+  }
 }

@@ -34,11 +34,17 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.controls.AxisCode;
+import frc.controls.ButtonCode;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
 import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
+import frc.util.StateManagementNew.ClawState;
+import frc.util.StateManagementNew.DrivetrainState;
+import frc.util.StateManagementNew.ZoneState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -399,9 +405,10 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     pid_test.setD(kdEntry.getDouble(0.0));
     pidCalc.setDouble(pid_test.calculate(inputAngle.getDouble(0), setPoint.getDouble(0)));
     // pidCalc.setDouble(inputAngle.getDouble(0));
-        Field2d driveTrainField = new Field2d();
-       //SmartDashboard.putData("drivetrain field2d", driveTrainField);
-        driveTrainField.setRobotPose(_odometryFromHardware.getPoseMeters());
+    setRobotZoneFromOdometry();
+    Field2d driveTrainField = new Field2d();
+    //SmartDashboard.putData("drivetrain field2d", driveTrainField);
+    driveTrainField.setRobotPose(_odometryFromHardware.getPoseMeters());
   }
 
   /**
@@ -423,6 +430,14 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     return _odometryFromHardware.getPoseMeters();
   }
 
+  private void setRobotZoneFromOdometry() {
+    // TODO: implement this method so it sets Robot.zoneState
+  }
+
+  public void resetOdometryCurrentPosition() {
+    resetOdometry(getPose(), getPose().getRotation());
+  }
+
   public void resetOdometry(Pose2d pose) {
     var targetPose = new Pose2d(pose.getTranslation(), pose.getRotation());
     // _odometryFromKinematics.resetPosition(targetPose, this.getGyroscopeRotation());
@@ -442,6 +457,11 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
   private void stop() {
     this.drive(new ChassisSpeeds(0,0,0));
+  }
+
+  public boolean isRobotSquareWithField() {
+    // TODO: Implement this method
+    return false;
   }
 
   @Override

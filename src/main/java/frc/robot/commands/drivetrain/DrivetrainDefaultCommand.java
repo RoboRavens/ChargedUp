@@ -10,6 +10,8 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
+import frc.util.StateManagementNew.DrivetrainState;
+import frc.util.StateManagementNew.OverallState;
 
 public class DrivetrainDefaultCommand extends CommandBase {
     private boolean _followLimelight = false;
@@ -64,12 +66,40 @@ public class DrivetrainDefaultCommand extends CommandBase {
             r = 0.0;
         }
 
-        // SmartDashboard.putNumber("Drive R", r);
+        // Set the drivetrain states and the x, y, and r values based on the overall robot state
+        if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
+            Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
+            r = getRValueSquareWithField();
+        }
+        else if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
+            Robot.drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;
+            r = getRValueSquareWithField();
+            // TODO: set x to align with a scoring node based on limelight input
+            x = 0;
+        }
+        else if (Robot.overallState == OverallState.HPS_PICKUP) {
+            Robot.drivetrainState = DrivetrainState.HPS_ALIGN;
+            // TODO: set the r and x value to align with a piece on the HPS
+            x = 0;
+            r = 0;
+        }
+        else if (Robot.overallState == OverallState.LOADING) {
+            Robot.drivetrainState = DrivetrainState.ACTIVELY_LOADING;
+            x = 0;
+            y = 0;
+            r = 0;
+        }
+        else if (Robot.overallState == OverallState.SCORING) {
+            Robot.drivetrainState = DrivetrainState.SCORING;
+            x = 0;
+            y = 0;
+            r = 0;
+        }
 
+        // apply the x, y, and r values to the drivetrain
         if (x == 0 && y == 0 && r == 0) {
             Robot.DRIVE_TRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
             Robot.DRIVE_TRAIN_SUBSYSTEM.holdPosition();
-            // System.out.println("All zeroes");
         } else {
             SmartDashboard.putNumber("x", x);
             SmartDashboard.putNumber("y", y);
@@ -83,11 +113,13 @@ public class DrivetrainDefaultCommand extends CommandBase {
                     a // The angle of the robot as measured by a gyroscope.
                 )
             );
-            // System.out.println("x: " + x);
-            // System.out.println("y: " + y);
-            // System.out.println("r: " + r);
-            // System.out.println("a: " + a);
         }
+
+    }
+
+    private double getRValueSquareWithField() {
+        // TODO: retrieve the R value for the drivetrain that allows the robot to square with the field
+        return 0;
     }
 
     @Override

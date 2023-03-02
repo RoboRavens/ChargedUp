@@ -30,6 +30,15 @@ public class LimelightSubsystem extends SubsystemBase {
   NetworkTableEntry ts = table.getEntry("ts");
   NetworkTableEntry tv = table.getEntry("tv");
   int camMode = 0;
+  
+  public boolean isAlignedWithScoringNode() {
+     // TODO: Implement this method
+     return false;
+  }
+
+  public void switchToScoringPipeline() {
+    // TODO: Implement this method
+  }
 
   public void periodic() {
     Pose2d pose = getRobotPose();
