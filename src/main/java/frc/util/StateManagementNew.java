@@ -6,7 +6,7 @@ public class StateManagementNew {
         EMPTY_TRANSIT,  // "Normal" state when the robot has no game piece (aka, not actively picking one up.)
         LOADED_TRANSIT, // "Normal" state when the robot has a game piece (aka, not scoring/preparing to score, ejecting, etc.)
         GROUND_PICKUP,  // While the robot is actively attempting to collect a piece from the ground.
-        HPS_PICKUP,     // While the robot is loading a piece from the HPS.
+        HPS_PICKUP,     // While the robot is preparing to load a piece from the HPS.
         LOADING, // When the robot does not have a piece but detects one (while claw is closing.)
         SCORING, // When the robot has a piece, the robot is positioned to score, and the driver intends to release it (while claw opens.)
         EJECTING, // When the robot has a piece and the driver intends to release it (while any ejection actions happen, such as the claw opening.)

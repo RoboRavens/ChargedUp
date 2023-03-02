@@ -173,16 +173,9 @@ public class Robot extends TimedRobot {
     }));
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece
     GAMEPAD.getButton(ButtonCode.B).and((() -> Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode())).toggleOnTrue(new ScorePieceCommand());
-    // While the left bumper is held, check if the robot is square with the field. If it is, proceed with aligning the robot with a node
-    // Otherwise, square the robot with the field first
-    // I'm not entirely sure this will work (scheduling a command within a command), but I can't see why not atm
+    // While the left bumper is held, set the overall state to final scoring alignment
     GAMEPAD.getButton(ButtonCode.LEFTBUMPER).whileTrue(new InstantCommand(() -> {
-      if (Robot.DRIVE_TRAIN_SUBSYSTEM.isRobotSquareWithField()) {
-        overallState = OverallState.FINAL_SCORING_ALIGNMENT;
-      }
-      else {
-        overallState = OverallState.PREPARING_TO_SCORE;
-      }
+      overallState = OverallState.FINAL_SCORING_ALIGNMENT;
     }));
     GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
     // When the floor intake button is pressed, update the states
