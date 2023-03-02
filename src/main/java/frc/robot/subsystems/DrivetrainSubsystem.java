@@ -46,6 +46,7 @@ import frc.util.StateManagementNew.ClawState;
 import frc.util.StateManagementNew.DrivetrainState;
 import frc.util.StateManagementNew.ZoneState;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -55,6 +56,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.RobotMap.*;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -256,6 +258,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
       }, new Pose2d(0, 0, new Rotation2d()));
     _diagnostics = new DrivetrainDiagnosticsShuffleboard();
     // _driveCharacteristics = new DriveCharacteristics();
+   
   }
 
   /**
@@ -402,8 +405,10 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     pid_test.setD(kdEntry.getDouble(0.0));
     pidCalc.setDouble(pid_test.calculate(inputAngle.getDouble(0), setPoint.getDouble(0)));
     // pidCalc.setDouble(inputAngle.getDouble(0));
-
     setRobotZoneFromOdometry();
+    Field2d driveTrainField = new Field2d();
+    //SmartDashboard.putData("drivetrain field2d", driveTrainField);
+    driveTrainField.setRobotPose(_odometryFromHardware.getPoseMeters());
   }
 
   /**
@@ -421,7 +426,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     return states;
   }
 
-  private Pose2d getPose() {
+  public Pose2d getPose() {
     return _odometryFromHardware.getPoseMeters();
   }
 
@@ -433,7 +438,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     resetOdometry(getPose(), getPose().getRotation());
   }
 
-  private void resetOdometry(Pose2d pose, Rotation2d rotation) {
+  public void resetOdometry(Pose2d pose) {
     var targetPose = new Pose2d(pose.getTranslation(), pose.getRotation());
     // _odometryFromKinematics.resetPosition(targetPose, this.getGyroscopeRotation());
     _odometryFromHardware.resetPosition(
@@ -479,7 +484,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
   @Override
   public Command CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory trajectory) {
-    return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialPose(), trajectory.getInitialPose().getRotation()));
+    return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialPose()));
   }
 
   @Override

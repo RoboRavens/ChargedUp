@@ -5,10 +5,22 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import java.util.List;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
@@ -33,6 +45,10 @@ import frc.util.StateManagementNew.OverallState;
 import frc.util.StateManagementNew.PieceState;
 import frc.util.StateManagementNew.ScoringTargetState;
 import frc.util.StateManagementNew.ZoneState;
+import frc.robot.subsystems.DrivetrainSubsystemMock;
+import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.LimelightTrajectorySubsystem;
+import frc.robot.subsystems.TrajectoryTestingSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -43,11 +59,16 @@ import frc.util.StateManagementNew.ZoneState;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
-  public static final DrivetrainSubsystemBase DRIVE_TRAIN_SUBSYSTEM = new DrivetrainSubsystem();
+  
+  public static final DrivetrainSubsystem DRIVE_TRAIN_SUBSYSTEM = new DrivetrainSubsystem();
+  //public static final DrivetrainSubsystemBase DRIVETRAIN_SUBSYSTEM_BASE = new DrivetrainSubsystemMock(); 
+  public static final TrajectoryTestingSubsystem TRAJECTORY_TESTING_SUBSYSTEM = new TrajectoryTestingSubsystem();
   public static final DrivetrainDefaultCommand drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final Gamepad OP_PAD = new Gamepad(1);
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
+  public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
   public static final ChargeStationBalancingCommand chargeStationBalancingCommand = new ChargeStationBalancingCommand();
   // public static GamePieceState gamePieceState = GamePieceState.CLEAR;
   // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
@@ -71,6 +92,7 @@ public class Robot extends TimedRobot {
   public static ScoringTargetState scoringTargetState = ScoringTargetState.NONE;
   public static ZoneState zoneState = ZoneState.NEUTRAL;
 
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -82,6 +104,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
     configureButtonBindings();
+    GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition()));
   }
 
   /**
@@ -168,7 +191,7 @@ public class Robot extends TimedRobot {
       Robot.overallState = OverallState.HPS_PICKUP;
     }));
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece
-    GAMEPAD.getButton(ButtonCode.B).and((() -> Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode())).toggleOnTrue(new ScorePieceCommand());
+    GAMEPAD.getButton(ButtonCode.Y).and((() -> Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode())).toggleOnTrue(new ScorePieceCommand());
     // While the left bumper is held, set the overall state to final scoring alignment
     GAMEPAD.getButton(ButtonCode.LEFTBUMPER).whileTrue(new InstantCommand(() -> {
       overallState = OverallState.FINAL_SCORING_ALIGNMENT;
