@@ -435,7 +435,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
   }
 
   public void resetOdometryCurrentPosition() {
-    resetOdometry(getPose(), getPose().getRotation());
+    resetOdometry(getPose());
   }
 
   public void resetOdometry(Pose2d pose) {
