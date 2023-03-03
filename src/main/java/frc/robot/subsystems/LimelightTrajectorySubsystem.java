@@ -34,10 +34,11 @@ public class LimelightTrajectorySubsystem {
 
     private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
+    Field2d DASHBOARD_Field2d = new Field2d();
 
     public LimelightTrajectorySubsystem() {
         
-        Field2d DASHBOARD_Field2d = new Field2d();
+        
         SmartDashboard.putData("trajectory", DASHBOARD_Field2d);
         
     }
