@@ -1,8 +1,15 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 import frc.robot.commands.claw.CloseClawCommand;
 import frc.util.StateManagementNew.ClawState;
 import frc.util.StateManagementNew.LoadState;
@@ -10,28 +17,44 @@ import frc.util.StateManagementNew.OverallState;
 
 // TODO: Implement Claw Subsystem
 public class ClawSubsystem extends SubsystemBase {
+
+    PneumaticHub pneumaticHub = new PneumaticHub(0);
+    
+    DoubleSolenoid rDoubleSolenoid = new DoubleSolenoid(null, 1, 3) ;
+    DoubleSolenoid lDoubleSolenoid = new DoubleSolenoid(null, 5, 7) ;
+    DigitalInput pieceSensor = new DigitalInput(RobotMap.PIECE_SENSOR);
+ 
+    
     // Returns true if the sensor detects a game piece
     // And false if a game piece is not detected
     public boolean detectsGamePiece() {
+        if (pieceSensor.get()) {
+        return true;
+        } else {
         return false;
+        }
     }
 
     // Returns true if the claw is open
     // And false if the claw is closed
-    private boolean isOpen() {
-        return false;
+    private boolean isOpen() {   
+     return Robot.clawState == ClawState.OPEN;
     }
 
     private boolean isClosed() {
-        return false;
+     return Robot.clawState == ClawState.CLOSED; 
     }
 
     public void open() {
         Robot.clawState = ClawState.OPENING;
+        lDoubleSolenoid.set(Value.kForward);
+        rDoubleSolenoid.set(Value.kForward);
     }
 
     public void close() {
         Robot.clawState = ClawState.CLOSING;
+        lDoubleSolenoid.set(Value.kReverse);
+        rDoubleSolenoid.set(Value.kReverse);
     }
 
     private void setClawStates() {
@@ -63,5 +86,8 @@ public class ClawSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         setClawStates();
+     //   if (Robot.clawState == ClawState.OPENING) {
+     //      new robot.commands.OpenClawCommand();
     }
 }
+
