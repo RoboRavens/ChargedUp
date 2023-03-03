@@ -13,11 +13,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 
-public class LimelightTrajectorySubsystem {
+public class LimelightTrajectorySubsystem extends SubsystemBase {
 
     /*
      * This code defines a LimelightTrajectorySubsystem in Java for a robot in the
@@ -36,6 +38,8 @@ public class LimelightTrajectorySubsystem {
     private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
     Field2d DASHBOARD_Field2d = new Field2d();
 
+    Pose2d pose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
+
     public LimelightTrajectorySubsystem() {
         
         
@@ -43,10 +47,17 @@ public class LimelightTrajectorySubsystem {
         
     }
 
+    public void periodic() {
+       
+       goToScoringPosition();
+        
+    }
+
 
     public void goToScoringPosition() {
 
         var limelightRobotPose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
+        
 
         if (limelightRobotPose == null) {
             return;
@@ -67,10 +78,10 @@ public class LimelightTrajectorySubsystem {
 
         // Push the trajectory to Field2d.
 
-       // var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(trajectory)
-               // .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(trajectory));
+        var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(trajectory)
+               .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(trajectory));
 
-       // driveCommand.schedule();
+        driveCommand.schedule();
 
        DASHBOARD_Field2d.getObject("trajectory").setTrajectory(trajectory);
 
