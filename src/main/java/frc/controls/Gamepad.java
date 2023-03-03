@@ -111,38 +111,35 @@ public class Gamepad {
 			buttonNumber = 7;
 			break;
 		// Button locations will need to be tested and changed.
+		case SUBSTATION_INTAKE:
+			buttonNumber = 9;
+			break;
 		case FLOOR_INTAKE:
-			buttonNumber = 6;
+			buttonNumber = 10;
 			break;
 		case SCORE_HIGH:
-			buttonNumber = 7;
+			buttonNumber = 11;
 			break;
 		case SCORE_MID:
-			buttonNumber = 4;
+			buttonNumber = 12;
 			break;
 		case SCORE_LOW:
-			buttonNumber = 1;
+			buttonNumber = 6;
 			break;
 		case CUBE:
-			buttonNumber = 2;
+			buttonNumber = 1;
 			break;
 		case CONE:
-			buttonNumber = 5;
+			buttonNumber = 2;
 			break;
 		case SCORE_PIECE:
 			buttonNumber = 3;
 			break;
-		// case TOGGLE_COLOR_SENSING_FEATURES:
-		// 	buttonNumber = 4;
-		// 	break;
+		case TOGGLE_COLOR_SENSING_FEATURES:
+			buttonNumber = 4;
+			break;
 		case EJECT_PIECE:
-			buttonNumber = 8;
-			break;
-		case TEMP_ALLIANCE_LOADING_ZONE:
-			buttonNumber = 12;
-			break;
-		case TEMP_ALLIANCE_COMMUNITY_ZONE:
-			buttonNumber = 10;
+			buttonNumber = 3;
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid Button Code");
