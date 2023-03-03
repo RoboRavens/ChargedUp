@@ -108,6 +108,10 @@ public class Robot extends TimedRobot {
     // Temp button bindings to simulate zone and claw state
     OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_LOADING_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));
     OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_COMMUNITY_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_COMMUNITY));
+    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_NEUTRAL_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.NEUTRAL));
+    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_OPPONENT_ZONES).onTrue(new InstantCommand(() -> zoneState = ZoneState.OPPONENT_COMMUNITY));
+    OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_IS_LOADED).toggleOnTrue(new InstantCommand(() -> {loadState = LoadState.LOADED; overallState = OverallState.LOADED_TRANSIT;}));
+    OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_IS_LOADED).toggleOnFalse(new InstantCommand(() -> {loadState = LoadState.EMPTY; overallState = OverallState.EMPTY_TRANSIT;}));
   }
 
   /**
@@ -131,11 +135,17 @@ public class Robot extends TimedRobot {
     if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.overallState == OverallState.LOADED_TRANSIT) {
       Robot.overallState = OverallState.PREPARING_TO_SCORE;
     }
+    // Button input dependent states
     SmartDashboard.putString("Piece State", pieceState.toString());
     SmartDashboard.putString("Scoring Target State", scoringTargetState.toString());
     SmartDashboard.putString("Load Target State", loadTargetState.toString());
     SmartDashboard.putString("Zone State", zoneState.toString());
-
+    SmartDashboard.putString("Load State", loadState.toString());
+    // Other states
+    SmartDashboard.putString("Overall State", overallState.toString());
+    SmartDashboard.putString("Drivetrain State", drivetrainState.toString());
+    SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand().getName());
+    SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand().getName());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

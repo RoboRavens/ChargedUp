@@ -144,6 +144,18 @@ public class Gamepad {
 		case TEMP_ALLIANCE_COMMUNITY_ZONE:
 			buttonNumber = 10;
 			break;
+		// TODO: Update these button numbers
+		case TEMP_NEUTRAL_ZONE:
+			buttonNumber = 0;
+			break;
+		case TEMP_OPPONENT_ZONES:
+			buttonNumber = 0;
+			break;
+		// Switch buttons
+		case TEMP_IS_LOADED:
+			buttonNumber = 0;
+			break;
+
 		default:
 			throw new IllegalArgumentException("Invalid Button Code");
 		}
