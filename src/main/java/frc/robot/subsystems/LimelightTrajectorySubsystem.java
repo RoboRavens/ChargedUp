@@ -47,12 +47,12 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
         
     }
 
-    public void periodic() {
+    /*public void periodic() {
        
        goToScoringPosition();
         
     }
-
+         */
 
     public void goToScoringPosition() {
 
