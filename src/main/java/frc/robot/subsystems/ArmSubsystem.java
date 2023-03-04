@@ -16,7 +16,6 @@ import frc.util.StateManagement.ZoneState;
 
 // TODO: Implement Arm Subsystem
 public class ArmSubsystem extends SubsystemBase {
-    
     public ArmSubsystem() {
         setAndManageArmStates();
     }
@@ -36,8 +35,13 @@ public class ArmSubsystem extends SubsystemBase {
         new Trigger(() -> Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.loadState == LoadState.LOADED)
         .whileTrue(new RotateArmToRowPositionCommand(Robot.scoringTargetState)
         .andThen(new ExtendArmToRowPositionCommand(Robot.scoringTargetState)));
-        // Retract the arm and rotate it upwards if it is not in the alliance community or alliance loading zone
-        new Trigger(() -> Robot.overallState == OverallState.LOADED_TRANSIT || Robot.overallState == OverallState.EMPTY_TRANSIT)
+        // Retract the arm and rotate it upwards if the robot
+        // - has just loaded
+        // - has just scored
+        // - is not in our alliance community or loading zone
+        new Trigger(() -> (Robot.overallState == OverallState.LOADED_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE) 
+                            || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
+                            || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
         .whileTrue(new RetractArmCommand().andThen(new RotateArmToRowPositionCommand(ScoringTargetState.HIGH)));
     }
 }
