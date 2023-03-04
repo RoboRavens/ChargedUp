@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.claw.CloseClawCommand;
 import frc.util.StateManagement.ClawState;
@@ -42,6 +43,7 @@ public class ClawSubsystem extends SubsystemBase {
         else if (isClosed()) {
             Robot.clawState = ClawState.CLOSED;
         }
+        new Trigger(() -> isOpen()).whileTrue(new InstantCommand(() -> Robot.clawState = ClawState.OPEN));
         // Sets the load state
         if (detectsGamePiece() && Robot.clawState == ClawState.CLOSED) {
             Robot.loadState = LoadState.LOADED;
