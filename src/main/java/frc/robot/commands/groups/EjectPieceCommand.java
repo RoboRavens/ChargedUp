@@ -11,11 +11,11 @@ import frc.robot.commands.arm.ExtendArmToRetrievalPositionCommand;
 import frc.robot.commands.arm.ExtendArmToRowPositionCommand;
 import frc.robot.commands.arm.RetractArmCommand;
 import frc.robot.commands.claw.OpenClawCommand;
-import frc.util.StateManagementNew.ArmRotationState;
-import frc.util.StateManagementNew.LoadTargetState;
-import frc.util.StateManagementNew.OverallState;
-import frc.util.StateManagementNew.PieceState;
-import frc.util.StateManagementNew.ScoringTargetState;
+import frc.util.StateManagement.ArmRotationState;
+import frc.util.StateManagement.LoadTargetState;
+import frc.util.StateManagement.OverallState;
+import frc.util.StateManagement.PieceState;
+import frc.util.StateManagement.ScoringTargetState;
 
 public class EjectPieceCommand extends SequentialCommandGroup {
     public EjectPieceCommand() {

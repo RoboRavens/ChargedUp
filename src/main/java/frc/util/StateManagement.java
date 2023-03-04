@@ -1,6 +1,6 @@
 package frc.util;
 
-public class StateManagementNew {
+public class StateManagement {
     // States set in Robot.java (mostly in the setOverallStates method)
     public enum OverallState {
         EMPTY_TRANSIT,  // "Normal" state when the robot has no game piece (aka, not actively picking one up.)

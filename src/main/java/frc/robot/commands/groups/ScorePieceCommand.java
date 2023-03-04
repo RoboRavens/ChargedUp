@@ -8,9 +8,9 @@ import frc.robot.Robot;
 import frc.robot.commands.arm.RetractArmCommand;
 import frc.robot.commands.claw.OpenClawCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
-import frc.util.StateManagementNew.OverallState;
-import frc.util.StateManagementNew.PieceState;
-import frc.util.StateManagementNew.ScoringTargetState;
+import frc.util.StateManagement.OverallState;
+import frc.util.StateManagement.PieceState;
+import frc.util.StateManagement.ScoringTargetState;
 
 public class ScorePieceCommand extends SequentialCommandGroup {
     public ScorePieceCommand() {

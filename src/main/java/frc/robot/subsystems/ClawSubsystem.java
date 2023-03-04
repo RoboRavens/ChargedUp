@@ -4,9 +4,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.commands.claw.CloseClawCommand;
-import frc.util.StateManagementNew.ClawState;
-import frc.util.StateManagementNew.LoadState;
-import frc.util.StateManagementNew.OverallState;
+import frc.util.StateManagement.ClawState;
+import frc.util.StateManagement.LoadState;
+import frc.util.StateManagement.OverallState;
 
 // TODO: Implement Claw Subsystem
 public class ClawSubsystem extends SubsystemBase {

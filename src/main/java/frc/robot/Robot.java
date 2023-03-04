@@ -34,18 +34,18 @@ import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.util.StateManagementNew.ArmExtensionState;
-import frc.util.StateManagementNew.ArmRotationState;
-import frc.util.StateManagementNew.ClawState;
-import frc.util.StateManagementNew.ZoneState;
-import frc.util.StateManagementNew.DrivetrainState;
-import frc.util.StateManagementNew.LimelightState;
-import frc.util.StateManagementNew.LoadState;
-import frc.util.StateManagementNew.LoadTargetState;
-import frc.util.StateManagementNew.OverallState;
-import frc.util.StateManagementNew.PieceState;
-import frc.util.StateManagementNew.ScoringTargetState;
-import frc.util.StateManagementNew.ZoneState;
+import frc.util.StateManagement.ArmExtensionState;
+import frc.util.StateManagement.ArmRotationState;
+import frc.util.StateManagement.ClawState;
+import frc.util.StateManagement.ZoneState;
+import frc.util.StateManagement.DrivetrainState;
+import frc.util.StateManagement.LimelightState;
+import frc.util.StateManagement.LoadState;
+import frc.util.StateManagement.LoadTargetState;
+import frc.util.StateManagement.OverallState;
+import frc.util.StateManagement.PieceState;
+import frc.util.StateManagement.ScoringTargetState;
+import frc.util.StateManagement.ZoneState;
 import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.LimelightTrajectorySubsystem;
@@ -221,7 +221,7 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     // Driver controller
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece
-    GAMEPAD.getButton(ButtonCode.Y).and((() -> Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode())).toggleOnTrue(new ScorePieceCommand());
+    GAMEPAD.getButton(ButtonCode.Y).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
     // Balance on the charge station while A is pressed
     GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
     // When the floor intake button is pressed, update the states
@@ -257,5 +257,10 @@ public class Robot extends TimedRobot {
     // or directly in front of the drivetrain.
     // The EJECTING state is handled in the arm subsystem
     OP_PAD_BUTTONS.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
+  }
+
+  private boolean isRobotReadyToScore() {
+    // TODO: implement this method
+    return true;
   }
 }
