@@ -43,4 +43,23 @@ public final class Constants {
   // public static final double JOYSTICK_DEADBAND = .05;
   public static final double JOYSTICK_DEADBAND = .05;
   public static final double DRIVE_MAX_TURN_RADIANS_PER_SECOND = 3;
+
+  // ARM
+  // These numbers are based off of CAD measurements but have not been tested or measured IRL.
+  public static final double FULCRUM_HEIGHT_INCHES = 19.25;
+  public static final double FULCRUM_TO_FRAME_INCHES = 14;
+  public static final double MAX_TELEOP_HEIGHT_INCHES = 78;
+  public static final double MAX_TELEOP_HORIZONTAL_EXTENSION_INCHES = 48;
+  public static final double ARM_BASE_LENGTH_INCHES = 33.524;
+  public static final double ARM_EXTENDED_LENGTH_INCHES = 66.25;
+  public static final double ARM_MAX_EXTENSION_ENCODER_UNITS = 10000; // This number is a wild guess and liable to be very wrong.
+  public static final double SAFETY_MARGIN_INCHES = 1;
+  public static final double ARM_EXTENSION_PER_UNIT = Constants.ARM_EXTENDED_LENGTH_INCHES / Constants.ARM_MAX_EXTENSION_ENCODER_UNITS;
+
+  // Calculate the limits for horizontal and vertical expansion based on the fulcrum's location.
+  public static final double VERTICAL_EXPANSION_ROOM = Constants.MAX_TELEOP_HEIGHT_INCHES - Constants.SAFETY_MARGIN_INCHES;
+  public static final double HORIZONTAL_EXPANSION_ROOM = Constants.FULCRUM_TO_FRAME_INCHES + Constants.MAX_TELEOP_HORIZONTAL_EXTENSION_INCHES - Constants.SAFETY_MARGIN_INCHES;
+
+  public static final double ARM_MAX_ROTATION_DEGREES = 120;
+  public static final double ARM_STARTING_DEGREES = 0;
 }

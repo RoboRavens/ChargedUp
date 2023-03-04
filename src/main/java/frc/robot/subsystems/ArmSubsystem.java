@@ -8,18 +8,33 @@ import frc.robot.commands.groups.EjectPieceCommand;
 import frc.robot.commands.arm.ExtendArmToRetrievalPositionCommand;
 import frc.robot.commands.arm.ExtendArmToRowPositionCommand;
 import frc.robot.commands.arm.RetractArmCommand;
+import frc.util.ArmPose;
 import frc.util.StateManagementNew.ArmExtensionState;
 import frc.util.StateManagementNew.LoadState;
 import frc.util.StateManagementNew.LoadTargetState;
 import frc.util.StateManagementNew.OverallState;
 import frc.util.StateManagementNew.ZoneState;
 
-// TODO: Implement Arm Subsystem
 public class ArmSubsystem extends SubsystemBase {
+    private ArmPose armPose = new ArmPose();
+    private int armRotationFinalTarget = 0;
+    private int armRotationInstantaneousTarget = 0;
+    private int armExtensionFinalTarget = 0;
+    private int armExtensionInstantaneousTarget = 0;
     
     @Override
     public void periodic() {
+        armPose.calculateInstantaneousMaximums();
         setAndManageArmStates();
+    }
+
+    private void manageSetpoints() {
+        int maxInstantaneousExtension = armPose.getArmLengthToHitConstraintNativeUnits();
+        this.armExtensionInstantaneousTarget = Math.min(this.armExtensionFinalTarget, maxInstantaneousExtension);
+    }
+
+    private void setExtensionTarget(int encoderNativeUnits) {
+        this.armExtensionFinalTarget = encoderNativeUnits;
     }
 
     private void setAndManageArmStates() {
