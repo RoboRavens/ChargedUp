@@ -24,6 +24,7 @@ public class RotateArmToRetrievalPositionCommand extends CommandBase {
   @Override
   public void execute() {
     Robot.ARM_SUBSYSTEM.setArmPosition(1000, 3000, 800);
+    //can also set _armPosiion to   Robot.ARM_SUBSYSTEM.getPositionFromAngle(intendedAngle)
   }
 
   // Called once the command ends or is interrupted.
