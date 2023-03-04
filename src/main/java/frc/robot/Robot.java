@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
+import frc.controls.AxisCode;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
@@ -130,11 +131,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
-    // Sets the robot state to PREPARING_TO_SCORE only once when the robot has a piece and is in the alliance community.
-    // This conditional is designed as such so it does not continuously set itself when a different overall state such as FINAL_SCORING_ALIGNMENT or SCORING is set.
-    if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.overallState == OverallState.LOADED_TRANSIT) {
-      Robot.overallState = OverallState.PREPARING_TO_SCORE;
-    }
+    setNonButtonDependentOverallStates();
     // Button input dependent states
     SmartDashboard.putString("Piece State", pieceState.toString());
     SmartDashboard.putString("Scoring Target State", scoringTargetState.toString());
@@ -203,20 +200,32 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic() {}
 
+  private void setNonButtonDependentOverallStates() {
+    // If the left trigger is pressed,
+    // Set the overall state to either scoring alignment or hps pickup based on the zone state
+    if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) {
+      if (zoneState == ZoneState.ALLIANCE_COMMUNITY) {
+        overallState = OverallState.FINAL_SCORING_ALIGNMENT;
+      }
+      else if (zoneState == ZoneState.ALLIANCE_LOADING_ZONE) {
+        Robot.overallState = OverallState.HPS_PICKUP;
+      }
+    }
+    // Sets the robot state to PREPARING_TO_SCORE only once when the robot has a piece and is in the alliance community.
+    // This conditional is designed as such so it does not continuously set itself when a different overall state such as FINAL_SCORING_ALIGNMENT or SCORING is set.
+    if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.overallState == OverallState.LOADED_TRANSIT) {
+      Robot.overallState = OverallState.PREPARING_TO_SCORE;
+    }
+  }
+
   private void configureButtonBindings() {
     // Driver controller
-    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).whileTrue(new InstantCommand(() -> {
-      Robot.overallState = OverallState.HPS_PICKUP;
-    }));
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece
     GAMEPAD.getButton(ButtonCode.Y).and((() -> Robot.LIMELIGHT_SUBSYSTEM.isAlignedWithScoringNode())).toggleOnTrue(new ScorePieceCommand());
-    // While the left bumper is held, set the overall state to final scoring alignment
-    GAMEPAD.getButton(ButtonCode.LEFTBUMPER).whileTrue(new InstantCommand(() -> {
-      overallState = OverallState.FINAL_SCORING_ALIGNMENT;
-    }));
+    // Balance on the charge station while A is pressed
     GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
     // When the floor intake button is pressed, update the states
-    GAMEPAD.getButton(ButtonCode.X).toggleOnTrue(new InstantCommand(() -> {
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;
       loadTargetState = LoadTargetState.GROUND;
     }));
@@ -224,7 +233,7 @@ public class Robot extends TimedRobot {
     //  If it was released without a successful ground pickup, state goes back to empty transit
     //  If it was released AFTER a successful ground pickup, state goes to loaded transit or preparing to score
     //  Pickup target changes to HPS either way
-    GAMEPAD.getButton(ButtonCode.X).toggleOnFalse(new InstantCommand(() -> {
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnFalse(new InstantCommand(() -> {
       if (loadState == LoadState.EMPTY) {
         overallState = OverallState.EMPTY_TRANSIT;
       }
