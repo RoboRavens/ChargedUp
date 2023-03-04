@@ -432,15 +432,6 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
   private void setRobotZoneFromOdometry() {
     // TODO: implement this method so it sets Robot.zoneState
-    // 1. Get the initial robot Pose2D's x and y offsets from the bottom left corner of the field (blue scoring zone), and the robot Rotation2D's offsets from facing the red scoring zone
-    //  These values will be based on the position we start at in the selected autonomous mode
-    //    - e.g. the initial robot pose is always x = 0 and y = 0, and the initial robot rotation is r = 0
-    //    - if the robot is positioned behind the purple cube closest to the scoring table near the blue alliance community, the offset for x might be +6 and the offset for y might be +1. 
-    //      The rotation offset would be zero, because the robot is facing the red scoring zone in this position
-    // 2. Get the current pose of the robot, and subtract the previously retrieved x and y offsets from the current x and y values of the robot pose
-    //    - e.g. continuing off of the example above; let's say the robot moved to the corner of the field in the blue loading zone.
-    //    Relative to the initial position of 
-    // 3. Compare these computed offsets to
   }
 
   public void resetOdometryCurrentPosition() {

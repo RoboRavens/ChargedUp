@@ -7,6 +7,7 @@
     },
     "windows": {
       "/SmartDashboard/Field": {
+        "image": "C:\\Users\\DigitalFire880\\Desktop\\2023-field.png",
         "window": {
           "visible": true
         }
