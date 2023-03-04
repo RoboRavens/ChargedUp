@@ -14,13 +14,14 @@ import frc.util.StateManagement.ScoringTargetState;
 
 public class ScorePieceCommand extends SequentialCommandGroup {
     public ScorePieceCommand() {
+        addRequirements(Robot.CLAW_SUBSYSTEM, Robot.ARM_SUBSYSTEM);
         addCommands(
             new InstantCommand(() -> Robot.overallState = OverallState.SCORING),
-            new OpenClawCommand(),
-            new WaitCommand(0.25),
+            // new OpenClawCommand(),
+            new WaitCommand(3),
             new ParallelCommandGroup(
-                new DrivetrainDefaultCommand(),
-                new RetractArmCommand(),
+                // new DrivetrainDefaultCommand(),
+                // new RetractArmCommand(),
                 new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT),
                 new InstantCommand(() -> Robot.pieceState = PieceState.NONE),
                 new InstantCommand(() -> Robot.scoringTargetState = ScoringTargetState.NONE)

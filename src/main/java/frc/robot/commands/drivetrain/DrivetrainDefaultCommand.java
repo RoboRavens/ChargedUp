@@ -95,6 +95,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
             y = 0;
             r = 0;
         }
+        else {
+            Robot.drivetrainState = DrivetrainState.FREEHAND;
+        }
 
         // apply the x, y, and r values to the drivetrain
         if (x == 0 && y == 0 && r == 0) {

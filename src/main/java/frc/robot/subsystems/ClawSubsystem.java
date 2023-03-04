@@ -11,9 +11,6 @@ import frc.util.StateManagement.OverallState;
 
 // TODO: Implement Claw Subsystem
 public class ClawSubsystem extends SubsystemBase {
-    public ClawSubsystem() {
-        setAndManageClawStates();
-    }
     // Returns true if the sensor detects a game piece
     // And false if a game piece is not detected
     public boolean detectsGamePiece() {
@@ -38,7 +35,7 @@ public class ClawSubsystem extends SubsystemBase {
         Robot.clawState = ClawState.CLOSING;
     }
 
-    private void setAndManageClawStates() {
+    public void setAndManageClawStates() {
         // Sets the claw state
         new Trigger(() -> isOpen()).whileTrue(new InstantCommand(() -> Robot.clawState = ClawState.OPEN));
         new Trigger(() -> isClosed()).whileTrue(new InstantCommand(() -> Robot.clawState = ClawState.CLOSED));
@@ -52,7 +49,7 @@ public class ClawSubsystem extends SubsystemBase {
                 if (detectsGamePiece() && isClosed()) {
                     Robot.overallState = OverallState.LOADED_TRANSIT;
                 }
-            }))
+            })).withName("Close claw and update overall state")
         );
         new Trigger(() -> detectsGamePiece() == false).whileTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY));
     }

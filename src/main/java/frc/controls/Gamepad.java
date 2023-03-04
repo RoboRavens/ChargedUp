@@ -144,16 +144,15 @@ public class Gamepad {
 		case TEMP_ALLIANCE_COMMUNITY_ZONE:
 			buttonNumber = 10;
 			break;
-		// TODO: Update these button numbers
 		case TEMP_NEUTRAL_ZONE:
-			buttonNumber = 0;
+			buttonNumber = 11;
 			break;
 		case TEMP_OPPONENT_ZONES:
-			buttonNumber = 0;
+			buttonNumber = 9;
 			break;
 		// Switch buttons
 		case TEMP_IS_LOADED:
-			buttonNumber = 0;
+			buttonNumber = 2;
 			break;
 
 		default:

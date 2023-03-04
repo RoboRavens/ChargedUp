@@ -19,13 +19,14 @@ import frc.util.StateManagement.ScoringTargetState;
 
 public class EjectPieceCommand extends SequentialCommandGroup {
     public EjectPieceCommand() {
+        addRequirements(Robot.ARM_SUBSYSTEM, Robot.CLAW_SUBSYSTEM);
         // TODO: set the arm rotation and extension state
         addCommands(
-            new RotateArmToRetrievalPositionCommand(LoadTargetState.GROUND),
-            new ExtendArmToRetrievalPositionCommand(LoadTargetState.GROUND),
-            new OpenClawCommand(),
-            new WaitCommand(0.25),
-            new RetractArmCommand(),
+            // new RotateArmToRetrievalPositionCommand(LoadTargetState.GROUND),
+            // new ExtendArmToRetrievalPositionCommand(LoadTargetState.GROUND),
+            // new OpenClawCommand(),
+            new WaitCommand(3),
+            // new RetractArmCommand(),
             new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT),
             new InstantCommand(() -> Robot.pieceState = PieceState.NONE),
             new InstantCommand(() -> Robot.scoringTargetState = ScoringTargetState.NONE)

@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
   public static ArmExtensionState armExtensionState = ArmExtensionState.RETRACTED;
   public static PieceState pieceState = PieceState.NONE;
   public static LoadState loadState = LoadState.EMPTY;
-  public static LoadTargetState loadTargetState = LoadTargetState.GROUND;
+  public static LoadTargetState loadTargetState = LoadTargetState.HPS;
   public static DrivetrainState drivetrainState = DrivetrainState.FREEHAND;
   public static ClawState clawState = ClawState.CLOSED;
   public static LimelightState limelightState = LimelightState.TAG_TRACKING;
@@ -106,6 +106,8 @@ public class Robot extends TimedRobot {
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
     configureButtonBindings();
     GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition()));
+    ARM_SUBSYSTEM.setAndManageArmStates();
+    CLAW_SUBSYSTEM.setAndManageClawStates();
     // Temp button bindings to simulate zone and claw state
     OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_LOADING_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));
     OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_COMMUNITY_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_COMMUNITY));
@@ -141,8 +143,8 @@ public class Robot extends TimedRobot {
     // Other states
     SmartDashboard.putString("Overall State", overallState.toString());
     SmartDashboard.putString("Drivetrain State", drivetrainState.toString());
-    SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand().getName());
-    SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand().getName());
+    SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand() == null ? "No command" : ARM_SUBSYSTEM.getCurrentCommand().getName());
+    SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand() == null ? "No command" : CLAW_SUBSYSTEM.getCurrentCommand().getName());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -209,6 +211,15 @@ public class Robot extends TimedRobot {
       }
       else if (zoneState == ZoneState.ALLIANCE_LOADING_ZONE) {
         Robot.overallState = OverallState.HPS_PICKUP;
+      }
+    }
+    // Changes the overall state to empty or loaded transit when the trigger is released
+    else if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT || overallState == OverallState.HPS_PICKUP) {
+      if (loadState == LoadState.LOADED) {
+        overallState = OverallState.LOADED_TRANSIT;
+      }
+      else {
+        overallState = OverallState.EMPTY_TRANSIT;
       }
     }
     // Sets the robot state to PREPARING_TO_SCORE only once when the robot has a piece and is in the alliance community.

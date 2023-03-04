@@ -8,6 +8,7 @@ public class ExtendArmToRetrievalPositionCommand extends CommandBase {
     public ExtendArmToRetrievalPositionCommand(LoadTargetState loadTargetState) {
         addRequirements(Robot.ARM_SUBSYSTEM);
     }
+
     
     // TODO: Implement this command
     // Remember to update arm extension state
