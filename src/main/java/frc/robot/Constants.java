@@ -16,6 +16,15 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  //Motion Magic
+	public static final int kSlotIdx = 0;
+	public static final int kPIDLoopIdx = 0;
+	public static final int kTimeoutMs = 0;
+  public static final Gains kGains = new Gains(0.09, 0.000009, 0.000005, 0.0, 0, 1.0);
+  public static final int COUNTS_PER_REVOLUTION = 4096;
+ //position to degrees 4096 counts per revolution
+
   // DRIVETRAIN PATHFINDING
   public static final double TRAJECTORY_CONFIG_MAX_VELOCITY_METERS_PER_SECOND = 1.5;
   public static final double TRAJECTORY_CONFIG_MAX_ACCELERATION_METERS_PER_SECOND = .6;
