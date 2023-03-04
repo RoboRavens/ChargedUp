@@ -7,6 +7,7 @@ import javax.swing.text.Position;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
@@ -41,26 +42,23 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
     Pose2d pose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
 
     public LimelightTrajectorySubsystem() {
-        
-        
+
         SmartDashboard.putData("trajectory", DASHBOARD_Field2d);
-        
+
     }
 
-    /*public void periodic() {
-       
-       goToScoringPosition();
-        
-    }
-         */
+    public void periodic() {
 
-    public void goToScoringPosition() {
+        goToScoringPosition();
+
+    }
+
+    public Trajectory goToScoringPosition() {
 
         var limelightRobotPose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
-        
 
         if (limelightRobotPose == null) {
-            return;
+            return null;
         }
 
         var interiorWaypoints = new ArrayList<Translation2d>();
@@ -70,21 +68,22 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
         TrajectoryConfig config = new TrajectoryConfig(1, 1);
         config.setReversed(true);
 
-        var trajectory = TrajectoryGenerator.generateTrajectory(
+        var TRAJECTORY1 = TrajectoryGenerator.generateTrajectory(
                 limelightRobotPose,
                 interiorWaypoints,
                 endpoint1,
                 config);
-
-        // Push the trajectory to Field2d.
-
-        var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(trajectory)
-               .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(trajectory));
-
-        driveCommand.schedule();
-
-       DASHBOARD_Field2d.getObject("trajectory").setTrajectory(trajectory);
+        return TRAJECTORY1;
 
     }
 
+    public void driveTrajectory() {
+        Trajectory Trajectory = goToScoringPosition();
+        var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory).andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(Trajectory));
+
+        driveCommand.schedule();
+
+            DASHBOARD_Field2d.getObject("trajectory").setTrajectory(Trajectory);
+
+    }
 }
