@@ -50,40 +50,47 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
     public void periodic() {
 
         goToScoringPosition();
-
+        DASHBOARD_Field2d.setRobotPose(Robot.DRIVE_TRAIN_SUBSYSTEM.getPose());
     }
 
     public Trajectory goToScoringPosition() {
 
-        var limelightRobotPose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
+        var robotPose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
 
-        if (limelightRobotPose == null) {
+        if (robotPose == null) {
             return null;
         }
 
         var interiorWaypoints = new ArrayList<Translation2d>();
         // Define the endpoints for the trajectories here.
-        var endpoint1 = new Pose2d(14.76, 2.76, Rotation2d.fromDegrees(0));
+        var endpoint1 = new Pose2d(14.6, 2.68, Rotation2d.fromDegrees(0));
 
         TrajectoryConfig config = new TrajectoryConfig(1, 1);
-        config.setReversed(true);
+        // config.setReversed(true);
+        try {
+            var TRAJECTORY1 = TrajectoryGenerator.generateTrajectory(
+                    robotPose,
+                    interiorWaypoints,
+                    endpoint1,
+                    config);
+            DASHBOARD_Field2d.getObject("trajectory").setTrajectory(TRAJECTORY1);
+            return TRAJECTORY1;
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
+        }
 
-        var TRAJECTORY1 = TrajectoryGenerator.generateTrajectory(
-                limelightRobotPose,
-                interiorWaypoints,
-                endpoint1,
-                config);
-        return TRAJECTORY1;
-
+        return null;
     }
 
     public void driveTrajectory() {
         Trajectory Trajectory = goToScoringPosition();
-        var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory).andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(Trajectory));
+        if (Trajectory == null) {
+            return;
+        }
+
+        var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory)
+                .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(Trajectory));
 
         driveCommand.schedule();
-
-            DASHBOARD_Field2d.getObject("trajectory").setTrajectory(Trajectory);
-
     }
 }
