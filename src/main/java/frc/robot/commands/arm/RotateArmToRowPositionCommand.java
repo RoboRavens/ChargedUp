@@ -23,8 +23,7 @@ public class RotateArmToRowPositionCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Robot.ARM_SUBSYSTEM.setArmPosition(1000, 3000, 800);
-    //can also set _armPosiion to   Robot.ARM_SUBSYSTEM.getPositionFromAngle(intendedAngle)
+    Robot.ARM_SUBSYSTEM.setArmPosition(-90, 3000, 800);
   }
 
   // Called once the command ends or is interrupted.

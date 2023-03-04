@@ -68,18 +68,19 @@ public class ArmSubsystem extends SubsystemBase {
         motor1.setInverted(InvertType.FollowMaster);
     }
 
-    public void setArmPosition(double _armPosition, double _armVelocity, double _armAcceleration) {
-        // always sends the motors in the right direction
-        if (_armPosition - (motorsLeader.getSelectedSensorPosition()) < 0) {
-            motorsLeader.configMotionCruiseVelocity(_armVelocity * -1, Constants.kTimeoutMs);
+    public void setArmPosition(double _armAngle, double _armVelocity, double _armAcceleration) {
+        //replace _armPosition with getPositionFromAngle(_armPosition) so that _armPosition can just be an angle
+        if (getPositionFromAngle(_armAngle) - (motorsLeader.getSelectedSensorPosition()) < 0) {
+          motorsLeader.configMotionCruiseVelocity(_armVelocity * -1, Constants.kTimeoutMs);
         }
-        if (_armPosition - (motorsLeader.getSelectedSensorPosition()) > 0) {
-            motorsLeader.configMotionCruiseVelocity(_armVelocity, Constants.kTimeoutMs);
+        if (getPositionFromAngle(_armAngle) - (motorsLeader.getSelectedSensorPosition()) > 0) {
+          motorsLeader.configMotionCruiseVelocity(_armVelocity, Constants.kTimeoutMs);
         }
+    
         motorsLeader.configMotionAcceleration(_armAcceleration, Constants.kTimeoutMs);
-        motorsLeader.set(ControlMode.Position, _armPosition);
-        SmartDashboard.putNumber("ArmSetPosition", _armPosition);
-    }
+        motorsLeader.set(ControlMode.Position, getPositionFromAngle(_armAngle));
+        SmartDashboard.putNumber("ArmSetPosition", getPositionFromAngle(_armAngle));
+      }
 
     public void stopArm() {
         motorsLeader.setVoltage(0);
