@@ -18,7 +18,7 @@ import frc.util.StateManagement.OverallState;
 
 // TODO: Implement Claw Subsystem
 public class ClawSubsystem extends SubsystemBase {
-
+/* 
     PneumaticHub pneumaticHub = new PneumaticHub(0);
     
     DoubleSolenoid rDoubleSolenoid = new DoubleSolenoid(null, 1, 3) ;
@@ -75,13 +75,14 @@ public class ClawSubsystem extends SubsystemBase {
             })));//.schedule());
             
 
-            /*
-        }
-        else {
-            Robot.loadState = LoadState.EMPTY;
-        }
-        */
+            
+       // }
+       // else {
+        //    Robot.loadState = LoadState.EMPTY;
+        //}
+        
     }
+    */
 
     @Override
     public void periodic() {

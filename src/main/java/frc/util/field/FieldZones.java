@@ -1,17 +1,21 @@
 package frc.util.field;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.awt.geom.Point2D;
 
 public class FieldZones {
-    ArrayList<FieldZone> fieldZones = new ArrayList<FieldZone>();
-
-    FieldZone blueCommunity;
-    FieldZone redCommunity;
-    FieldZone blueLoadingZone;
-    FieldZone redLoadingZone;
-    FieldZone blueChargeStation;
-    FieldZone redChargeStation;
-    FieldZone neutralZone;
+    private ArrayList<FieldZone> fieldZones = new ArrayList<FieldZone>();
+    private FieldZone blueCommunity;
+    private FieldZone redCommunity;
+    private FieldZone blueLoadingZone;
+    private FieldZone redLoadingZone;
+    private FieldZone blueChargeStation;
+    private FieldZone redChargeStation;
+    private FieldZone neutralZone;
+    
+    // We'll include a none state in case odometry ever breaks by enough that no zone is returned.
+    private FieldZone noneZone;
 
     // Community.
     public static final MirroredSubzone COMMUNITY_NORTHERN_SECTION_MIRRORED_SUBZONE = new MirroredSubzone(
@@ -85,6 +89,13 @@ public class FieldZones {
         FieldMeasurements.NEUTRAL_ZONE_HALF_FIELD_SOUTHERN_AREA_SOUTHWEST_CORNER_Y_METERS,
         FieldMeasurements.NEUTRAL_ZONE_HALF_FIELD_SOUTHERN_AREA_WIDTH_METERS * 2,
         FieldMeasurements.NEUTRAL_ZONE_HALF_FIELD_SOUTHERN_AREA_HEIGHT_METERS);
+    
+    public static final FieldSubzone noneSubzone = new FieldSubzone(
+        "None",
+        -1,
+        -1,
+        0,
+        0);
 
     
     
@@ -115,10 +126,13 @@ public class FieldZones {
 
         // Neutral zone.
         neutralZone = new FieldZone("Neutral Zone", neutralZoneNarrowArea);
-            neutralZone.addSubzone(neutralZoneNorthernArea);
-            neutralZone.addSubzone(neutralZoneSouthernArea);
-        
+        neutralZone.addSubzone(neutralZoneNorthernArea);
+        neutralZone.addSubzone(neutralZoneSouthernArea);
         neutralZone.generateBoundingBox();
+        neutralZoneNarrowArea.setFieldZone(neutralZone);
+        neutralZoneNorthernArea.setFieldZone(neutralZone);
+        neutralZoneSouthernArea.setFieldZone(neutralZone);
+
         fieldZones.add(neutralZone);
 
         // The charge stations are a subzone of their respective communities, but also their own zones.
@@ -129,6 +143,36 @@ public class FieldZones {
         redChargeStation.generateBoundingBox();
         fieldZones.add(blueChargeStation);
         fieldZones.add(redChargeStation);
+
+        // Create the none zone.
+        noneZone = new FieldZone("None", noneSubzone);
+        noneZone.generateBoundingBox();
+        noneSubzone.setFieldZone(noneZone);
+        fieldZones.add(noneZone);
+    }
+
+    public FieldSubzone getPointFieldZone(Point2D point) {
+        // If odometry is working correctly we'll always find a zone, but if it's not, we need a default.
+        FieldSubzone robotFieldSubzone = noneSubzone;
+
+        // Check each zone to see if the point is within the overall bounding box.
+        // If it is, check the subzones to see if its in one of those bounding boxes.
+        // If it is, that's the zone/subzone that the robot is centered in.
+        // If it is not, hop back out and continue checking the remaining zones.
+        for (int i = 0; i < fieldZones.size(); i++) {
+            if (fieldZones.get(i).containsPoint(point)) {
+                robotFieldSubzone = fieldZones.get(i).subzonesContainPoint(point);
+
+                if (robotFieldSubzone != null) {
+                    break;
+                }
+            }
+        }
+
+        return robotFieldSubzone;
+
+//        Optional<FieldZone> result =
+//            fieldZones.stream().filter(fieldZone -> fieldZone.containsPoint(point) ).findFirst();
     }
 
     public void output() {
@@ -140,6 +184,10 @@ public class FieldZones {
 
         System.out.println();
         System.out.println();
+    }
+
+    public FieldZone getNoneZone() {
+        return noneZone;
     }
     
 }
