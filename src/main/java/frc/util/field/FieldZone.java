@@ -5,15 +5,15 @@ import java.util.ArrayList;
 //import org.opencv.core.Point3;
 //import org.opencv.core.Rect;
 
-import java.awt.Rectangle;
-import java.awt.Point;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D;
 
 public class FieldZone {
     private String name;
     private ArrayList<FieldSubzone> subzones = new ArrayList<FieldSubzone>();
-    private Point southwestCorner;
-    private Point northeastCorner;
-    private Rectangle boundingBox;
+    private Point2D southwestCorner;
+    private Point2D northeastCorner;
+    private Rectangle2D boundingBox;
     // private Rectangle rectangle;
 
     // Create a field zone, which must be initialized with at least one subzone.
@@ -29,14 +29,27 @@ public class FieldZone {
 
         // Update the bounding box's boundaries to any boundary that is more extreme in the subzone,
         // than in the current field zone.
-        southwestCorner.x = Math.min(southwestCorner.x, subzone.getSouthwestCorner().x);
+        double newSouthwestCornerX = Math.min(southwestCorner.getX(), subzone.getSouthwestCorner().getX());
+        double newSouthwestCornerY = Math.min(southwestCorner.getY(), subzone.getSouthwestCorner().getY());
+        southwestCorner = new Point2D.Double(newSouthwestCornerX, newSouthwestCornerY);
+
+        double newNortheastCornerX = Math.max(northeastCorner.getX(), subzone.getNortheastCorner().getX());
+        double newNortheastCornerY = Math.max(northeastCorner.getY(), subzone.getNortheastCorner().getY());
+        northeastCorner = new Point2D.Double(newNortheastCornerX, newNortheastCornerY);
+
+/*
+        southwestCorner.set = Math.min(southwestCorner.x, subzone.getSouthwestCorner().x);
         southwestCorner.y = Math.min(southwestCorner.y, subzone.getSouthwestCorner().y);
         northeastCorner.x = Math.max(northeastCorner.x, subzone.getNortheastCorner().x);
         northeastCorner.y = Math.max(northeastCorner.y, subzone.getNortheastCorner().y);
+        */
     }
 
     public void generateBoundingBox() {
-        boundingBox = new Rect(southwestCorner, northeastCorner);
+        double width = northeastCorner.getX() - southwestCorner.getX();
+        double height = northeastCorner.getY() - southwestCorner.getY();
+
+        boundingBox = new Rectangle2D.Double(southwestCorner.getX(), southwestCorner.getY(), width, height);
     }
 
     public String getName() {
@@ -45,8 +58,26 @@ public class FieldZone {
 
     public void output() {
         System.out.println("Zone: " + name);
-        System.out.println("SW Corner: " + southwestCorner.x + ", " + southwestCorner.y);
-        System.out.println("NE Corner: " + northeastCorner.x + ", " + northeastCorner.y);
-        System.out.println(" Bounding box: x: " + boundingBox.x + " y: " + boundingBox.y + " width: " + boundingBox.width + " height: " + boundingBox.height);
+        System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
+        System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
+        
+        System.out.println(" Bounding box: x: " + boundingBox.getX() + " y: " + boundingBox.getY() + " width: " + boundingBox.getWidth() + " height: " + boundingBox.getHeight());
+        System.out.println();
+        System.out.println();
+    }
+
+    public void outputSubzones() {
+        System.out.println("Zone: " + name);
+        System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
+        System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
+        System.out.println();
+        // System.out.println(" Bounding box: x: " + boundingBox.getX() + " y: " + boundingBox.getY() + " width: " + boundingBox.getWidth() + " height: " + boundingBox.getHeight());
+
+        for (FieldSubzone subzone : subzones) {
+            subzone.output();
+        }
+
+        System.out.println();
+        System.out.println();
     }
 }

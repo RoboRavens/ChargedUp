@@ -11,10 +11,10 @@ public class FieldMeasurements {
 
     // This field height value is slightly shorter than the nominally given height of 26 foot 3.5 inches.
     // This is compiled by the various zones. The discrepancy could be due to the inclusion of the field wall.
-    public static final double FIELD_HEIGHT_INCHES = (59.39 * 2) + 99.07;
+    public static final double FIELD_HEIGHT_INCHES = (59.39 * 2) + 99.07 + 96;
 
     // Field elements used as references.
-    public static final double DOUBLE_SUBSTATION_WIDTH_INCHES = 27.125;
+    public static final double DOUBLE_SUBSTATION_WIDTH_INCHES = 14;
     public static final double LOADING_ZONE_WIDE_AREA_WIDTH_PAST_DOUBLE_SUBSTATION_INCHES = 118.25;
     
     // Community.
@@ -57,14 +57,14 @@ public class FieldMeasurements {
     // Loading zone.
     public static final double LOADING_ZONE_WIDE_AREA_WIDTH_INCHES = DOUBLE_SUBSTATION_WIDTH_INCHES + LOADING_ZONE_WIDE_AREA_WIDTH_PAST_DOUBLE_SUBSTATION_INCHES;
     public static final double LOADING_ZONE_WIDE_AREA_HEIGHT_INCHES = 99.07;
-    public static final double LOADING_ZONE_NARROW_AREA_WIDTH_INCHES = 119;
+    public static final double LOADING_ZONE_NARROW_AREA_WIDTH_INCHES = HALF_FIELD_WIDTH_INCHES - LOADING_ZONE_WIDE_AREA_WIDTH_INCHES - 61.36;
     public static final double LOADING_ZONE_NARROW_AREA_HEIGHT_INCHES = 50.5;
 
     // Loading zone southwest corner coordinates.
     public static final double LOADING_ZONE_WIDE_AREA_SOUTHWEST_CORNER_X_INCHES = 0;
     public static final double LOADING_ZONE_WIDE_AREA_SOUTHWEST_CORNER_Y_INCHES = COMMUNITY_NORTHERN_SECTION_SOUTHWEST_CORNER_Y_INCHES + COMMUNITY_NORTHERN_SECTION_HEIGHT_INCHES;
     public static final double LOADING_ZONE_NARROW_AREA_SOUTHWEST_CORNER_X_INCHES = LOADING_ZONE_WIDE_AREA_WIDTH_INCHES;
-    public static final double LOADING_ZONE_NARROW_AREA_SOUTHWEST_CORNER_Y_INCHES = LOADING_ZONE_WIDE_AREA_SOUTHWEST_CORNER_Y_INCHES + LOADING_ZONE_WIDE_AREA_HEIGHT_INCHES;
+    public static final double LOADING_ZONE_NARROW_AREA_SOUTHWEST_CORNER_Y_INCHES = FIELD_HEIGHT_INCHES - LOADING_ZONE_NARROW_AREA_HEIGHT_INCHES;
 
     // For ease of use in other places, the net height of the wide LZ area, without the narrow height.
     public static final double LOADING_ZONE_WIDE_AREA_MARGINAL_HEIGHT_INCHES = LOADING_ZONE_WIDE_AREA_HEIGHT_INCHES - LOADING_ZONE_NARROW_AREA_HEIGHT_INCHES;
@@ -92,12 +92,12 @@ public class FieldMeasurements {
         COMMUNITY_CHARGE_STATION_HEIGHT_INCHES + 2;
     
     // Neutral zone southwest corner coordinates.
-    public static final double NEUTRAL_ZONE_HALF_FIELD_NARROW_AREA_SOUTHWEST_CORNER_X_INCHES = 0;
+    public static final double NEUTRAL_ZONE_HALF_FIELD_NARROW_AREA_SOUTHWEST_CORNER_X_INCHES = LOADING_ZONE_WIDE_AREA_WIDTH_INCHES + LOADING_ZONE_NARROW_AREA_WIDTH_INCHES;
     public static final double NEUTRAL_ZONE_HALF_FIELD_NARROW_AREA_SOUTHWEST_CORNER_Y_INCHES = FIELD_HEIGHT_INCHES - NEUTRAL_ZONE_HALF_FIELD_NARROW_AREA_HEIGHT_INCHES;
     public static final double NEUTRAL_ZONE_HALF_FIELD_NORTHERN_AREA_SOUTHWEST_CORNER_X_INCHES = DISTANCE_FROM_WALL_TO_COMMUNITY_INCHES + COMMUNITY_NORTHERN_SECTION_WIDTH_INCHES;
     // We don't include the two inches for the tape outside of the bridge in the community, but we'll include for the neutral zone - better safe than sorry.
     public static final double NEUTRAL_ZONE_HALF_FIELD_NORTHERN_AREA_SOUTHWEST_CORNER_Y_INCHES = COMMUNITY_COOP_SECTION_HEIGHT_INCHES + COMMUNITY_SOUTHERN_SECTION_HEIGHT_INCHES + 2;
-    public static final double NEUTRAL_ZONE_HALF_FIELD_SOUTHERN_AREA_SOUTHWEST_CORNER_X_INCHES = COMMUNITY_SOUTHERN_SECTION_WIDTH_INCHES;
+    public static final double NEUTRAL_ZONE_HALF_FIELD_SOUTHERN_AREA_SOUTHWEST_CORNER_X_INCHES = DISTANCE_FROM_WALL_TO_COMMUNITY_INCHES + COMMUNITY_SOUTHERN_SECTION_WIDTH_INCHES;
     public static final double NEUTRAL_ZONE_HALF_FIELD_SOUTHERN_AREA_SOUTHWEST_CORNER_Y_INCHES = 0;
     
     // AprilTags.

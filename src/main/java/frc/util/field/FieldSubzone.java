@@ -1,25 +1,19 @@
 package frc.util.field;
 
-import java.awt.Point;
-
-// import java.awt.Point2D;
-import java.awt.Rectangle;
-
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D;
 
 public class FieldSubzone {
     private String name;
-    private Point southwestCorner;
-    private Point northeastCorner;
+    private Point2D southwestCorner;
+    private Point2D northeastCorner;
     private Rectangle2D boundingBox;// = new Rectangle2D.Double();
-
-    private Rectangle test = new Rectangle(.5, .23, .12, .12);
 
     public FieldSubzone(String name, double southwestCornerX, double southwestCornerY, double width, double height) {
         this.name = name;
 
-        Point southwestCorner = new Point(southwestCornerX, southwestCornerY);
-        Point northeastCorner = new Point(southwestCornerX + width, southwestCornerY + height);
+        Point2D southwestCorner = new Point2D.Double(southwestCornerX, southwestCornerY);
+        Point2D northeastCorner = new Point2D.Double(southwestCornerX + width, southwestCornerY + height);
 
         this.southwestCorner = southwestCorner;
         this.northeastCorner = northeastCorner;
@@ -35,11 +29,21 @@ public class FieldSubzone {
         return boundingBox;
     }
 
-    public Point getSouthwestCorner() {
+    public Point2D getSouthwestCorner() {
         return southwestCorner;
     }
 
-    public Point getNortheastCorner() {
+    public Point2D getNortheastCorner() {
         return northeastCorner;
+    }
+
+    public void output() {
+        System.out.println("Zone: " + name);
+        System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
+        System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
+        // System.out.println(" Bounding box: x: " + boundingBox.getX() + " y: " + boundingBox.getY() + " width: " + boundingBox.getWidth() + " height: " + boundingBox.getHeight());
+
+        System.out.println();
+        System.out.println();
     }
 }
