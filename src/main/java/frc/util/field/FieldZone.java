@@ -1,17 +1,24 @@
-package frc.util;
+package frc.util.field;
 
 import java.util.ArrayList;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
+//import org.opencv.core.Point;
+//import org.opencv.core.Point3;
+//import org.opencv.core.Rect;
+
+import java.awt.Rectangle;
+import java.awt.Point;
 
 public class FieldZone {
+    private String name;
     private ArrayList<FieldSubzone> subzones = new ArrayList<FieldSubzone>();
     private Point southwestCorner;
     private Point northeastCorner;
-    private Rect boundingBox;
+    private Rectangle boundingBox;
+    // private Rectangle rectangle;
 
-    // Createa field zone, which must be initialized with at least one subzone.
-    public FieldZone(FieldSubzone initialSubzone) {
+    // Create a field zone, which must be initialized with at least one subzone.
+    public FieldZone(String name, FieldSubzone initialSubzone) {
+        this.name = name;
         subzones.add(initialSubzone);
         this.southwestCorner = initialSubzone.getSouthwestCorner();
         this.northeastCorner = initialSubzone.getNortheastCorner();
@@ -30,5 +37,16 @@ public class FieldZone {
 
     public void generateBoundingBox() {
         boundingBox = new Rect(southwestCorner, northeastCorner);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void output() {
+        System.out.println("Zone: " + name);
+        System.out.println("SW Corner: " + southwestCorner.x + ", " + southwestCorner.y);
+        System.out.println("NE Corner: " + northeastCorner.x + ", " + northeastCorner.y);
+        System.out.println(" Bounding box: x: " + boundingBox.x + " y: " + boundingBox.y + " width: " + boundingBox.width + " height: " + boundingBox.height);
     }
 }

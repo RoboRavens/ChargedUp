@@ -37,6 +37,7 @@ import frc.util.StateManagementNew.ArmExtensionState;
 import frc.util.StateManagementNew.ArmRotationState;
 import frc.util.StateManagementNew.ClawState;
 import frc.util.StateManagementNew.ZoneState;
+import frc.util.field.FieldZones;
 import frc.util.StateManagementNew.DrivetrainState;
 import frc.util.StateManagementNew.LimelightState;
 import frc.util.StateManagementNew.LoadState;
@@ -91,6 +92,8 @@ public class Robot extends TimedRobot {
   public static ScoringTargetState scoringTargetState = ScoringTargetState.NONE;
   public static ZoneState zoneState = ZoneState.NEUTRAL;
 
+  public static FieldZones fieldZones = new FieldZones();
+
   
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -104,6 +107,11 @@ public class Robot extends TimedRobot {
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
     configureButtonBindings();
     GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition()));
+
+    fieldZones.output();
+
+    // DELETE
+    System.out.println();
   }
 
   /**
@@ -134,7 +142,9 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    //System.out.println("OUTPUT!");
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
