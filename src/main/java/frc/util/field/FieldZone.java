@@ -1,10 +1,6 @@
 package frc.util.field;
 
 import java.util.ArrayList;
-//import org.opencv.core.Point;
-//import org.opencv.core.Point3;
-//import org.opencv.core.Rect;
-
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 
@@ -14,7 +10,6 @@ public class FieldZone {
     private Point2D southwestCorner;
     private Point2D northeastCorner;
     private Rectangle2D boundingBox;
-    // private Rectangle rectangle;
 
     // Create a field zone, which must be initialized with at least one subzone.
     public FieldZone(String name, FieldSubzone initialSubzone) {
@@ -36,13 +31,6 @@ public class FieldZone {
         double newNortheastCornerX = Math.max(northeastCorner.getX(), subzone.getNortheastCorner().getX());
         double newNortheastCornerY = Math.max(northeastCorner.getY(), subzone.getNortheastCorner().getY());
         northeastCorner = new Point2D.Double(newNortheastCornerX, newNortheastCornerY);
-
-/*
-        southwestCorner.set = Math.min(southwestCorner.x, subzone.getSouthwestCorner().x);
-        southwestCorner.y = Math.min(southwestCorner.y, subzone.getSouthwestCorner().y);
-        northeastCorner.x = Math.max(northeastCorner.x, subzone.getNortheastCorner().x);
-        northeastCorner.y = Math.max(northeastCorner.y, subzone.getNortheastCorner().y);
-        */
     }
 
     public void generateBoundingBox() {

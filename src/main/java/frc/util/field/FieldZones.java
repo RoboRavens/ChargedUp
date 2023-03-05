@@ -135,10 +135,7 @@ public class FieldZones {
         System.out.println("Zones:");
 
         for (FieldZone zone : fieldZones) {
-            // System.out.println(" Name: " + zone.getName());
-
             zone.outputSubzones();
-
         }
 
         System.out.println();
