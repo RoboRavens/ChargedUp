@@ -7,17 +7,20 @@ import javax.swing.text.Position;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 
-public class LimelightTrajectorySubsystem {
+public class LimelightTrajectorySubsystem extends SubsystemBase {
 
     /*
      * This code defines a LimelightTrajectorySubsystem in Java for a robot in the
@@ -34,40 +37,60 @@ public class LimelightTrajectorySubsystem {
 
     private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
+    Field2d DASHBOARD_Field2d = new Field2d();
 
+    Pose2d pose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
 
+    public LimelightTrajectorySubsystem() {
 
-    public void goToScoringPosition() {
+        SmartDashboard.putData("trajectory", DASHBOARD_Field2d);
 
-        var limelightRobotPose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
+    }
 
-        if (limelightRobotPose == null) {
-            return;
+    public void periodic() {
+
+        goToScoringPosition();
+        DASHBOARD_Field2d.setRobotPose(Robot.DRIVE_TRAIN_SUBSYSTEM.getPose());
+    }
+
+    public Trajectory goToScoringPosition() {
+
+        var robotPose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
+
+        if (robotPose == null) {
+            return null;
         }
 
         var interiorWaypoints = new ArrayList<Translation2d>();
         // Define the endpoints for the trajectories here.
-        var endpoint1 = new Pose2d(14.76, 2.76, Rotation2d.fromDegrees(0));
+        var endpoint1 = new Pose2d(14.6, 2.68, Rotation2d.fromDegrees(0));
 
         TrajectoryConfig config = new TrajectoryConfig(1, 1);
-        config.setReversed(true);
+        // config.setReversed(true);
+        try {
+            var TRAJECTORY1 = TrajectoryGenerator.generateTrajectory(
+                    robotPose,
+                    interiorWaypoints,
+                    endpoint1,
+                    config);
+            DASHBOARD_Field2d.getObject("trajectory").setTrajectory(TRAJECTORY1);
+            return TRAJECTORY1;
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
+        }
 
-        var trajectory = TrajectoryGenerator.generateTrajectory(
-                limelightRobotPose,
-                interiorWaypoints,
-                endpoint1,
-                config);
-
-        // Push the trajectory to Field2d.
-
-       // var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(trajectory)
-               // .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(trajectory));
-
-       // driveCommand.schedule();
-
-        Field2d TRAJECTORY_FIELD = new Field2d();
-        SmartDashboard.putData("trajectory", TRAJECTORY_FIELD);
-        TRAJECTORY_FIELD.getObject("trajectory").setTrajectory(trajectory);
+        return null;
     }
 
+    public void driveTrajectory() {
+        Trajectory Trajectory = goToScoringPosition();
+        if (Trajectory == null) {
+            return;
+        }
+
+        var driveCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory)
+                .andThen(Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(Trajectory));
+
+        driveCommand.schedule();
+    }
 }

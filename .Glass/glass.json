@@ -13,10 +13,18 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/field": "Field2d"
+      "/SmartDashboard/field": "Field2d",
+      "/SmartDashboard/trajectory": "Field2d"
     },
     "windows": {
-      "/SmartDashboard/field": {
+      "/SmartDashboard/trajectory": {
+        "image": "C:\\Users\\1188\\Desktop\\FRC2023.PNG",
+        "trajectory": {
+          "length": 1.0,
+          "style": "Line",
+          "weight": 1.0,
+          "width": 0.10000000149011612
+        },
         "window": {
           "visible": true
         }
@@ -31,6 +39,24 @@
       "open": true
     },
     "Server": {
+      "open": true
+    },
+    "glass": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
+      "open": true
+    },
+    "glass@1": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
       "open": true
     },
     "visible": true
