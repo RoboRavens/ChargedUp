@@ -10,8 +10,8 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
-import frc.util.StateManagementNew.DrivetrainState;
-import frc.util.StateManagementNew.OverallState;
+import frc.util.StateManagement.DrivetrainState;
+import frc.util.StateManagement.OverallState;
 
 public class DrivetrainDefaultCommand extends CommandBase {
     private boolean _followLimelight = false;
@@ -94,6 +94,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
             x = 0;
             y = 0;
             r = 0;
+        }
+        else {
+            Robot.drivetrainState = DrivetrainState.FREEHAND;
         }
 
         // apply the x, y, and r values to the drivetrain
