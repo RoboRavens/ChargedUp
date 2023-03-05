@@ -141,6 +141,17 @@ public class Gamepad {
 		case EJECT_PIECE:
 			buttonNumber = 3;
 			break;
+		case TEMP_NEUTRAL_ZONE:
+			buttonNumber = 11;
+			break;
+		case TEMP_OPPONENT_ZONES:
+			buttonNumber = 9;
+			break;
+		// Switch buttons
+		case TEMP_IS_LOADED:
+			buttonNumber = 2;
+			break;
+
 		default:
 			throw new IllegalArgumentException("Invalid Button Code");
 		}

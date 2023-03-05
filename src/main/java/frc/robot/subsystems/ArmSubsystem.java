@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -18,15 +19,13 @@ import frc.robot.commands.groups.EjectPieceCommand;
 import frc.robot.commands.arm.ExtendArmToRetrievalPositionCommand;
 import frc.robot.commands.arm.ExtendArmToRowPositionCommand;
 import frc.robot.commands.arm.RetractArmCommand;
+import frc.util.StateManagement.LoadState;
+import frc.util.StateManagement.OverallState;
+import frc.util.StateManagement.ScoringTargetState;
+import frc.util.StateManagement.ZoneState;
 import frc.util.ArmPose;
-import frc.util.StateManagementNew.ArmExtensionState;
-import frc.util.StateManagementNew.LoadState;
-import frc.util.StateManagementNew.LoadTargetState;
-import frc.util.StateManagementNew.OverallState;
-import frc.util.StateManagementNew.ZoneState;
 
 public class ArmSubsystem extends SubsystemBase {
-
     public WPI_TalonFX motor1 = new WPI_TalonFX(10);
     public WPI_TalonFX motor2 = new WPI_TalonFX(11);
     public WPI_TalonSRX motorsLeader = new WPI_TalonSRX(12);
@@ -121,32 +120,26 @@ public class ArmSubsystem extends SubsystemBase {
     private void setExtensionTarget(int encoderNativeUnits) {
         this.armExtensionFinalTarget = encoderNativeUnits;
     }
-
-    private void setAndManageArmStates() {
+    
+    public void setAndManageArmStates() {
         // Schedules commands that require the arm subsystem
         // The commands scheduled set the arm state in turn
-        if (Robot.overallState == OverallState.EJECTING) {
-            new EjectPieceCommand().schedule();
-        } else if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE
-                || Robot.overallState == OverallState.GROUND_PICKUP) {
-            // Extend and rotate the arm to the loading target
-            new RotateArmToRetrievalPositionCommand(Robot.loadTargetState)
-                    .andThen(new ExtendArmToRetrievalPositionCommand(Robot.loadTargetState)).schedule();
-        } else if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY) {
-            // Extend and rotate the arm to the scoring target
-            new RotateArmToRowPositionCommand(Robot.scoringTargetState)
-                    .andThen(new ExtendArmToRowPositionCommand(Robot.scoringTargetState)).schedule();
-        }
-        // (When the robot is either in the neutral area, any of the opposite alliance's
-        // zones, or on our alliance bridge)
-        else {
-            // Retract the arm, but rotate the arm to the scoring/loading position
-            if (Robot.loadState == LoadState.LOADED) {
-                new RetractArmCommand().andThen(new RotateArmToRowPositionCommand(Robot.scoringTargetState)).schedule();
-            } else {
-                new RetractArmCommand().andThen(new RotateArmToRetrievalPositionCommand(Robot.loadTargetState))
-                        .schedule();
-            }
-        }
+        new Trigger(() -> Robot.overallState == OverallState.EJECTING).whileTrue(new EjectPieceCommand());
+        // Extend and rotate the arm to the loading target
+        new Trigger(() -> (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE || Robot.overallState == OverallState.GROUND_PICKUP) && Robot.loadState == LoadState.EMPTY)
+        .whileTrue(new RotateArmToRetrievalPositionCommand(Robot.loadTargetState)
+        .andThen(new ExtendArmToRetrievalPositionCommand(Robot.loadTargetState)).withName("Extend and rotate arm to loading target"));
+        // Extend and rotate the arm to the scoring target
+        new Trigger(() -> Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.loadState == LoadState.LOADED)
+        .whileTrue(new RotateArmToRowPositionCommand(Robot.scoringTargetState)
+        .andThen(new ExtendArmToRowPositionCommand(Robot.scoringTargetState)).withName("Extend and rotate arm to scoring target"));
+        // Retract the arm and rotate it upwards if the robot
+        // - has just loaded
+        // - has just scored
+        // - is not in our alliance community or loading zone
+        new Trigger(() -> (Robot.overallState == OverallState.LOADED_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE) 
+                            || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
+                            || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
+        .whileTrue(new RetractArmCommand().andThen(new RotateArmToRowPositionCommand(ScoringTargetState.HIGH)).withName("Retract arm"));
     }
 }
