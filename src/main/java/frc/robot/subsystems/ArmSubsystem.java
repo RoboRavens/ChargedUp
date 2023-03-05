@@ -67,18 +67,19 @@ public class ArmSubsystem extends SubsystemBase {
         motor1.setInverted(InvertType.FollowMaster);
     }
 
-    public void setArmPosition(double _armPosition, double _armVelocity, double _armAcceleration) {
-        // always sends the motors in the right direction
-        if (_armPosition - (motorsLeader.getSelectedSensorPosition()) < 0) {
-            motorsLeader.configMotionCruiseVelocity(_armVelocity * -1, Constants.kTimeoutMs);
+    public void setArmPosition(double _armAngle, double _armVelocity, double _armAcceleration) {
+        //replace _armPosition with getPositionFromAngle(_armPosition) so that _armPosition can just be an angle
+        if (getPositionFromAngle(_armAngle) - (motorsLeader.getSelectedSensorPosition()) < 0) {
+          motorsLeader.configMotionCruiseVelocity(_armVelocity * -1, Constants.kTimeoutMs);
         }
-        if (_armPosition - (motorsLeader.getSelectedSensorPosition()) > 0) {
-            motorsLeader.configMotionCruiseVelocity(_armVelocity, Constants.kTimeoutMs);
+        if (getPositionFromAngle(_armAngle) - (motorsLeader.getSelectedSensorPosition()) > 0) {
+          motorsLeader.configMotionCruiseVelocity(_armVelocity, Constants.kTimeoutMs);
         }
+    
         motorsLeader.configMotionAcceleration(_armAcceleration, Constants.kTimeoutMs);
-        motorsLeader.set(ControlMode.Position, _armPosition);
-        SmartDashboard.putNumber("ArmSetPoint", _armPosition);
-    }
+        motorsLeader.set(ControlMode.Position, getPositionFromAngle(_armAngle));
+        SmartDashboard.putNumber("ArmSetPosition", getPositionFromAngle(_armAngle));
+      }
 
     public void stopArm() {
         motorsLeader.setVoltage(0);
@@ -101,16 +102,36 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("LeaderEncoderPosition", motorsLeader.getSelectedSensorPosition());
         SmartDashboard.putNumber("motor1position", motor1.getSelectedSensorPosition());
         SmartDashboard.putNumber("motor2position", motor2.getSelectedSensorPosition());
-        double setPointDegrees = (360 * (SmartDashboard.getNumber("ArmSetPoint", 0.0))
-                / Constants.COUNTS_PER_REVOLUTION);
-        SmartDashboard.putNumber("SetPositonInDegrees", setPointDegrees);
-        double armPointDegrees = (360 * (SmartDashboard.getNumber("LeaderEncoderPosition", 0.0))
-                / Constants.COUNTS_PER_REVOLUTION);
-        SmartDashboard.putNumber("ActualPositionInDegrees", armPointDegrees);
+
+        double setAngle = getAngleFromPosition((SmartDashboard.getNumber("ArmSetPosition", 0.0)));
+        SmartDashboard.putNumber("SetPositonInDegrees", setAngle);
+
+        double actualAngle = getAngleFromPosition((SmartDashboard.getNumber("LeaderEncoderPosition", 0.0)));
+        SmartDashboard.putNumber("ActualPositionInDegrees", actualAngle);
+        // Angle (in 360) = 360 * ((ArmSetPosition / CountsPerRevolution) % 360)
+        // ArmSetPosition = (Angle/360) * CountsPerRevolution
+        // from degrees to position is ~11.377778
 
         armPose.calculateInstantaneousMaximums();
         setAndManageArmStates();
     }
+
+    public double getAngleFromPosition(double position) {
+        double angle =  (360 * (((position) / Constants.COUNTS_PER_REVOLUTION) % 360));
+        if (angle < -180) {
+            return angle + 360;
+        }
+        if (angle > 180) {
+            return angle - 360;
+        } else {
+            return angle;
+        }
+    }
+
+    public double getPositionFromAngle(double intendedAngle) {
+        double position = (intendedAngle/360) * Constants.COUNTS_PER_REVOLUTION;
+          return position;
+      }
 
     private void manageSetpoints() {
         int maxInstantaneousExtension = armPose.getArmLengthToHitConstraintNativeUnits();
