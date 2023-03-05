@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import frc.controls.AxisCode;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
+import frc.robot.commands.claw.OpenClawCommand;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.groups.EjectPieceCommand;
@@ -264,6 +265,7 @@ public class Robot extends TimedRobot {
       }
       loadTargetState = LoadTargetState.HPS;
     }));
+    GAMEPAD.getButton(ButtonCode.LEFTSTICK).whileTrue(new OpenClawCommand);
 
     // This should likely be part of driver control as well, but have to think about which button...
     GAMEPAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
