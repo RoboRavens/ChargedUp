@@ -2,7 +2,7 @@ package frc.robot.commands.claw;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
-import frc.util.StateManagementNew.ClawState;
+import frc.util.StateManagement.ClawState;
 
 public class OpenClawCommand extends CommandBase {
     public OpenClawCommand() {
@@ -14,9 +14,9 @@ public class OpenClawCommand extends CommandBase {
         initialize();
     }
 
-new 
-    public void () {
-    Robot.clawState = ClawState.OPEN;
+// new 
+    public void newMethod() {
+        Robot.clawState = ClawState.OPEN;
     }
 
     // TODO: Implement this command

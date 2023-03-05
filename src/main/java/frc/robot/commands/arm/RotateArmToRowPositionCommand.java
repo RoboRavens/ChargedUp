@@ -11,11 +11,6 @@ public class RotateArmToRowPositionCommand extends CommandBase {
         addRequirements(Robot.ARM_SUBSYSTEM);
     }
 
-    @Override
-    public void execute() {
-
-    }
-
     // TODO: Implement this command
     // Remember to update the arm rotation state
       // Called when the command is initially scheduled.
