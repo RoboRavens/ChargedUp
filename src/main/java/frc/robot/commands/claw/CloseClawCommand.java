@@ -7,6 +7,8 @@ public class CloseClawCommand extends CommandBase {
     public CloseClawCommand() {
         addRequirements(Robot.CLAW_SUBSYSTEM);
     }
-      // TODO: Implement this command
+
+    // TODO: Implement this command
+
     // Remember to update claw state
 }

@@ -8,12 +8,13 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.claw.CloseClawCommand;
-import frc.util.StateManagementNew.ClawState;
-import frc.util.StateManagementNew.LoadState;
-import frc.util.StateManagementNew.OverallState;
+import frc.util.StateManagement.ClawState;
+import frc.util.StateManagement.LoadState;
+import frc.util.StateManagement.OverallState;
 
 // TODO: Implement Claw Subsystem
 public class ClawSubsystem extends SubsystemBase {
@@ -57,20 +58,16 @@ public class ClawSubsystem extends SubsystemBase {
         rDoubleSolenoid.set(Value.kReverse);
     }
 
-    private void setClawStates() {
+    public void setAndManageClawStates() {
         // Sets the claw state
-        if (isOpen()) {
-            Robot.clawState = ClawState.OPEN;
-        }
-        else if (isClosed()) {
-            Robot.clawState = ClawState.CLOSED;
-        }
+        new Trigger(() -> isOpen()).whileTrue(new InstantCommand(() -> Robot.clawState = ClawState.OPEN));
+        new Trigger(() -> isClosed()).whileTrue(new InstantCommand(() -> Robot.clawState = ClawState.CLOSED));
         // Sets the load state
-        if (detectsGamePiece() && Robot.clawState == ClawState.CLOSED) {
-            Robot.loadState = LoadState.LOADED;
-        }
-        else if (detectsGamePiece()) {
-            new InstantCommand(() -> Robot.overallState = OverallState.LOADING).andThen(new CloseClawCommand()).andThen(new InstantCommand(() -> {
+        new Trigger(() -> detectsGamePiece() && Robot.clawState == ClawState.CLOSED).whileTrue(new InstantCommand(() -> Robot.loadState = LoadState.LOADED));
+        new Trigger(() -> detectsGamePiece() && Robot.clawState != ClawState.CLOSED).whileTrue(
+            new InstantCommand(() -> Robot.overallState = OverallState.LOADING)
+            .andThen(new CloseClawCommand())
+            .andThen(new InstantCommand(() -> {
                 // Check if the game piece was loaded successfully
                 if (detectsGamePiece() && isClosed()) {
                     Robot.overallState = OverallState.LOADED_TRANSIT;
@@ -88,6 +85,11 @@ public class ClawSubsystem extends SubsystemBase {
         setClawStates();
      //   if (Robot.clawState == ClawState.OPENING) {
      //      new robot.commands.OpenClawCommand();
+
+            })).withName("Close claw and update overall state")
+        );
+        new Trigger(() -> detectsGamePiece() == false).whileTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY));
+
     }
 }
 

@@ -46,10 +46,11 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("PoseX", pose.getX());
       SmartDashboard.putNumber("PoseY", pose.getY());
       SmartDashboard.putNumber("Rotation", pose.getRotation().getDegrees());
-    } else
+    } else {
       SmartDashboard.putNumber("PoseX", 0);
-    SmartDashboard.putNumber("PoseY", 0);
-    SmartDashboard.putNumber("Rotation", 0);
+      SmartDashboard.putNumber("PoseY", 0);
+      SmartDashboard.putNumber("Rotation", 0);
+    }
 
     if ((pose.getX() > 0 && pose.getY() > 0) && getTa() >= 0.2) {
       Robot.DRIVE_TRAIN_SUBSYSTEM.resetOdometry(pose);
@@ -70,6 +71,8 @@ public class LimelightSubsystem extends SubsystemBase {
     }
     return null;
   }
+
+
 
   // how many degrees back is your limelight rotated from perfectly vertical?
   double limelightMountAngleDegrees = 25.0;
