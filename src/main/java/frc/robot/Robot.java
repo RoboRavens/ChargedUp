@@ -51,6 +51,7 @@ import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.LimelightTrajectorySubsystem;
 import frc.robot.subsystems.TrajectoryTestingSubsystem;
+import frc.util.field.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -69,6 +70,8 @@ public class Robot extends TimedRobot {
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final Gamepad OP_PAD = new Gamepad(1);
+  public static final Gamepad OP_PAD_BUTTONS = new Gamepad(2);
+  public static final Gamepad OP_PAD_SWITCHES = new Gamepad(3);
   public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
   public static final ChargeStationBalancingCommand chargeStationBalancingCommand = new ChargeStationBalancingCommand();
   // public static GamePieceState gamePieceState = GamePieceState.CLEAR;
@@ -265,7 +268,7 @@ public class Robot extends TimedRobot {
       }
       loadTargetState = LoadTargetState.HPS;
     }));
-    GAMEPAD.getButton(ButtonCode.LEFTSTICK).whileTrue(new OpenClawCommand);
+    // GAMEPAD.getButton(ButtonCode.LEFTSTICK).whileTrue(new OpenClawCommand);
 
     // This should likely be part of driver control as well, but have to think about which button...
     GAMEPAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)

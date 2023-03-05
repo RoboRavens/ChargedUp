@@ -72,16 +72,21 @@ public class ClawSubsystem extends SubsystemBase {
                 if (detectsGamePiece() && isClosed()) {
                     Robot.overallState = OverallState.LOADED_TRANSIT;
                 }
-            })).schedule();
+            })));//.schedule());
             
+
+            /*
         }
         else {
             Robot.loadState = LoadState.EMPTY;
         }
+        */
     }
 
     @Override
     public void periodic() {
+
+        /* 
         setClawStates();
      //   if (Robot.clawState == ClawState.OPENING) {
      //      new robot.commands.OpenClawCommand();
@@ -89,7 +94,7 @@ public class ClawSubsystem extends SubsystemBase {
             })).withName("Close claw and update overall state")
         );
         new Trigger(() -> detectsGamePiece() == false).whileTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY));
-
+            */
     }
 }
 
