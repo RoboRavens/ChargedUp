@@ -17,7 +17,7 @@ public class ScorePieceCommand extends SequentialCommandGroup {
         addRequirements(Robot.CLAW_SUBSYSTEM, Robot.ARM_SUBSYSTEM);
         addCommands(
             new InstantCommand(() -> Robot.overallState = OverallState.SCORING),
-            // new OpenClawCommand(),
+            new OpenClawCommand(),
             new WaitCommand(3),
             new ParallelCommandGroup(
                 // new DrivetrainDefaultCommand(),

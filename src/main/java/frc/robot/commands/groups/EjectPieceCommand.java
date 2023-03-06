@@ -24,7 +24,7 @@ public class EjectPieceCommand extends SequentialCommandGroup {
         addCommands(
             // new RotateArmToRetrievalPositionCommand(LoadTargetState.GROUND),
             // new ExtendArmToRetrievalPositionCommand(LoadTargetState.GROUND),
-            // new OpenClawCommand(),
+            new OpenClawCommand(),
             new WaitCommand(3),
             // new RetractArmCommand(),
             new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT),

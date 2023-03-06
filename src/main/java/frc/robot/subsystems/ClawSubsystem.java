@@ -17,16 +17,6 @@ public class ClawSubsystem extends SubsystemBase {
         return false;
     }
 
-    // Returns true if the claw is open
-    // And false if the claw is closed
-    private boolean isOpen() {
-        return false;
-    }
-
-    private boolean isClosed() {
-        return false;
-    }
-
     public void open() {
         Robot.clawState = ClawState.OPENING;
     }
@@ -36,9 +26,6 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public void setAndManageClawStates() {
-        // Sets the claw state
-        new Trigger(() -> isOpen()).whileTrue(new InstantCommand(() -> Robot.clawState = ClawState.OPEN));
-        new Trigger(() -> isClosed()).whileTrue(new InstantCommand(() -> Robot.clawState = ClawState.CLOSED));
         // Sets the load state
         new Trigger(() -> detectsGamePiece() && Robot.clawState == ClawState.CLOSED).whileTrue(new InstantCommand(() -> Robot.loadState = LoadState.LOADED));
         new Trigger(() -> detectsGamePiece() && Robot.clawState != ClawState.CLOSED).whileTrue(
@@ -46,7 +33,7 @@ public class ClawSubsystem extends SubsystemBase {
             .andThen(new CloseClawCommand())
             .andThen(new InstantCommand(() -> {
                 // Check if the game piece was loaded successfully
-                if (detectsGamePiece() && isClosed()) {
+                if (detectsGamePiece()) {
                     Robot.overallState = OverallState.LOADED_TRANSIT;
                 }
             })).withName("Close claw and update overall state")

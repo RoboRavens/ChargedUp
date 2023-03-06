@@ -210,11 +210,11 @@ public class Robot extends TimedRobot {
         overallState = OverallState.FINAL_SCORING_ALIGNMENT;
       }
       else if (zoneState == ZoneState.ALLIANCE_LOADING_ZONE) {
-        Robot.overallState = OverallState.HPS_PICKUP;
+        Robot.drivetrainState = DrivetrainState.HPS_ALIGN;
       }
     }
     // Changes the overall state to empty or loaded transit when the trigger is released
-    else if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT || overallState == OverallState.HPS_PICKUP) {
+    else if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT || drivetrainState == DrivetrainState.HPS_ALIGN) {
       if (loadState == LoadState.LOADED) {
         overallState = OverallState.LOADED_TRANSIT;
       }
@@ -226,6 +226,10 @@ public class Robot extends TimedRobot {
     // This conditional is designed as such so it does not continuously set itself when a different overall state such as FINAL_SCORING_ALIGNMENT or SCORING is set.
     if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.overallState == OverallState.LOADED_TRANSIT) {
       Robot.overallState = OverallState.PREPARING_TO_SCORE;
+    }
+    // Sets the robot state to HPS_PICKUP only once when the robot does not have a piece and is in the alliance loading zone
+    if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.overallState == OverallState.EMPTY_TRANSIT) {
+      Robot.overallState = OverallState.HPS_PICKUP;
     }
   }
 
