@@ -10,15 +10,24 @@ public class OpenClawCommand extends CommandBase {
     }
 
     @Override
-    public void initialize() {
-        initialize();
+    public void execute() {
+        Robot.clawState = ClawState.OPENING;
+        // TODO: Implement this command
     }
 
-// new 
-    public void newMethod() {
+    @Override
+    public void end(boolean interrupted) {
         Robot.clawState = ClawState.OPEN;
     }
-
-    // TODO: Implement this command
-    // Remember to update claw state
+    
+    @Override
+    public boolean isFinished() {
+        try {
+            Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 }
