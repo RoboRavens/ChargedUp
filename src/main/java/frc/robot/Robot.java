@@ -97,6 +97,7 @@ public class Robot extends TimedRobot {
   public static ZoneState zoneState = ZoneState.NEUTRAL;
 
   public static FieldZones fieldZones = new FieldZones();
+  public static FieldSubzone fieldSubzone = FieldZones.noneSubzone;
 
   
   /**
@@ -116,18 +117,13 @@ public class Robot extends TimedRobot {
     ARM_SUBSYSTEM.setAndManageArmStates();
     CLAW_SUBSYSTEM.setAndManageClawStates();
     // Temp button bindings to simulate zone and claw state
+
     OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_LOADING_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));
     OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_COMMUNITY_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_COMMUNITY));
     OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_NEUTRAL_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.NEUTRAL));
     OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_OPPONENT_ZONES).onTrue(new InstantCommand(() -> zoneState = ZoneState.OPPONENT_COMMUNITY));
     OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_IS_LOADED).toggleOnTrue(new InstantCommand(() -> {loadState = LoadState.LOADED; overallState = OverallState.LOADED_TRANSIT;}));
     OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_IS_LOADED).toggleOnFalse(new InstantCommand(() -> {loadState = LoadState.EMPTY; overallState = OverallState.EMPTY_TRANSIT;}));
-
-
-    fieldZones.output();
-
-    // DELETE
-    System.out.println();
   }
 
   /**

@@ -45,6 +45,7 @@ import frc.util.SwerveModuleConverter;
 import frc.util.StateManagement.ClawState;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.ZoneState;
+import frc.util.field.FieldSubzone;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -53,6 +54,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.awt.geom.Point2D;
 
 import static frc.robot.RobotMap.*;
 
@@ -431,7 +433,14 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
   }
 
   private void setRobotZoneFromOdometry() {
-    // TODO: implement this method so it sets Robot.zoneState
+    Pose2d robotPose = getPose();
+
+    double robotX = robotPose.getX();
+    double robotY = robotPose.getY();
+    
+    Point2D robotPoint = new Point2D.Double(robotX, robotY);
+
+    Robot.fieldSubzone = Robot.fieldZones.getPointFieldZone(robotPoint);
   }
 
   public void resetOdometryCurrentPosition() {

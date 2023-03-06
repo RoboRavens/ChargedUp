@@ -1,6 +1,7 @@
 package frc.util.field;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 
@@ -40,6 +41,24 @@ public class FieldZone {
         boundingBox = new Rectangle2D.Double(southwestCorner.getX(), southwestCorner.getY(), width, height);
     }
 
+    public boolean containsPoint(Point2D point) {
+        return boundingBox.contains(point);
+    }
+
+    public FieldSubzone subzonesContainPoint(Point2D point) {
+        Optional<FieldSubzone> result =
+            subzones.stream().filter(subzone -> subzone.containsPoint(point) ).findFirst();
+        
+            System.out.println();
+        
+        if (result.isPresent()) {
+            return result.get();
+        }
+        else {
+            return null;
+        }
+    }
+
     public String getName() {
         return name;
     }
@@ -49,7 +68,6 @@ public class FieldZone {
         System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
         System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
         
-        System.out.println(" Bounding box: x: " + boundingBox.getX() + " y: " + boundingBox.getY() + " width: " + boundingBox.getWidth() + " height: " + boundingBox.getHeight());
         System.out.println();
         System.out.println();
     }
@@ -59,7 +77,6 @@ public class FieldZone {
         System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
         System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
         System.out.println();
-        // System.out.println(" Bounding box: x: " + boundingBox.getX() + " y: " + boundingBox.getY() + " width: " + boundingBox.getWidth() + " height: " + boundingBox.getHeight());
 
         for (FieldSubzone subzone : subzones) {
             subzone.output();
