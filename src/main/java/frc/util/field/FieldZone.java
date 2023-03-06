@@ -2,6 +2,10 @@ package frc.util.field;
 
 import java.util.ArrayList;
 import java.util.Optional;
+
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.util.field.FieldZones.FieldMacroZone;
+
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 
@@ -11,9 +15,13 @@ public class FieldZone {
     private Point2D southwestCorner;
     private Point2D northeastCorner;
     private Rectangle2D boundingBox;
+    private FieldMacroZone macroZone;
+    private Alliance zoneOwner;
 
     // Create a field zone, which must be initialized with at least one subzone.
-    public FieldZone(String name, FieldSubzone initialSubzone) {
+    public FieldZone(Alliance owner, FieldMacroZone macroZone, String name, FieldSubzone initialSubzone) {
+        this.zoneOwner = owner;
+        this.macroZone = macroZone;
         this.name = name;
         subzones.add(initialSubzone);
         this.southwestCorner = initialSubzone.getSouthwestCorner();
@@ -61,6 +69,14 @@ public class FieldZone {
 
     public String getName() {
         return name;
+    }
+
+    public FieldMacroZone getMacroZone() {
+        return macroZone;
+    }
+
+    public Alliance getZoneOwner() {
+        return zoneOwner;
     }
 
     public void output() {

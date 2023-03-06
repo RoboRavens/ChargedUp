@@ -2,80 +2,56 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.robot.commands.claw.CloseClawCommand;
 import frc.util.StateManagement.ClawState;
-import frc.util.StateManagement.LoadState;
-import frc.util.StateManagement.OverallState;
 
-// TODO: Implement Claw Subsystem
 public class ClawSubsystem extends SubsystemBase {
     PneumaticHub pneumaticHub = new PneumaticHub(0);
-    
-    DoubleSolenoid rDoubleSolenoid = new DoubleSolenoid(null, 1, 3) ;
-    DoubleSolenoid lDoubleSolenoid = new DoubleSolenoid(null, 5, 7) ;
+    DoubleSolenoid leftDoubleSolenoid = new DoubleSolenoid(null, 5, 7) ;
+    DoubleSolenoid rightDoubleSolenoid = new DoubleSolenoid(null, 1, 3) ;
     DigitalInput pieceSensor = new DigitalInput(RobotMap.PIECE_SENSOR);
- 
-    
-    // Returns true if the sensor detects a game piece
-    // And false if a game piece is not detected
+     
+    // Returns true if the sensor detects a game piece,
+    // and false if a game piece is not detected.
     public boolean detectsGamePiece() {
         if (pieceSensor.get()) {
-        return true;
-        } else {
-        return false;
+            return true;
+        }
+        else {
+            return false;
         }
     }
-  
+
+    // Returns true if the claw is open,
+    // and false if the claw is is in any other state.
+    public boolean isOpen() {   
+        return Robot.clawState == ClawState.OPEN;
+    }
+
+    public boolean isClosed() {
+        return Robot.clawState == ClawState.CLOSED; 
+    }
+
     public void open() {
-        Robot.clawState = ClawState.OPENING;
-        lDoubleSolenoid.set(Value.kForward);
-        rDoubleSolenoid.set(Value.kForward);
+        setClawState(ClawState.OPENING);
+        leftDoubleSolenoid.set(Value.kForward);
+        rightDoubleSolenoid.set(Value.kForward);
     }
 
     public void close() {
-        Robot.clawState = ClawState.CLOSING;
-        lDoubleSolenoid.set(Value.kReverse);
-        rDoubleSolenoid.set(Value.kReverse);
+        leftDoubleSolenoid.set(Value.kReverse);
+        rightDoubleSolenoid.set(Value.kReverse);
     }
 
-    public void setAndManageClawStates() {
-        // Sets the load state
-        new Trigger(() -> detectsGamePiece() && Robot.clawState == ClawState.CLOSED).whileTrue(new InstantCommand(() -> Robot.loadState = LoadState.LOADED));
-        new Trigger(() -> detectsGamePiece() && Robot.clawState != ClawState.CLOSED).whileTrue(
-            new InstantCommand(() -> Robot.overallState = OverallState.LOADING)
-            .andThen(new CloseClawCommand())
-            .andThen(new InstantCommand(() -> {
-                // Check if the game piece was loaded successfully
-                if (detectsGamePiece()) {
-                    Robot.overallState = OverallState.LOADED_TRANSIT;
-                }
-            })).withName("Close claw and update overall state")
-        );
-        new Trigger(() -> detectsGamePiece() == false).whileTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY));
+    public void setClawState(ClawState newState) {
+        Robot.clawState = newState;
     }
-    
 
     @Override
-    public void periodic() {
-
-        /* 
-        setClawStates();
-     //   if (Robot.clawState == ClawState.OPENING) {
-     //      new robot.commands.OpenClawCommand();
-
-            })).withName("Close claw and update overall state")
-        );
-        new Trigger(() -> detectsGamePiece() == false).whileTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY));
-            */
-    }
+    public void periodic() {}
 }
 

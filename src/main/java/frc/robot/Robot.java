@@ -5,12 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,11 +24,19 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.controls.AxisCode;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
-import frc.robot.commands.claw.OpenClawCommand;
+import frc.robot.commands.ArmGoToSetpointCommand;
+import frc.robot.commands.arm.ExtendArmToRetrievalPositionCommand;
+import frc.robot.commands.arm.ExtendArmToRowPositionCommand;
+import frc.robot.commands.arm.RetractArmCommand;
+import frc.robot.commands.arm.RotateArmToRetrievalPositionCommand;
+import frc.robot.commands.arm.RotateArmToRowPositionCommand;
+import frc.robot.commands.claw.ClawCloseCommand;
+import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.groups.EjectPieceCommand;
@@ -35,6 +46,7 @@ import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.util.StateManagement;
 import frc.util.StateManagement.ArmExtensionState;
 import frc.util.StateManagement.ArmRotationState;
 import frc.util.StateManagement.ClawState;
@@ -89,7 +101,7 @@ public class Robot extends TimedRobot {
   public static ArmExtensionState armExtensionState = ArmExtensionState.RETRACTED;
   public static PieceState pieceState = PieceState.NONE;
   public static LoadState loadState = LoadState.EMPTY;
-  public static LoadTargetState loadTargetState = LoadTargetState.HPS;
+  public static LoadTargetState loadTargetState = LoadTargetState.DOUBLE_SUBSTATION;
   public static DrivetrainState drivetrainState = DrivetrainState.FREEHAND;
   public static ClawState clawState = ClawState.CLOSED;
   public static LimelightState limelightState = LimelightState.TAG_TRACKING;
@@ -98,6 +110,7 @@ public class Robot extends TimedRobot {
 
   public static FieldZones fieldZones = new FieldZones();
   public static FieldSubzone fieldSubzone = FieldZones.noneSubzone;
+  public static DriverStation.Alliance allianceColor = Alliance.Invalid;
 
   
   /**
@@ -111,11 +124,11 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
     configureButtonBindings();
+    configureTriggers();
 
     GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory()));
     GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition()));
-    ARM_SUBSYSTEM.setAndManageArmStates();
-    CLAW_SUBSYSTEM.setAndManageClawStates();
+
     // Temp button bindings to simulate zone and claw state
 
     OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_LOADING_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));
@@ -135,6 +148,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    setDriverStationData();
+
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -154,6 +169,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Drivetrain State", drivetrainState.toString());
     SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand() == null ? "No command" : ARM_SUBSYSTEM.getCurrentCommand().getName());
     SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand() == null ? "No command" : CLAW_SUBSYSTEM.getCurrentCommand().getName());
+
+    setZoneStateFromFieldZone();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -168,6 +185,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    setDriverStationData();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -182,6 +200,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    setDriverStationData();
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -214,6 +234,11 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void setNonButtonDependentOverallStates() {
+    // Check the load state of the robot.
+    if (Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.CLOSED) {
+      Robot.loadState = LoadState.LOADED;
+    }
+
     // If the left trigger is pressed,
     // Set the overall state to either scoring alignment or hps pickup based on the zone state
     if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) {
@@ -221,11 +246,19 @@ public class Robot extends TimedRobot {
         overallState = OverallState.FINAL_SCORING_ALIGNMENT;
       }
       else if (zoneState == ZoneState.ALLIANCE_LOADING_ZONE) {
-        Robot.drivetrainState = DrivetrainState.HPS_ALIGN;
+        // This will put the drivetrain into vision-assisted alignment mode.
+        // Not sure yet if we should handle that here, or somewhere in the drive code.
+        Robot.drivetrainState = DrivetrainState.DOUBLE_SUBSTATION_ALIGN;
       }
     }
     // Changes the overall state to empty or loaded transit when the trigger is released
-    else if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT || drivetrainState == DrivetrainState.HPS_ALIGN) {
+    else if (
+        // When the trigger isn't pulled we should be in "normal" operation,
+        // but on the off chance the trigger is released during a special state,
+        // do not override that state. When the special states clear themselves,
+        // this if will go back to successfully setting the new state.
+        StateManagement.isManipulatingGamePiece(Robot.overallState, Robot.clawState) == false
+        && (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT || overallState == OverallState.DOUBLE_SUBSTATION_PICKUP)) {
       if (loadState == LoadState.LOADED) {
         overallState = OverallState.LOADED_TRANSIT;
       }
@@ -238,17 +271,18 @@ public class Robot extends TimedRobot {
     if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.overallState == OverallState.LOADED_TRANSIT) {
       Robot.overallState = OverallState.PREPARING_TO_SCORE;
     }
-    // Sets the robot state to HPS_PICKUP only once when the robot does not have a piece and is in the alliance loading zone
+
+    // Same thing but for preparing to collect a game piece when entering the loading zone.
     if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.overallState == OverallState.EMPTY_TRANSIT) {
-      Robot.overallState = OverallState.HPS_PICKUP;
+      Robot.overallState = OverallState.DOUBLE_SUBSTATION_PICKUP;
     }
   }
 
   private void configureButtonBindings() {
     // Driver controller
-    // If the release button is pressed and the robot is aligned with a scoring node, score the piece
+    // If the release button is pressed and the robot is aligned with a scoring node, score the piece.
     GAMEPAD.getButton(ButtonCode.Y).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
-    // Balance on the charge station while A is pressed
+    // Balance on the charge station while A is held.
     GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
     // When the floor intake button is pressed, update the states
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnTrue(new InstantCommand(() -> {
@@ -266,7 +300,7 @@ public class Robot extends TimedRobot {
       else {
         overallState = OverallState.LOADED_TRANSIT;
       }
-      loadTargetState = LoadTargetState.HPS;
+      loadTargetState = LoadTargetState.DOUBLE_SUBSTATION;
     }));
     // GAMEPAD.getButton(ButtonCode.LEFTSTICK).whileTrue(new OpenClawCommand);
 
@@ -278,7 +312,7 @@ public class Robot extends TimedRobot {
     OP_PAD.getButton(ButtonCode.SCORE_LOW).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
     OP_PAD.getButton(ButtonCode.SCORE_MID).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
     OP_PAD.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
-    OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.HPS));
+    OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.DOUBLE_SUBSTATION));
 
     // This looks correct to me but the ejection process is likely a bit more complicated than simply opening the claw; if the piece falls in the wrong spot, it could be bad.
     // We probably want a command group that handles piece ejection. This could include rotating the robot and/or the arm to ensure the piece falls neither inside the robot,
@@ -287,8 +321,99 @@ public class Robot extends TimedRobot {
     OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
   }
 
+  private void configureTriggers() {
+    // CLAW
+    // If the claw closes and we have a game piece, we're loaded.
+    // new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.CLOSED).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.LOADED));
+
+    // If the claw closes but we do NOT have a game piece, pickup failed, so open the claw again.
+    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false && Robot.clawState == ClawState.CLOSED).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY).andThen(new ClawOpenCommand()));
+    
+    // While the claw is open, check if we detect a game piece, and if we do, close the claw.
+    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN).onTrue(
+      new InstantCommand(() -> Robot.overallState = OverallState.LOADING)
+      .andThen(new ClawCloseCommand())
+      .andThen(new InstantCommand(() -> Robot.overallState = OverallState.LOADED_TRANSIT))
+    );
+    
+    // ARM
+    new Trigger(() -> Robot.overallState == OverallState.EJECTING).onTrue(new EjectPieceCommand());
+
+    // Extend and rotate the arm to the loading target
+    new Trigger(() -> Robot.loadState == LoadState.EMPTY && (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE || Robot.overallState == OverallState.GROUND_PICKUP))
+        .whileTrue(new RotateArmToRetrievalPositionCommand(Robot.loadTargetState)
+        .andThen(new ExtendArmToRetrievalPositionCommand(Robot.loadTargetState)).withName("Extend and rotate arm to loading target"));
+    
+    // Extend and rotate the arm to the scoring target
+    new Trigger(() -> Robot.loadState == LoadState.LOADED && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
+      .onTrue(new RotateArmToRowPositionCommand(Robot.scoringTargetState)
+      .andThen(new ExtendArmToRowPositionCommand(Robot.scoringTargetState)).withName("Extend and rotate arm to scoring target"));
+    
+    // Retract the arm and rotate it upwards if the robot
+    // - has just loaded
+    // - has just scored
+    // - is not in our alliance community or loading zone
+    new Trigger(() -> (Robot.overallState == OverallState.LOADED_TRANSIT && Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY) 
+                        || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
+                        || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
+      .onTrue(new ArmGoToSetpointCommand(Constants.ARM_FULL_RETRACT_SETPOINT).withName("Retract arm"));
+  }
+
+  private void setZoneStateFromFieldZone() {
+    FieldZone fieldZone = fieldSubzone.getFieldZone();
+    boolean allianceOwnsZone = allianceColor == fieldZone.getZoneOwner();
+
+    switch (fieldZone.getMacroZone()) {
+      case NONE:
+        zoneState = ZoneState.NONE;
+        break;
+      case NEUTRAL:
+          zoneState = ZoneState.NEUTRAL;
+          break;
+      case LOADING_ZONE:
+        if (allianceOwnsZone) {
+          zoneState = ZoneState.ALLIANCE_LOADING_ZONE;
+        }
+        else {
+          zoneState = ZoneState.OPPONENT_LOADING_ZONE;
+        }
+        break;
+      case COMMUNITY:
+        if (allianceOwnsZone) {
+          zoneState = ZoneState.ALLIANCE_COMMUNITY;
+        }
+        else {
+          zoneState = ZoneState.OPPONENT_COMMUNITY;
+        }
+        break;
+      case CHARGE_STATION:
+        if (allianceOwnsZone) {
+          zoneState = ZoneState.ALLIANCE_CHARGE_STATION;
+        }
+        else {
+          zoneState = ZoneState.OPPONENT_CHARGE_STATION;
+        }
+        break;
+    }
+  }
+
   private boolean isRobotReadyToScore() {
     // TODO: implement this method
+
+    // Components:
+    // Is robot in correct location
+    //    This could be either the proper pose,
+    //    or the correct angle if we end up using the tape
+    // Is arm in correct configuration (rotation and orientation)
     return true;
+  }
+
+  // Due to the manner in which the robot connects to the driver station,
+  // which differs between the shop and match play,
+  // this method needs to called both periodically AND in the auto/tele init methods.
+  private void setDriverStationData() {
+    if (allianceColor == Alliance.Invalid) {
+      allianceColor = DriverStation.getAlliance();
+    }
   }
 }

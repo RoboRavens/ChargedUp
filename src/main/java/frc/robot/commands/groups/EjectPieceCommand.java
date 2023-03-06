@@ -10,6 +10,7 @@ import frc.robot.commands.arm.RotateArmToRetrievalPositionCommand;
 import frc.robot.commands.arm.ExtendArmToRetrievalPositionCommand;
 import frc.robot.commands.arm.ExtendArmToRowPositionCommand;
 import frc.robot.commands.arm.RetractArmCommand;
+import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.claw.OpenClawCommand;
 import frc.util.StateManagement.ArmRotationState;
 import frc.util.StateManagement.LoadTargetState;

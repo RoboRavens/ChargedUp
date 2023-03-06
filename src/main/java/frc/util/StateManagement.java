@@ -6,7 +6,8 @@ public class StateManagement {
         EMPTY_TRANSIT,  // "Normal" state when the robot has no game piece (aka, not actively picking one up.)
         LOADED_TRANSIT, // "Normal" state when the robot has a game piece (aka, not scoring/preparing to score, ejecting, etc.)
         GROUND_PICKUP,  // While the robot is actively attempting to collect a piece from the ground.
-        HPS_PICKUP,     // While the robot is preparing to load a piece from the HPS.
+        SINGLE_SUBSTATION_PICKUP,   // While the robot is preparing to load a piece from the single substation.
+        DOUBLE_SUBSTATION_PICKUP,   // While the robot is preparing to load a piece from the double substation.
         LOADING, // When the robot does not have a piece but detects one (while claw is closing.)
         SCORING, // When the robot has a piece, the robot is positioned to score, and the driver intends to release it (while claw opens.)
         EJECTING, // When the robot has a piece and the driver intends to release it (while any ejection actions happen, such as the claw opening.)
@@ -14,10 +15,21 @@ public class StateManagement {
         FINAL_SCORING_ALIGNMENT // When the robot is checking final scoring conditions. If met, the game piece is ready to be released.
     }
 
+    public static boolean isManipulatingGamePiece(OverallState robotState, ClawState clawState) {
+        boolean manipulatingGamePiece = false;
+
+        if (robotState == OverallState.LOADING || robotState == OverallState.SCORING || robotState == OverallState.EJECTING || clawState == ClawState.OPENING || clawState == ClawState.CLOSING) {
+            manipulatingGamePiece = true;
+        }
+
+        return manipulatingGamePiece;
+    }
+
     // Set in the arm subsystem
     public enum ArmRotationState {
         UP,
-        HPS,
+        SINGLE_SUBSTATION,
+        DOUBLE_SUBSTATION,
         SCORE_HIGH,
         SCORE_MID,
         SCORE_LOW,
@@ -32,7 +44,8 @@ public class StateManagement {
     // Set in the arm subsystem
     public enum ArmExtensionState {
         RETRACTED,
-        HPS,
+        SINGLE_SUBSTATION,
+        DOUBLE_SUBSTATION,
         SCORE_HIGH,
         SCORE_MID,
         SCORE_LOW,
@@ -59,14 +72,16 @@ public class StateManagement {
 
     // Set in configureButtonBindings() in Robot.java
     public enum LoadTargetState {
-        HPS,
+        SINGLE_SUBSTATION,
+        DOUBLE_SUBSTATION,
         GROUND
     }
 
     // Set in the drivetrain subsystem
     public enum DrivetrainState {
         FREEHAND,   // Normal driving.
-        HPS_ALIGN,  // Yaw locked parallel to HPS, and translation auto-aligns to shelf.
+        SINGLE_SUBSTATION_ALIGN,  // Yaw locked parallel to single substation, and translation auto-aligns to chute.
+        DOUBLE_SUBSTATION_ALIGN,  // Yaw locked parallel to double substation, and translation auto-aligns to shelf.
         ACTIVELY_LOADING,   // All human control locked out (briefly, while claw closes.)
         FREEHAND_WITH_ROTATION_LOCK,    // Yaw locked parallel to grid, but no effect on translation.
         FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN, // Yaw locked and sideways translation delegated to limelight, but forward/backward accessible.
@@ -96,12 +111,13 @@ public class StateManagement {
     }
 
     public enum ZoneState {
+        NONE,
         ALLIANCE_LOADING_ZONE,
         ALLIANCE_COMMUNITY,
-        ALLIANCE_BRIDGE,
+        ALLIANCE_CHARGE_STATION,
         NEUTRAL,
         OPPONENT_LOADING_ZONE,
         OPPONENT_COMMUNITY,
-        OPPONENT_BRIDGE
+        OPPONENT_CHARGE_STATION
     }
 }

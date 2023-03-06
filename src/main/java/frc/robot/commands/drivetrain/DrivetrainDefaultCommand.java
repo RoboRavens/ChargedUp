@@ -77,7 +77,8 @@ public class DrivetrainDefaultCommand extends CommandBase {
             // TODO: set x to align with a scoring node based on limelight input
             x = 0;
         }
-        else if (Robot.drivetrainState == DrivetrainState.HPS_ALIGN) {
+        else if (Robot.overallState == OverallState.DOUBLE_SUBSTATION_PICKUP) {
+            Robot.drivetrainState = DrivetrainState.DOUBLE_SUBSTATION_ALIGN;
             // TODO: set the r and x value to align with a piece on the HPS
             x = 0;
             r = 0;
