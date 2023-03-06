@@ -1,7 +1,6 @@
 package frc.util.field;
 
 import java.util.ArrayList;
-import java.util.Optional;
 import java.awt.geom.Point2D;
 
 public class FieldZones {
@@ -170,9 +169,6 @@ public class FieldZones {
         }
 
         return robotFieldSubzone;
-
-//        Optional<FieldZone> result =
-//            fieldZones.stream().filter(fieldZone -> fieldZone.containsPoint(point) ).findFirst();
     }
 
     public void output() {
@@ -189,5 +185,4 @@ public class FieldZones {
     public FieldZone getNoneZone() {
         return noneZone;
     }
-    
 }

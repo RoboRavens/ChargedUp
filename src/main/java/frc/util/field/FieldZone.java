@@ -57,8 +57,6 @@ public class FieldZone {
         else {
             return null;
         }
-        
-        
     }
 
     public String getName() {
@@ -70,7 +68,6 @@ public class FieldZone {
         System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
         System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
         
-        System.out.println(" Bounding box: x: " + boundingBox.getX() + " y: " + boundingBox.getY() + " width: " + boundingBox.getWidth() + " height: " + boundingBox.getHeight());
         System.out.println();
         System.out.println();
     }
@@ -80,7 +77,6 @@ public class FieldZone {
         System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
         System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
         System.out.println();
-        // System.out.println(" Bounding box: x: " + boundingBox.getX() + " y: " + boundingBox.getY() + " width: " + boundingBox.getWidth() + " height: " + boundingBox.getHeight());
 
         for (FieldSubzone subzone : subzones) {
             subzone.output();

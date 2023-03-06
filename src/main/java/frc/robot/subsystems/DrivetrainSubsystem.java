@@ -437,17 +437,10 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
     double robotX = robotPose.getX();
     double robotY = robotPose.getY();
-
-    robotX = 12;
-    robotY = 6;
     
-
     Point2D robotPoint = new Point2D.Double(robotX, robotY);
 
-    FieldSubzone robotSubzone = Robot.fieldZones.getPointFieldZone(robotPoint);
-
-System.out.println();
-    // TODO: implement this method so it sets Robot.zoneState
+    Robot.fieldSubzone = Robot.fieldZones.getPointFieldZone(robotPoint);
   }
 
   public void resetOdometryCurrentPosition() {
