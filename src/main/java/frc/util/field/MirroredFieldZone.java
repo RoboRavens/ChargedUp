@@ -2,16 +2,19 @@ package frc.util.field;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.util.field.FieldZones.FieldMacroZone;
+
 public class MirroredFieldZone {
     private ArrayList<MirroredSubzone> mirroredSubzones = new ArrayList<MirroredSubzone>();
     private FieldZone blueFieldZone;
     private FieldZone redFieldZone;
 
-    public MirroredFieldZone(String zoneName, MirroredSubzone initialMirroredSubzone) {
-        blueFieldZone = new FieldZone("Blue " + zoneName, initialMirroredSubzone.getBlueSubzone());
+    public MirroredFieldZone(FieldMacroZone macroZone, String zoneName, MirroredSubzone initialMirroredSubzone) {
+        blueFieldZone = new FieldZone(Alliance.Blue, macroZone, "Blue " + zoneName, initialMirroredSubzone.getBlueSubzone());
         initialMirroredSubzone.getBlueSubzone().setFieldZone(blueFieldZone);
 
-        redFieldZone = new FieldZone("Red " + zoneName, initialMirroredSubzone.getRedSubzone());
+        redFieldZone = new FieldZone(Alliance.Red, macroZone, "Red " + zoneName, initialMirroredSubzone.getRedSubzone());
         initialMirroredSubzone.getRedSubzone().setFieldZone(redFieldZone);
     }
 

@@ -1,9 +1,21 @@
 package frc.util.field;
 
 import java.util.ArrayList;
+
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 import java.awt.geom.Point2D;
 
+
 public class FieldZones {
+    public enum FieldMacroZone {
+        NONE,
+        LOADING_ZONE,
+        COMMUNITY,
+        CHARGE_STATION,
+        NEUTRAL
+    }
+
     private ArrayList<FieldZone> fieldZones = new ArrayList<FieldZone>();
     private FieldZone blueCommunity;
     private FieldZone redCommunity;
@@ -100,7 +112,7 @@ public class FieldZones {
     
     public FieldZones() {
         // Communities.
-        MirroredFieldZone communityMirroredFieldZone = new MirroredFieldZone("Community", COMMUNITY_NORTHERN_SECTION_MIRRORED_SUBZONE);
+        MirroredFieldZone communityMirroredFieldZone = new MirroredFieldZone(FieldMacroZone.COMMUNITY, "Community", COMMUNITY_NORTHERN_SECTION_MIRRORED_SUBZONE);
             communityMirroredFieldZone.addMirroredSubzone(COMMUNITY_COOP_SECTION_MIRRORED_SUBZONE);
             communityMirroredFieldZone.addMirroredSubzone(COMMUNITY_SOUTHERN_SECTION_MIRRORED_SUBZONE);
             communityMirroredFieldZone.addMirroredSubzone(COMMUNITY_CHARGE_STATION_MIRRORED_SUBZONE);
@@ -113,7 +125,7 @@ public class FieldZones {
         fieldZones.add(redCommunity);
 
         // Loading zones.
-        MirroredFieldZone loadingZoneMirroredFieldZone = new MirroredFieldZone("Loading Zone", LOADING_ZONE_WIDE_SECTION_MIRRORED_SUBZONE);
+        MirroredFieldZone loadingZoneMirroredFieldZone = new MirroredFieldZone(FieldMacroZone.LOADING_ZONE, "Loading Zone", LOADING_ZONE_WIDE_SECTION_MIRRORED_SUBZONE);
             loadingZoneMirroredFieldZone.addMirroredSubzone(LOADING_ZONE_NARROW_SECTION_MIRRORED_SUBZONE);
 
         blueLoadingZone = loadingZoneMirroredFieldZone.getBlueFieldZone();
@@ -124,7 +136,7 @@ public class FieldZones {
         fieldZones.add(redLoadingZone);
 
         // Neutral zone.
-        neutralZone = new FieldZone("Neutral Zone", neutralZoneNarrowArea);
+        neutralZone = new FieldZone(Alliance.Invalid, FieldMacroZone.NEUTRAL, "Neutral Zone", neutralZoneNarrowArea);
         neutralZone.addSubzone(neutralZoneNorthernArea);
         neutralZone.addSubzone(neutralZoneSouthernArea);
         neutralZone.generateBoundingBox();
@@ -135,7 +147,7 @@ public class FieldZones {
         fieldZones.add(neutralZone);
 
         // The charge stations are a subzone of their respective communities, but also their own zones.
-        MirroredFieldZone chargeStationMirroredFieldZone = new MirroredFieldZone("Charge Station", COMMUNITY_CHARGE_STATION_MIRRORED_SUBZONE);
+        MirroredFieldZone chargeStationMirroredFieldZone = new MirroredFieldZone(FieldMacroZone.CHARGE_STATION, "Charge Station", COMMUNITY_CHARGE_STATION_MIRRORED_SUBZONE);
         blueChargeStation = chargeStationMirroredFieldZone.getBlueFieldZone();
         redChargeStation = chargeStationMirroredFieldZone.getRedFieldZone();
         blueChargeStation.generateBoundingBox();
@@ -144,7 +156,7 @@ public class FieldZones {
         fieldZones.add(redChargeStation);
 
         // Create the none zone.
-        noneZone = new FieldZone("None", noneSubzone);
+        noneZone = new FieldZone(Alliance.Invalid, FieldMacroZone.NONE, "None", noneSubzone);
         noneZone.generateBoundingBox();
         noneSubzone.setFieldZone(noneZone);
         fieldZones.add(noneZone);
