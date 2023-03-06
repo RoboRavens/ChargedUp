@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
-public class ChargeStationBalancingCommand extends CommandBase {
+public class DrivetrainChargeStationBalancingCommand extends CommandBase {
     private double xVelocity = 0; // in meters per second
 
-    public ChargeStationBalancingCommand() {
+    public DrivetrainChargeStationBalancingCommand() {
         addRequirements(Robot.DRIVE_TRAIN_SUBSYSTEM);
     }
 
