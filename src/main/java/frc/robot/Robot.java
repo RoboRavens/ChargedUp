@@ -248,6 +248,7 @@ public class Robot extends TimedRobot {
       else if (zoneState == ZoneState.ALLIANCE_LOADING_ZONE) {
         // This will put the drivetrain into vision-assisted alignment mode.
         // Not sure yet if we should handle that here, or somewhere in the drive code.
+        Robot.drivetrainState = DrivetrainState.DOUBLE_SUBSTATION_ALIGN;
       }
     }
     // Changes the overall state to empty or loaded transit when the trigger is released
