@@ -280,6 +280,10 @@ public class Robot extends TimedRobot {
 
   private void configureButtonBindings() {
     // Driver controller
+    GAMEPAD.getButton(ButtonCode.LEFTBUMPER)
+    .and(GAMEPAD.getButton(ButtonCode.RIGHTBUMPER))
+    .and(GAMEPAD.getButton(ButtonCode.Y))
+    .onTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.zeroGyroscope()));
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece.
     GAMEPAD.getButton(ButtonCode.Y).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
     // Balance on the charge station while A is held.
