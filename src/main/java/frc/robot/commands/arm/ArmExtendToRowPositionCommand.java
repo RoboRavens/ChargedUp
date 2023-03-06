@@ -5,8 +5,8 @@ import frc.robot.Robot;
 import frc.util.StateManagement.LoadTargetState;
 import frc.util.StateManagement.ScoringTargetState;
 
-public class ExtendArmToRowPositionCommand extends CommandBase {
-    public ExtendArmToRowPositionCommand(ScoringTargetState scoringTargetState) {
+public class ArmExtendToRowPositionCommand extends CommandBase {
+    public ArmExtendToRowPositionCommand(ScoringTargetState scoringTargetState) {
         addRequirements(Robot.ARM_SUBSYSTEM);
     }
     

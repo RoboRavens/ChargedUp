@@ -30,14 +30,14 @@ import frc.controls.AxisCode;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
 import frc.robot.commands.ArmGoToSetpointCommand;
-import frc.robot.commands.arm.ExtendArmToRetrievalPositionCommand;
-import frc.robot.commands.arm.ExtendArmToRowPositionCommand;
-import frc.robot.commands.arm.RetractArmCommand;
-import frc.robot.commands.arm.RotateArmToRetrievalPositionCommand;
-import frc.robot.commands.arm.RotateArmToRowPositionCommand;
+import frc.robot.commands.arm.ArmExtendToRetrievalPositionCommand;
+import frc.robot.commands.arm.ArmExtendToRowPositionCommand;
+import frc.robot.commands.arm.ArmRetractCommand;
+import frc.robot.commands.arm.ArmRotateToRetrievalPositionCommand;
+import frc.robot.commands.arm.ArmRotateToRowPositionCommand;
 import frc.robot.commands.claw.ClawCloseCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
-import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
+import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.groups.EjectPieceCommand;
 import frc.robot.commands.groups.ScorePieceCommand;
@@ -85,7 +85,7 @@ public class Robot extends TimedRobot {
   public static final Gamepad OP_PAD_BUTTONS = new Gamepad(2);
   public static final Gamepad OP_PAD_SWITCHES = new Gamepad(3);
   public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
-  public static final ChargeStationBalancingCommand chargeStationBalancingCommand = new ChargeStationBalancingCommand();
+  public static final DrivetrainChargeStationBalancingCommand chargeStationBalancingCommand = new DrivetrainChargeStationBalancingCommand();
   // public static GamePieceState gamePieceState = GamePieceState.CLEAR;
   // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
   // public static PieceRetrievalState pieceRetrievalState = PieceRetrievalState.CLEAR;
@@ -341,13 +341,13 @@ public class Robot extends TimedRobot {
 
     // Extend and rotate the arm to the loading target
     new Trigger(() -> Robot.loadState == LoadState.EMPTY && (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE || Robot.overallState == OverallState.GROUND_PICKUP))
-        .whileTrue(new RotateArmToRetrievalPositionCommand(Robot.loadTargetState)
-        .andThen(new ExtendArmToRetrievalPositionCommand(Robot.loadTargetState)).withName("Extend and rotate arm to loading target"));
+        .whileTrue(new ArmRotateToRetrievalPositionCommand(Robot.loadTargetState)
+        .andThen(new ArmExtendToRetrievalPositionCommand(Robot.loadTargetState)).withName("Extend and rotate arm to loading target"));
     
     // Extend and rotate the arm to the scoring target
     new Trigger(() -> Robot.loadState == LoadState.LOADED && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
-      .onTrue(new RotateArmToRowPositionCommand(Robot.scoringTargetState)
-      .andThen(new ExtendArmToRowPositionCommand(Robot.scoringTargetState)).withName("Extend and rotate arm to scoring target"));
+      .onTrue(new ArmRotateToRowPositionCommand(Robot.scoringTargetState)
+      .andThen(new ArmExtendToRowPositionCommand(Robot.scoringTargetState)).withName("Extend and rotate arm to scoring target"));
     
     // Retract the arm and rotate it upwards if the robot
     // - has just loaded

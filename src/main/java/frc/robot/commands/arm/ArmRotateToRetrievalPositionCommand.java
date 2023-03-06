@@ -4,9 +4,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.util.StateManagement.LoadTargetState;
 
-public class RotateArmToRetrievalPositionCommand extends CommandBase {
+public class ArmRotateToRetrievalPositionCommand extends CommandBase {
     
-    public RotateArmToRetrievalPositionCommand(LoadTargetState ground) {
+    public ArmRotateToRetrievalPositionCommand(LoadTargetState ground) {
         addRequirements(Robot.ARM_SUBSYSTEM);
     }
 

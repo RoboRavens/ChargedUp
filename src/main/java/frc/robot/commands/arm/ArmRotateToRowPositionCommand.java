@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.util.StateManagement.ScoringTargetState;
 
-public class RotateArmToRowPositionCommand extends CommandBase {
+public class ArmRotateToRowPositionCommand extends CommandBase {
 
-    public RotateArmToRowPositionCommand(ScoringTargetState scoringTargetState) {
+    public ArmRotateToRowPositionCommand(ScoringTargetState scoringTargetState) {
         addRequirements(Robot.ARM_SUBSYSTEM);
     }
 
