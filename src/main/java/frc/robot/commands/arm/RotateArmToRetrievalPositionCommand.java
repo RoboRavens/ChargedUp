@@ -12,4 +12,27 @@ public class RotateArmToRetrievalPositionCommand extends CommandBase {
 
     // TODO: Implement this command
     // Remember to update the arm state
+      // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    System.out.println("default position command run");
+    Robot.ARM_SUBSYSTEM.motionMagic();
+
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    Robot.ARM_SUBSYSTEM.setArmPosition(90, 3000, 800);
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }
