@@ -1,11 +1,13 @@
 package frc.util;
 
+import frc.robot.Constants;
+
 public class ArmSetpoint {
     private String name;
-    private int extensionSetpoint;
-    private int rotationSetpoint;
+    private double extensionSetpoint;
+    private double rotationSetpoint;
 
-    public ArmSetpoint(String name, int extensionSetpoint, int rotationSetpoint) {
+    public ArmSetpoint(String name, double extensionSetpoint, double rotationSetpoint) {
         this.name = name;
         this.extensionSetpoint = extensionSetpoint;
         this.rotationSetpoint = rotationSetpoint;
@@ -15,11 +17,15 @@ public class ArmSetpoint {
         return name;
     }
     
-    public int getExtensionSetpoint() {
+    public double getExtensionSetpoint() {
         return extensionSetpoint;
     }
 
-    public int getRotationSetpoint() {
+    public double getRotationSetpoint() {
         return rotationSetpoint;
+    }
+
+    public double getRotationSetpointDegrees() {
+        return rotationSetpoint / Constants.ARM_DEGREES_TO_ENCODER_UNITS;
     }
 }

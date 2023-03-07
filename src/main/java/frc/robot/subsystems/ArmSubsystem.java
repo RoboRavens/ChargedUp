@@ -9,81 +9,90 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
-import frc.robot.Robot;
-import frc.robot.commands.arm.ArmRotateToRetrievalPositionCommand;
-import frc.robot.commands.arm.ArmRotateToRowPositionCommand;
-import frc.robot.commands.groups.EjectPieceCommand;
-import frc.robot.commands.arm.ArmExtendToRetrievalPositionCommand;
-import frc.robot.commands.arm.ArmExtendToRowPositionCommand;
-import frc.robot.commands.arm.ArmRetractCommand;
-import frc.util.StateManagement.LoadState;
-import frc.util.StateManagement.LoadTargetState;
-import frc.util.StateManagement.OverallState;
-import frc.util.StateManagement.ScoringTargetState;
-import frc.util.StateManagement.ZoneState;
+import frc.robot.RobotMap;
 import frc.util.ArmPose;
+import frc.util.ArmSetpoint;
 
 public class ArmSubsystem extends SubsystemBase {
-    public WPI_TalonFX motor1 = new WPI_TalonFX(10);
-    public WPI_TalonFX motor2 = new WPI_TalonFX(11);
-    public WPI_TalonSRX motorsLeader = new WPI_TalonSRX(12);
+    public WPI_TalonFX rotationMotor1 = new WPI_TalonFX(RobotMap.ARM_ROTATION_MOTOR_1);
+    public WPI_TalonFX rotationMotor2 = new WPI_TalonFX(RobotMap.ARM_ROTATION_MOTOR_2);
+    public WPI_TalonSRX rotationMotorsLeader = new WPI_TalonSRX(RobotMap.ARM_ROTATION_MOTOR_LEADER);
+    public WPI_TalonFX extensionMotor = new WPI_TalonFX(RobotMap.ARM_EXTENSION_MOTOR);
 
     public PIDController pidController;
     CommandXboxController _controller;
 
-    public double _armPosition;
-    public double _armVelocity;
-    public double _armAcceleration;
+    public double _armRotationPosition;
+    public double _armRotationVelocity;
+    public double _armRotationAcceleration;
 
     private ArmPose armPose = new ArmPose();
-    private int armRotationFinalTarget = 0;
-    private int armRotationInstantaneousTarget = 0;
-    private int armExtensionFinalTarget = 0;
-    private int armExtensionInstantaneousTarget = 0;
+    private double armRotationFinalTarget = 0;
+    private double armRotationInstantaneousTarget = 0;
+    private double armExtensionFinalTarget = 0;
+    private double armExtensionInstantaneousTarget = 0;
 
     public ArmSubsystem() {
         // configures motion magic setup
-        motorsLeader.configFactoryDefault();
-        motor1.configFactoryDefault();
-        motor2.configFactoryDefault(100);
-        motorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
+        rotationMotorsLeader.configFactoryDefault();
+        rotationMotor1.configFactoryDefault();
+        rotationMotor2.configFactoryDefault(100);
+        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
                 Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        motorsLeader.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-        motorsLeader.config_kF(Constants.kSlotIdx, Constants.kGains.kF, Constants.kTimeoutMs);
-        motorsLeader.config_kP(Constants.kSlotIdx, Constants.kGains.kP, Constants.kTimeoutMs);
-        motorsLeader.config_kI(Constants.kSlotIdx, Constants.kGains.kI, Constants.kTimeoutMs);
-        motorsLeader.config_kD(Constants.kSlotIdx, Constants.kGains.kD, Constants.kTimeoutMs);
-        motorsLeader.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        motor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        motor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotorsLeader.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
+        rotationMotorsLeader.config_kF(Constants.kSlotIdx, Constants.kGains.kF, Constants.kTimeoutMs);
+        rotationMotorsLeader.config_kP(Constants.kSlotIdx, Constants.kGains.kP, Constants.kTimeoutMs);
+        rotationMotorsLeader.config_kI(Constants.kSlotIdx, Constants.kGains.kI, Constants.kTimeoutMs);
+        rotationMotorsLeader.config_kD(Constants.kSlotIdx, Constants.kGains.kD, Constants.kTimeoutMs);
+        rotationMotorsLeader.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
         // configures following
-        motorsLeader.setInverted(false);
-        motor2.follow(motorsLeader);
-        motor2.setInverted(InvertType.FollowMaster);
-        motor1.follow(motorsLeader);
-        motor1.setInverted(InvertType.FollowMaster);
+        rotationMotorsLeader.setInverted(false);
+        rotationMotor2.follow(rotationMotorsLeader);
+        rotationMotor2.setInverted(InvertType.FollowMaster);
+        rotationMotor1.follow(rotationMotorsLeader);
+        rotationMotor1.setInverted(InvertType.FollowMaster);
     }
 
-    public void setArmPosition(double _armAngle, double _armVelocity, double _armAcceleration) {
+    public void setFinalTargetPositions(ArmSetpoint armSetpoint) {
+        armRotationFinalTarget = armSetpoint.getRotationSetpoint();
+        armExtensionFinalTarget = armSetpoint.getExtensionSetpoint();
+    }
+
+    public void setArmRotationAngularPosition(double _armAngle, double _armVelocity, double _armAcceleration) {
         //replace _armPosition with getPositionFromAngle(_armPosition) so that _armPosition can just be an angle
-        if (getPositionFromAngle(_armAngle) - (motorsLeader.getSelectedSensorPosition()) < 0) {
-          motorsLeader.configMotionCruiseVelocity(_armVelocity * -1, Constants.kTimeoutMs);
+        if (getPositionFromAngle(_armAngle) - (rotationMotorsLeader.getSelectedSensorPosition()) < 0) {
+          rotationMotorsLeader.configMotionCruiseVelocity(_armVelocity * -1, Constants.kTimeoutMs);
         }
-        if (getPositionFromAngle(_armAngle) - (motorsLeader.getSelectedSensorPosition()) > 0) {
-          motorsLeader.configMotionCruiseVelocity(_armVelocity, Constants.kTimeoutMs);
+        if (getPositionFromAngle(_armAngle) - (rotationMotorsLeader.getSelectedSensorPosition()) > 0) {
+          rotationMotorsLeader.configMotionCruiseVelocity(_armVelocity, Constants.kTimeoutMs);
         }
     
-        motorsLeader.configMotionAcceleration(_armAcceleration, Constants.kTimeoutMs);
-        motorsLeader.set(ControlMode.Position, getPositionFromAngle(_armAngle));
+        rotationMotorsLeader.configMotionAcceleration(_armAcceleration, Constants.kTimeoutMs);
+        rotationMotorsLeader.set(ControlMode.Position, getPositionFromAngle(_armAngle));
         SmartDashboard.putNumber("ArmSetPosition", getPositionFromAngle(_armAngle));
-      }
+    }
+
+    public void setArmRotationPosition(double setpoint, double rotationVelocity, double rotationAcceleration) {
+        rotationMotorsLeader.configMotionCruiseVelocity(rotationVelocity, Constants.kTimeoutMs);
+        rotationMotorsLeader.configMotionAcceleration(rotationAcceleration, Constants.kTimeoutMs);
+        rotationMotorsLeader.set(ControlMode.Position, setpoint);
+        SmartDashboard.putNumber("ArmRotationPosition", setpoint);
+    }
+
+    public void setArmExtensionPosition(double setpoint, double extensionVelocity, double extensionAcceleration) {
+        extensionMotor.configMotionCruiseVelocity(extensionVelocity, Constants.kTimeoutMs);
+        extensionMotor.configMotionAcceleration(extensionAcceleration, Constants.kTimeoutMs);
+        extensionMotor.set(ControlMode.Position, setpoint);
+        SmartDashboard.putNumber("ArmExtensionPosition", setpoint);
+    }
 
     public void stopArm() {
-        motorsLeader.setVoltage(0);
+        rotationMotorsLeader.setVoltage(0);
     }
 
     public void motionMagic() {
@@ -98,11 +107,19 @@ public class ArmSubsystem extends SubsystemBase {
         pidController.getD();
     }
 
+    public double getCommandTimeoutSeconds() {
+        double rotationDifference = Math.abs(rotationMotorsLeader.getSelectedSensorPosition() - armRotationFinalTarget);
+        double extensionDifference = Math.abs(extensionMotor.getSelectedSensorPosition() - armExtensionFinalTarget);
+
+        return 0;
+        // double rotationTime = rotationDifference / ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND;
+    }
+
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("LeaderEncoderPosition", motorsLeader.getSelectedSensorPosition());
-        SmartDashboard.putNumber("motor1position", motor1.getSelectedSensorPosition());
-        SmartDashboard.putNumber("motor2position", motor2.getSelectedSensorPosition());
+        SmartDashboard.putNumber("LeaderEncoderPosition", rotationMotorsLeader.getSelectedSensorPosition());
+        SmartDashboard.putNumber("motor1position", rotationMotor1.getSelectedSensorPosition());
+        SmartDashboard.putNumber("motor2position", rotationMotor2.getSelectedSensorPosition());
 
         double setAngle = getAngleFromPosition((SmartDashboard.getNumber("ArmSetPosition", 0.0)));
         SmartDashboard.putNumber("SetPositonInDegrees", setAngle);
@@ -114,6 +131,10 @@ public class ArmSubsystem extends SubsystemBase {
         // from degrees to position is ~11.377778
 
         armPose.calculateInstantaneousMaximums();
+    }
+
+    public double getCurrentAngleDegrees() {
+        return rotationMotorsLeader.getSelectedSensorPosition() / Constants.COUNTS_PER_REVOLUTION;
     }
 
     public double getAngleFromPosition(double position) {
@@ -140,5 +161,16 @@ public class ArmSubsystem extends SubsystemBase {
 
     private void setExtensionTarget(int encoderNativeUnits) {
         this.armExtensionFinalTarget = encoderNativeUnits;
+    }
+
+    private void setRotationTarget(int encoderNativeUnits) {
+        this.armRotationFinalTarget = encoderNativeUnits;
+    }
+    public double getArmRotationInstantaneousTarget() {
+        return armRotationInstantaneousTarget;
+    }
+
+    public double getArmExtensionInstantaneousTarget() {
+        return armExtensionInstantaneousTarget;
     }
 }
