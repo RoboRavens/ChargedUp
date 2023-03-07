@@ -12,6 +12,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.OverallState;
+import edu.wpi.first.math.MathUtil;
 
 public class DrivetrainDefaultCommand extends CommandBase {
     private boolean _followLimelight = false;
@@ -69,11 +70,11 @@ public class DrivetrainDefaultCommand extends CommandBase {
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
         if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
             Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
-            r = getRValueSquareWithField();
+            r = getAngularVelocityForScoringAlign();
         }
         else if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
             Robot.drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;
-            r = getRValueSquareWithField();
+            r = getAngularVelocityForScoringAlign();
             // TODO: set x to align with a scoring node based on limelight input
             x = 0;
         }
@@ -120,9 +121,11 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
     }
 
-    private double getRValueSquareWithField() {
-        // TODO: retrieve the R value for the drivetrain that allows the robot to square with the field
-        return 0;
+    private double getAngularVelocityForScoringAlign() {
+        // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
+        double currentRotationOffset = MathUtil.angleModulus(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians());
+        // This will need to be tested (does it over/undershoot the target? May need to use PID)
+        return currentRotationOffset / Math.PI * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * -1; // angular velocity
     }
 
     @Override
