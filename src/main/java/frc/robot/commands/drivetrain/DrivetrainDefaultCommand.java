@@ -17,7 +17,7 @@ import edu.wpi.first.math.MathUtil;
 public class DrivetrainDefaultCommand extends CommandBase {
     private boolean _followLimelight = false;
     private boolean _autoSteer = true;
-    private PIDController _followLimelightPID = new PIDController(.13, 0, 0);
+    private PIDController _scoringRotationAlignPID = new PIDController(.13, 0, 0);
     private PIDController _autoSteerPID = new PIDController(.035, 0, 0);
 
     public DrivetrainDefaultCommand() {
@@ -118,14 +118,13 @@ public class DrivetrainDefaultCommand extends CommandBase {
                 )
             );
         }
-
     }
 
     private double getAngularVelocityForScoringAlign() {
         // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
         double currentRotationOffset = MathUtil.angleModulus(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians());
-        // This will need to be tested (does it over/undershoot the target? May need to use PID)
-        return currentRotationOffset / Math.PI * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * -1; // angular velocity
+        // This will need to be tested
+        return _scoringRotationAlignPID.calculate(currentRotationOffset); // angular velocity
     }
 
     @Override
