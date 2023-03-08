@@ -12,7 +12,7 @@ public class ArmPose {
     private double armLengthToHitConstraintNativeUnits;
     private double armRotationMinimumBoundNativeUnits;
     private double armRotationMaximumBoundNativeUnits;
-    
+
     // We can either remove these or uncomment the getters
     // if we want to set them and use them for diagnostic data.
     private double armRotationMinimumBoundDegrees;
@@ -44,6 +44,7 @@ public class ArmPose {
         this.armRotationMinimumBoundNativeUnits = window.getLowerBound() * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
         this.armRotationMaximumBoundDegrees = window.getUpperBound();
         this.armRotationMaximumBoundNativeUnits = window.getUpperBound() * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+
     }
 
     public static AngularConstraintWindow getMaxRotationAngularConstraintWindow(double armExtensionInches, double angleDegrees) {
@@ -179,6 +180,14 @@ public class ArmPose {
     public void setArmAngleDegrees(double armAngleDegrees) {
         this.armAngleDegrees = armAngleDegrees;
         this.armAngleRadians = Math.toRadians(armAngleDegrees);
+    }
+
+    public double getArmRotationMinimumBoundNativeUnits() {
+        return armRotationMinimumBoundNativeUnits;
+    }
+
+    public double getArmRotationMaximumBoundNativeUnits() {
+        return armRotationMaximumBoundNativeUnits;
     }
 /*
     public double getArmNetLengthInches() {

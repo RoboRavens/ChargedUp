@@ -63,6 +63,24 @@ public class ArmSubsystem extends SubsystemBase {
         armExtensionFinalTarget = armSetpoint.getExtensionSetpoint();
     }
 
+    public void updateFinalTargetPositions() {
+        // Length only has one constraint (maximum) so just min the constraint and the target.
+        armExtensionFinalTarget = Math.min(armExtensionFinalTarget, armPose.getArmLengthToHitConstraintNativeUnits());
+
+        // Rotation is slightly trickier since it has constraints in either direction.
+        // First, figure out which way the arm is rotating by checking the difference between the target and the actual.
+        // Then, find the constraint that is in the proper direction relative to the current position out of the two constraints.
+        // Remember to use max instead of min when looking at bounds that are lower than the current value.
+        if (_armRotationPosition < armRotationFinalTarget) {
+            // The arm is moving forward.
+            armRotationFinalTarget = Math.min(armRotationFinalTarget, armPose.getArmRotationMaximumBoundNativeUnits());
+        }
+        else {
+            // The arm is moving backward.
+            armRotationFinalTarget = Math.max(armRotationFinalTarget, armPose.getArmRotationMinimumBoundNativeUnits());
+        }
+    }
+
     public void setArmRotationAngularPosition(double _armAngle, double _armVelocity, double _armAcceleration) {
         //replace _armPosition with getPositionFromAngle(_armPosition) so that _armPosition can just be an angle
         if (getPositionFromAngle(_armAngle) - (rotationMotorsLeader.getSelectedSensorPosition()) < 0) {
@@ -132,6 +150,7 @@ public class ArmSubsystem extends SubsystemBase {
         // from degrees to position is ~11.377778
 
         armPose.calculateInstantaneousMaximums();
+        this.updateFinalTargetPositions();
     }
 
     public double getCurrentAngleDegrees() {
