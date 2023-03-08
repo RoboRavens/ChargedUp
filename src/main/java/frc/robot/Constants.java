@@ -6,7 +6,7 @@ package frc.robot;
 
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.util.ArmSetpoint;
+import frc.util.arm.ArmSetpoint;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -68,6 +68,15 @@ public final class Constants {
   public static final double SAFETY_MARGIN_INCHES = 1;
   public static final double ARM_EXTENSION_PER_UNIT = Constants.ARM_EXTENDED_LENGTH_INCHES / Constants.ARM_MAX_EXTENSION_ENCODER_UNITS;
 
+  // Used for torque calculations because the claw is light, so extending it adds minimal torque.
+  public static final double ARM_BASE_LENGTH_CLAW_OPEN_INCHES = 26.353;
+  public static final double ARM_EXTENDED_LENGTH_CLAW_OPEN_INCHES = 66.353;
+
+  // When the claw is retracted, it's "0% extended" in terms of encoder ticks,
+  // but it still has some non-zero percent of its max length, because it physically exists.
+  // This constant is that percent of the max length.
+  public static final double ARM_MINIMUM_EXTENSION_RATIO = ARM_BASE_LENGTH_CLAW_OPEN_INCHES / ARM_EXTENDED_LENGTH_CLAW_OPEN_INCHES;
+
   // Calculate the limits for horizontal and vertical expansion based on the fulcrum's location.
   public static final double VERTICAL_EXPANSION_ROOM = Constants.MAX_TELEOP_HEIGHT_INCHES - Constants.SAFETY_MARGIN_INCHES;
   public static final double HORIZONTAL_EXPANSION_ROOM = Constants.FULCRUM_TO_FRAME_INCHES + Constants.MAX_TELEOP_HORIZONTAL_EXTENSION_INCHES - Constants.SAFETY_MARGIN_INCHES;
@@ -113,6 +122,23 @@ public final class Constants {
   public static final ArmSetpoint ARM_SCORE_CUBE_MID_SETPOINT = new ArmSetpoint("Score Cube Mid", ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT, ARM_SCORE_CUBE_MID_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_SCORE_CONE_HIGH_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_SCORE_CUBE_HIGH_SETPOINT = new ArmSetpoint("Score Cube High", ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT);
+
+  public static final double ARM_ROTATION_VELOCITY = 3000;
+  public static final double ARM_ROTATION_ACCELERATION = 800;
+  public static final double ARM_EXTENSION_VELOCITY = 1000;
+  public static final double ARM_EXTENION_ACCELERATION = 100;
+
+  public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
+  public static final double ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
+  public static final double ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 2000;
+  public static final double ARM_EXTENSION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 1000;
+  public static final double ARM_ROTATION_TIMEOUT_BASE_VALUE = .25;
+  public static final double ARM_EXTENSION_TIMEOUT_BASE_VALUE = .25;
+  
+  public static final double EXTENSION_UPRIGHT_EMPTY_AFF = .1;
+  public static final double EXTENSION_UPRIGHT_LOADED_AFF = .11;
+  public static final double ROTATION_SIDEWAYS_EMPTY_AFF = .2;
+  public static final double ROTATION_SIDEWAYS_LOADED_AFF = .21;
 
   // CLAW
   public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
