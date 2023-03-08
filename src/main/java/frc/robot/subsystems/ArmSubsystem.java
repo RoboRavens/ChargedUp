@@ -3,11 +3,15 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,17 +22,18 @@ import frc.util.arm.ArmPose;
 import frc.util.arm.ArmSetpoint;
 
 public class ArmSubsystem extends SubsystemBase {
-    public WPI_TalonFX rotationMotor1 = new WPI_TalonFX(RobotMap.ARM_ROTATION_MOTOR_1);
-    public WPI_TalonFX rotationMotor2 = new WPI_TalonFX(RobotMap.ARM_ROTATION_MOTOR_2);
-    public WPI_TalonSRX rotationMotorsLeader = new WPI_TalonSRX(RobotMap.ARM_ROTATION_MOTOR_LEADER);
-    public WPI_TalonFX extensionMotor = new WPI_TalonFX(RobotMap.ARM_EXTENSION_MOTOR);
+    private WPI_TalonFX rotationMotor1 = new WPI_TalonFX(RobotMap.ARM_ROTATION_MOTOR_1);
+    private WPI_TalonFX rotationMotor2 = new WPI_TalonFX(RobotMap.ARM_ROTATION_MOTOR_2);
+    private WPI_TalonSRX rotationMotorsLeader = new WPI_TalonSRX(RobotMap.ARM_ROTATION_MOTOR_LEADER);
+    private WPI_TalonFX extensionMotor = new WPI_TalonFX(RobotMap.ARM_EXTENSION_MOTOR);
+    private DoubleSolenoid brakeDoubleSolenoid = new DoubleSolenoid(null, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
 
-    public PIDController pidController;
+    private PIDController pidController;
     CommandXboxController _controller;
 
-    public double _armRotationPosition;
-    public double _armRotationVelocity;
-    public double _armRotationAcceleration;
+    private double _armRotationPosition;
+    private double _armRotationVelocity;
+    private double _armRotationAcceleration;
 
     private ArmPose armPose = new ArmPose(Constants.ARM_STARTING_DEGREES);
     private double armRotationFinalTarget = 0;
@@ -61,6 +66,26 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotor2.setInverted(InvertType.FollowMaster);
         rotationMotor1.follow(rotationMotorsLeader);
         rotationMotor1.setInverted(InvertType.FollowMaster);
+
+        // Set limits. The rotation only has soft limits but the extension has a physical retraction limit switch.
+        rotationMotorsLeader.configForwardSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS, 0);
+        rotationMotorsLeader.configReverseSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS * -1, 0);
+        rotationMotorsLeader.configForwardSoftLimitEnable(true, 0);
+        rotationMotorsLeader.configReverseSoftLimitEnable(true, 0);
+
+        extensionMotor.configForwardSoftLimitThreshold(Constants.ARM_MAX_EXTENSION_ENCODER_UNITS, 0);
+        extensionMotor.configReverseSoftLimitThreshold(0, 0);
+        extensionMotor.configForwardSoftLimitEnable(true, 0);
+        extensionMotor.configReverseSoftLimitEnable(true, 0);
+        extensionMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+    }
+
+    public void brakeEnable() {
+        brakeDoubleSolenoid.set(Value.kForward);
+    }
+
+    public void brakeDisable() {
+        brakeDoubleSolenoid.set(Value.kReverse);
     }
 
     public void setFinalTargetPositions(ArmSetpoint armSetpoint) {
@@ -115,7 +140,22 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void stopArm() {
-        rotationMotorsLeader.setVoltage(0);
+        brakeEnable();
+
+        // This code will apply a constant voltage to the arm in order to fight backlash,
+        // but we probably don't want this running until the brake is hooked up and working.
+        // We may further want it on some kind of override later on,
+        // or perhaps an override that switches to a different default arm command
+        // that will seek a current position (if the brake is not online.)
+        /*
+        // Apply voltage in the direction that the arm is planning on going next.
+        if (armRotationFinalTarget > getCurrentRotationNativeUnits()) {
+            rotationMotorsLeader.setVoltage(Constants.ARM_BRAKE_ANTI_BACKLASH_VOLTAGE);
+        }
+        else {
+            rotationMotorsLeader.setVoltage(Constants.ARM_BRAKE_ANTI_BACKLASH_VOLTAGE * -1);
+        }
+        */
     }
 
     public void motionMagic() {

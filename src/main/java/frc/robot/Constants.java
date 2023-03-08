@@ -68,6 +68,10 @@ public final class Constants {
   public static final double SAFETY_MARGIN_INCHES = 1;
   public static final double ARM_EXTENSION_PER_UNIT = Constants.ARM_EXTENDED_LENGTH_INCHES / Constants.ARM_MAX_EXTENSION_ENCODER_UNITS;
 
+  // This is magnitude of the voltage output that will be applied to the arm rotation,
+  // while it is being held by the brake, to fight backlash upon brake release.
+  public static final double ARM_BRAKE_ANTI_BACKLASH_VOLTAGE = .5;
+
   // Used for torque calculations because the claw is light, so extending it adds minimal torque.
   public static final double ARM_BASE_LENGTH_CLAW_OPEN_INCHES = 26.353;
   public static final double ARM_EXTENDED_LENGTH_CLAW_OPEN_INCHES = 66.353;
@@ -98,6 +102,7 @@ public final class Constants {
   public static final int ARM_FULL_RETRACT_ROTATION_SETPOINT = (int) Math.round(ARM_FULL_RETRACT_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_GROUND_PICKUP_EXTENSION_SETPOINT = 0;
   public static final int ARM_GROUND_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_GROUND_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
+  public static final int ARM_ROTATION_MAXIMUM_ENCODER_UNITS = ARM_GROUND_PICKUP_ROTATION_SETPOINT;
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_EXTENSION_SETPOINT = 0;
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_EXTENSION_SETPOINT = 0;
