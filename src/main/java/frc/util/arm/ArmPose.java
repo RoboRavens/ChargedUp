@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.util;
+package frc.util.arm;
 
 import frc.robot.Constants;
 
@@ -10,9 +10,13 @@ public class ArmPose {
     private double armAngleDegrees;
     private double armAngleRadians;
     private double armLengthToHitConstraintNativeUnits;
+    private double armRotationMinimumBoundNativeUnits;
+    private double armRotationMaximumBoundNativeUnits;
     
     // We can either remove these or uncomment the getters
     // if we want to set them and use them for diagnostic data.
+    private double armRotationMinimumBoundDegrees;
+    private double armRotationMaximumBoundDegrees;
     private double armNetLengthInches;
     private double armNetHeightInches;
     private double armNetExtensionInches;
@@ -29,10 +33,74 @@ public class ArmPose {
     }
 
     public void calculateInstantaneousMaximums() {
-        calculateInstaneousMaxExtension();
+        calculateInstantaneousMaxRotation();
+        calculateInstantaneousMaxExtension();
     }
 
-    public void calculateInstaneousMaxExtension() {
+    public void calculateInstantaneousMaxRotation() {
+        AngularConstraintWindow window = getMaxRotationAngularConstraintWindow(armNetExtensionInches, armAngleDegrees);
+
+        this.armRotationMinimumBoundDegrees = window.getLowerBound();
+        this.armRotationMinimumBoundNativeUnits = window.getLowerBound() * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+        this.armRotationMaximumBoundDegrees = window.getUpperBound();
+        this.armRotationMaximumBoundNativeUnits = window.getUpperBound() * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+    }
+
+    public static AngularConstraintWindow getMaxRotationAngularConstraintWindow(double armExtensionInches, double angleDegrees) {
+        double armLengthInches = Constants.ARM_BASE_LENGTH_INCHES + armExtensionInches;
+
+        // Upper quadrants height constraint angle.
+        double remainingVerticalInches = Constants.VERTICAL_EXPANSION_ROOM - Constants.FULCRUM_HEIGHT_INCHES;
+        double sinOfHeightConstraintAngle = remainingVerticalInches / armLengthInches;
+        double heightConstraintAngle = Math.asin(sinOfHeightConstraintAngle);
+        double heightConstraintAngleDegrees = Math.toDegrees(heightConstraintAngle);
+
+        // Lower quadrants height constraint angle.
+        double remainingNegativeVerticalInches = Constants.FULCRUM_HEIGHT_INCHES - Constants.SAFETY_MARGIN_INCHES;
+        double sinOfNegativeHeightConstraintAngle = remainingNegativeVerticalInches / armLengthInches;
+        double lowerQuadrantsHeightConstraintAngle = Math.asin(sinOfNegativeHeightConstraintAngle);
+        double negativeHeightConstraintAngleDegrees = Math.toDegrees(lowerQuadrantsHeightConstraintAngle);
+
+        // Width constraint angle.
+        double cosOfWidthConstraintAngle = Constants.HORIZONTAL_EXPANSION_ROOM / armLengthInches;
+        double widthConstraintAngle = Math.acos(cosOfWidthConstraintAngle);
+        double widthConstraintAngleDegrees = Math.toDegrees(widthConstraintAngle);
+
+        // Lower quadrants width constraint angle.
+        double lowerQuadrantsWidthConstraintAngleDegrees = widthConstraintAngleDegrees + 90;
+
+        // Translate the raw angles to our coordinate system.
+        heightConstraintAngleDegrees = 90 - heightConstraintAngleDegrees;
+        negativeHeightConstraintAngleDegrees += 90;
+        widthConstraintAngleDegrees = 90 - widthConstraintAngleDegrees;
+
+        // Once we have all the constraints, create a window based on which quadrant the arm is actually in.
+        // Constraints in other quadrants are not relevant.
+        double finalWidthConstraintAngleDegrees = widthConstraintAngleDegrees;
+        double finalHeightConstraintAngleDegrees = heightConstraintAngleDegrees;
+
+        // Check if the arm is in a lower quadrant and if it is, use the lower quadrant limits.
+        if (Math.abs(angleDegrees) > 90) {
+            finalWidthConstraintAngleDegrees = lowerQuadrantsWidthConstraintAngleDegrees;
+            finalHeightConstraintAngleDegrees = negativeHeightConstraintAngleDegrees;
+        }
+
+        // If the arm is "backwards", just multiple by -1 since in our coordinate system the Y axis is 0.
+        if (angleDegrees < 0) {
+            finalWidthConstraintAngleDegrees  *= -1;
+            finalHeightConstraintAngleDegrees  *= -1;
+        }
+
+        
+        // Last step is to return the window.
+        AngularConstraintWindow window = new AngularConstraintWindow(Math.min(finalWidthConstraintAngleDegrees, finalHeightConstraintAngleDegrees), Math.max(finalWidthConstraintAngleDegrees, finalHeightConstraintAngleDegrees));
+
+        return window;
+    }
+
+
+
+    public void calculateInstantaneousMaxExtension() {
         ArmMaximumConstraint maxConstraintAtAngle = calculateMaxExtensionAtAngleDegrees(armAngleDegrees);
 
         this.armLengthToHitConstraintInches = maxConstraintAtAngle.getArmLengthToHitConstraintInches();

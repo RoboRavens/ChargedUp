@@ -1,4 +1,4 @@
-package frc.util;
+package frc.util.arm;
 
 public class ArmMaximumConstraint {
     private double armAngleDegrees;

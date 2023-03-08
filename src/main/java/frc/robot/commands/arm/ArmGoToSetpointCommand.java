@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.util.ArmMaximumConstraint;
-import frc.util.ArmPose;
-import frc.util.ArmSetpoint;
+import frc.util.arm.ArmMaximumConstraint;
+import frc.util.arm.ArmPose;
+import frc.util.arm.ArmSetpoint;
 
 public class ArmGoToSetpointCommand extends CommandBase {
   private ArrayList<ArmSetpoint> subSetpoints = new ArrayList<ArmSetpoint>();
@@ -23,7 +23,6 @@ public class ArmGoToSetpointCommand extends CommandBase {
   private Timer timer = new Timer();
   private double timeoutSeconds = 0;
   private ArmSetpoint currentSubSetpoint;
-
 
   public ArmGoToSetpointCommand(ArmSetpoint setpoint) {
     this.finalSetpoint = setpoint;
@@ -138,7 +137,6 @@ public class ArmGoToSetpointCommand extends CommandBase {
 
     boolean rotationIsFinished = rotationError < Constants.ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS;
     boolean extensionIsFinished = extensionError < Constants.ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS;
-
 
     return rotationIsFinished && extensionIsFinished;
   }

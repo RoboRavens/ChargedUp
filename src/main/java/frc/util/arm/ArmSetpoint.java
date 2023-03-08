@@ -1,4 +1,4 @@
-package frc.util;
+package frc.util.arm;
 
 import frc.robot.Constants;
 

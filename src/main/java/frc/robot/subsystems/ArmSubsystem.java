@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
-import frc.util.ArmPose;
-import frc.util.ArmSetpoint;
+import frc.util.arm.ArmPose;
+import frc.util.arm.ArmSetpoint;
 
 public class ArmSubsystem extends SubsystemBase {
     public WPI_TalonFX rotationMotor1 = new WPI_TalonFX(RobotMap.ARM_ROTATION_MOTOR_1);
@@ -135,7 +135,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public double getCurrentAngleDegrees() {
-        return rotationMotorsLeader.getSelectedSensorPosition() / Constants.COUNTS_PER_REVOLUTION;
+        return rotationMotorsLeader.getSelectedSensorPosition() / Constants.ARM_DEGREES_TO_ENCODER_UNITS;
     }
 
     public double getCurrentRotationNativeUnits() {
