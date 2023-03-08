@@ -319,6 +319,12 @@ public class Robot extends TimedRobot {
     OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
   }
 
+  // Checking for a cone specifically, as opposed to any game piece, is relevant
+  // since cones have weight and cubes mostly don't.
+  public static boolean hasCone() {
+    return loadState == LoadState.LOADED && pieceState == PieceState.CONE;
+  }
+
   private void configureTriggers() {
     // CLAW
     // If the claw closes and we have a game piece, we're loaded.

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.util.arm.ArmPose;
 import frc.util.arm.ArmSetpoint;
@@ -33,6 +35,9 @@ public class ArmSubsystem extends SubsystemBase {
     private double armRotationInstantaneousTarget = 0;
     private double armExtensionFinalTarget = 0;
     private double armExtensionInstantaneousTarget = 0;
+
+    private double extensionAFF = 0;
+    private double rotationAFF = 0;
 
     public ArmSubsystem() {
         // configures motion magic setup
@@ -98,14 +103,14 @@ public class ArmSubsystem extends SubsystemBase {
     public void setArmRotationPosition(double setpoint, double rotationVelocity, double rotationAcceleration) {
         rotationMotorsLeader.configMotionCruiseVelocity(rotationVelocity, Constants.kTimeoutMs);
         rotationMotorsLeader.configMotionAcceleration(rotationAcceleration, Constants.kTimeoutMs);
-        rotationMotorsLeader.set(ControlMode.Position, setpoint);
+        rotationMotorsLeader.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, rotationAFF);
         SmartDashboard.putNumber("ArmRotationPosition", setpoint);
     }
 
     public void setArmExtensionPosition(double setpoint, double extensionVelocity, double extensionAcceleration) {
         extensionMotor.configMotionCruiseVelocity(extensionVelocity, Constants.kTimeoutMs);
         extensionMotor.configMotionAcceleration(extensionAcceleration, Constants.kTimeoutMs);
-        extensionMotor.set(ControlMode.Position, setpoint);
+        extensionMotor.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, extensionAFF);
         SmartDashboard.putNumber("ArmExtensionPosition", setpoint);
     }
 
@@ -151,6 +156,45 @@ public class ArmSubsystem extends SubsystemBase {
 
         armPose.calculateInstantaneousMaximums();
         this.updateFinalTargetPositions();
+        this.updateAFFs();
+    }
+
+    public void updateAFFs() {
+        updateRotationAFF();
+        updateExtensionAFF();
+
+    }
+
+    public void updateRotationAFF() {
+        double extensionPercent = getExtensionPercentOfMaximumNativeUnits();
+        double armExtensionPercentTerm = (1 - Constants.ARM_MINIMUM_EXTENSION_RATIO) * extensionPercent;
+        double extensionScaling = Constants.ARM_MINIMUM_EXTENSION_RATIO + armExtensionPercentTerm;
+
+        double rotationScaling = Math.sin(Math.abs(armPose.getArmAngleRadians()));
+
+        double maxAFF = Constants.ROTATION_SIDEWAYS_EMPTY_AFF;
+
+        if (Robot.hasCone()) {
+            maxAFF = Constants.ROTATION_SIDEWAYS_LOADED_AFF;
+        }
+
+        rotationAFF = maxAFF * rotationScaling * extensionScaling;
+    }
+
+    public void updateExtensionAFF() {
+        double maxAFF = Constants.EXTENSION_UPRIGHT_EMPTY_AFF;
+
+        if (Robot.hasCone()) {
+            maxAFF = Constants.EXTENSION_UPRIGHT_LOADED_AFF;
+        }
+        
+        double rotationScaling = Math.sin(Math.abs(armPose.getArmAngleRadians()));
+
+        extensionAFF = maxAFF * rotationScaling;
+    }
+
+    public double getExtensionPercentOfMaximumNativeUnits() {
+        return this.getCurrentExtensionNativeUnits() / Constants.ARM_MAX_EXTENSION_ENCODER_UNITS;
     }
 
     public double getCurrentAngleDegrees() {
