@@ -119,9 +119,11 @@ public final class Constants {
   public static final double ARM_EXTENSION_VELOCITY = 1000;
   public static final double ARM_EXTENION_ACCELERATION = 100;
 
-  public static final double ARM_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
+  public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
+  public static final double ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
   public static final double ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 2000;
   public static final double ARM_EXTENSION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 1000;
+  public static final double ARM_ROTATION_TIMEOUT_BASE_VALUE = .25;
   public static final double ARM_EXTENSION_TIMEOUT_BASE_VALUE = .25;
   
 

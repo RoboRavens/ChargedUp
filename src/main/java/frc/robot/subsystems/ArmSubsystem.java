@@ -28,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
     public double _armRotationVelocity;
     public double _armRotationAcceleration;
 
-    private ArmPose armPose = new ArmPose();
+    private ArmPose armPose = new ArmPose(Constants.ARM_STARTING_DEGREES);
     private double armRotationFinalTarget = 0;
     private double armRotationInstantaneousTarget = 0;
     private double armExtensionFinalTarget = 0;
@@ -111,7 +111,8 @@ public class ArmSubsystem extends SubsystemBase {
         double rotationDifference = Math.abs(rotationMotorsLeader.getSelectedSensorPosition() - armRotationFinalTarget);
         double extensionDifference = Math.abs(extensionMotor.getSelectedSensorPosition() - armExtensionFinalTarget);
 
-        return 0;
+        // Need to test actual motion times at speeds we like and then come up with a reasonable timeout formula.
+        return 4;
         // double rotationTime = rotationDifference / ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND;
     }
 
@@ -135,6 +136,14 @@ public class ArmSubsystem extends SubsystemBase {
 
     public double getCurrentAngleDegrees() {
         return rotationMotorsLeader.getSelectedSensorPosition() / Constants.COUNTS_PER_REVOLUTION;
+    }
+
+    public double getCurrentRotationNativeUnits() {
+        return rotationMotorsLeader.getSelectedSensorPosition();
+    }
+
+    public double getCurrentExtensionNativeUnits() {
+        return rotationMotorsLeader.getSelectedSensorPosition();
     }
 
     public double getAngleFromPosition(double position) {

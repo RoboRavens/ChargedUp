@@ -11,20 +11,54 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.util.ArmMaximumConstraint;
+import frc.util.ArmPose;
 import frc.util.ArmSetpoint;
 
 public class ArmGoToSetpointCommand extends CommandBase {
-  private ArrayList<ArmSetpoint> subSetpoints;
+  private ArrayList<ArmSetpoint> subSetpoints = new ArrayList<ArmSetpoint>();
   private ArmSubsystem arm = Robot.ARM_SUBSYSTEM;
-  private ArmSetpoint setpoint;
+  private ArmSetpoint finalSetpoint;
+  private int setpointIterator = 0;
   private Timer timer = new Timer();
   private double timeoutSeconds = 0;
+  private ArmSetpoint currentSubSetpoint;
 
 
   public ArmGoToSetpointCommand(ArmSetpoint setpoint) {
-    this.setpoint = setpoint;
+    this.finalSetpoint = setpoint;
+    this.currentSubSetpoint = setpoint;
     addRequirements(arm);
+  }
 
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    System.out.println("default position command run");
+    subSetpoints = new ArrayList<ArmSetpoint>();
+    setpointIterator = 0;
+    calculateSubSetpoints();
+    setArmTargets();
+    
+    timeoutSeconds = arm.getCommandTimeoutSeconds();
+
+    arm.motionMagic();
+    timer.reset();
+    timer.start();
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    if (setpointIsFinished(currentSubSetpoint)) {
+      setpointIterator++;
+    }
+
+    arm.setArmRotationPosition(arm.getArmRotationInstantaneousTarget(), Constants.ARM_ROTATION_VELOCITY, Constants.ARM_ROTATION_ACCELERATION);
+    arm.setArmExtensionPosition(arm.getArmExtensionInstantaneousTarget(), Constants.ARM_ROTATION_VELOCITY, Constants.ARM_ROTATION_ACCELERATION);
+  }
+
+  private void calculateSubSetpoints() {
     // Sub-setpoints can be needed if the destination is in a different quadrant than the origin point.
     // The arm will not extend or rotate if that would put it in an illegal state,
     // but it will not automatically contract without a setpoint.
@@ -33,8 +67,8 @@ public class ArmGoToSetpointCommand extends CommandBase {
     // An example of this is if the arm is at max extension towards the corner of a quadrant,
     // and wants to go to max extension in the corner of a different quadrant.
     // It must first pass through the border of the two quadrants, which has a shorter max extension.
-    double currentAngleDegrees = Robot.ARM_SUBSYSTEM.getCurrentAngleDegrees();
-    double setpointAngleDegress = setpoint.getRotationSetpointDegrees();
+    double currentAngleDegrees = arm.getCurrentAngleDegrees();
+    double setpointAngleDegress = finalSetpoint.getRotationSetpointDegrees();
     double rotationDifferenceDegress = setpointAngleDegress - currentAngleDegrees;
     double rotationDifferenceDegressAbsValue = Math.abs(rotationDifferenceDegress);
     boolean rotatingForward = (rotationDifferenceDegress > 0);
@@ -48,13 +82,18 @@ public class ArmGoToSetpointCommand extends CommandBase {
       distanceToFirstQuadrantBoundary = 90 - distanceToFirstQuadrantBoundary;
     }
 
+    // Count the number of boundaries that will be crossed.
     int quadrantBoundariesToCross = 0;
-    
+
+    // The difference between "no boundaries" and "any boundaries" depends on how far the
+    // starting position is from a boundary, but subsequent boundaries are always 90 degree increments.
     if (rotationDifferenceDegressAbsValue > distanceToFirstQuadrantBoundary) {
       quadrantBoundariesToCross++;
 
+      // Do not use the distance "consumed" by the first boundary in subsequent calculations.
       double marginalDistanceAfterFirstBoundary = rotationDifferenceDegressAbsValue - distanceToFirstQuadrantBoundary;
 
+      // If the final destination is past a boundary, simply using integer division will truncate the remainder.
       quadrantBoundariesToCross += (int) marginalDistanceAfterFirstBoundary / 90;
     }
     
@@ -69,33 +108,39 @@ public class ArmGoToSetpointCommand extends CommandBase {
         else {
           subSetpointRotation = currentAngleDegrees - distanceToFirstQuadrantBoundary - (90 * i);
         }
+
+        ArmMaximumConstraint constraint = ArmPose.calculateMaxExtensionAtAngleDegrees(subSetpointRotation);
+        subSetpointRotation = Math.min(finalSetpoint.getExtensionSetpoint(), constraint.getArmLengthToHitConstraintNativeUnits());
         
         ArmSetpoint boundarySubSetpoint = new ArmSetpoint("Boundary SubSetpoint " + i + 1, subSetpointExtension, subSetpointRotation);
+
+        subSetpoints.add(boundarySubSetpoint);
       }
     }
-
-
-
-
-    //int quadrantBoundariesToCross = (int) setpoint.getRotationSetpointDegrees() / 90;
-    
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    System.out.println("default position command run");
-    Robot.ARM_SUBSYSTEM.setFinalTargetPositions(setpoint);
-    Robot.ARM_SUBSYSTEM.motionMagic();
-    timer.reset();
-    timer.start();
+  public void setArmTargets() {
+    // If there sub-setpoints remaining, set the target to be the current point.
+    // Otherwise just set to the overall setpoint.
+    // No points at all is equivalent to none remaining.
+    if (subSetpoints.size() > setpointIterator) {
+      arm.setFinalTargetPositions(subSetpoints.get(setpointIterator));
+      currentSubSetpoint = subSetpoints.get(setpointIterator);
+    }
+    else {
+      arm.setFinalTargetPositions(finalSetpoint);
+    }
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    Robot.ARM_SUBSYSTEM.setArmRotationPosition(arm.getArmRotationInstantaneousTarget(), Constants.ARM_ROTATION_VELOCITY, Constants.ARM_ROTATION_ACCELERATION);
-    Robot.ARM_SUBSYSTEM.setArmExtensionPosition(arm.getArmExtensionInstantaneousTarget(), Constants.ARM_ROTATION_VELOCITY, Constants.ARM_ROTATION_ACCELERATION);
+  public boolean setpointIsFinished(ArmSetpoint setpoint) {
+    double rotationError = Math.abs(setpoint.getRotationSetpoint() - arm.getCurrentRotationNativeUnits());
+    double extensionError = Math.abs(setpoint.getExtensionSetpoint() - arm.getCurrentExtensionNativeUnits());
+
+    boolean rotationIsFinished = rotationError < Constants.ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS;
+    boolean extensionIsFinished = extensionError < Constants.ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS;
+
+
+    return rotationIsFinished && extensionIsFinished;
   }
 
   // Called once the command ends or is interrupted.
@@ -105,6 +150,13 @@ public class ArmGoToSetpointCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    // Note that terminating this command early, for example due to a timeout,
+    // does not change the target of the arm, so if the next command issued
+    // continues moving the arm to its target, it will do so.
+    // However, if this command was processing a multi-setpoint path,
+    // the target after this command terminates will be whatever sub-setpoint it was on,
+    // which was not necessarily the final target.
+    boolean timeout = timer.get() >= timeoutSeconds;
+    return setpointIsFinished(finalSetpoint) || timeout;
   }
 }
