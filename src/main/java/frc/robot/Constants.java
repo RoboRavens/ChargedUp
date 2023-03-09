@@ -5,6 +5,9 @@
 package frc.robot;
 
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.util.arm.ArmSetpoint;
 
@@ -27,6 +30,14 @@ public final class Constants {
   public static final int COUNTS_PER_REVOLUTION = 4096;
   public static final double ARM_DEGREES_TO_ENCODER_UNITS = COUNTS_PER_REVOLUTION / 360;
  
+
+  //APRILTAGS
+  public static final Pose2d APRILTAG_ID_1 = new Pose2d(15.51, 1.07, Rotation2d.fromDegrees(180));
+  public static final Pose2d APRILTAG_ID_2 = new Pose2d(15.51, 2.74, Rotation2d.fromDegrees(180));
+  public static final Pose2d APRILTAG_ID_3 = new Pose2d(15.51, 3.73, Rotation2d.fromDegrees(180));
+  public static final Pose2d APRILTAG_ID_6 = new Pose2d(1.02, 3.73, Rotation2d.fromDegrees(180));
+  public static final Pose2d APRILTAG_ID_7 = new Pose2d(1.027, 2.74, Rotation2d.fromDegrees(180));
+  public static final Pose2d APRILTAG_ID_8 = new Pose2d(1.027, 1.071, Rotation2d.fromDegrees(180));
 
   // DRIVETRAIN PATHFINDING
   public static final double TRAJECTORY_CONFIG_MAX_VELOCITY_METERS_PER_SECOND = 1.5;
