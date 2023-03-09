@@ -27,6 +27,8 @@ public final class Constants {
   public static final int COUNTS_PER_REVOLUTION = 4096;
   public static final double ARM_DEGREES_TO_ENCODER_UNITS = COUNTS_PER_REVOLUTION / 360;
  
+  //OFFSET
+  public static final double ROBOT_SCORING_OFFSET = 0.127;
 
   // DRIVETRAIN PATHFINDING
   public static final double TRAJECTORY_CONFIG_MAX_VELOCITY_METERS_PER_SECOND = 1.5;
@@ -148,4 +150,5 @@ public final class Constants {
   // CLAW
   public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
   public static final double CLAW_OPEN_TIMEOUT_SECONDS = .25;
+
 }
