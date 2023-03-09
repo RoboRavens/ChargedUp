@@ -78,7 +78,7 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
         poseChooser.addOption("ROW 6 CONE BLUE ALLIANCE", row6BlueAlliance);
         poseChooser.addOption("ROW 7 CONE BLUE ALLIANCE", row7BlueAlliance);
         poseChooser.addOption("ROW 8 CUBE BLUE ALLIANCE", row8BlueAlliance);
-        poseChooser.addOption("ROW 8 CONE BLUE ALLIANCE", row9BlueAlliance);
+        poseChooser.addOption("ROW 9 CONE BLUE ALLIANCE", row9BlueAlliance);
         poseChooser.addOption("ROW 1 CONE RED ALLIANCE", row1RedAlliance);
         poseChooser.addOption("ROW 2 CUBE RED ALLIANCE", row2RedAlliance);
         poseChooser.addOption("ROW 3 CONE RED ALLIANCE", row3RedAlliance);
