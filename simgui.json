@@ -3,7 +3,8 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/field": "Field2d"
+      "/SmartDashboard/field": "Field2d",
+      "/SmartDashboard/trajectory": "Field2d"
     },
     "windows": {
       "/SmartDashboard/Field": {

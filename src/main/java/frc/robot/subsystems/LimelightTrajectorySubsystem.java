@@ -16,6 +16,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -44,9 +45,54 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
     public LimelightTrajectorySubsystem() {
 
         SmartDashboard.putData("trajectory", DASHBOARD_Field2d);
+        
 
     }
 
+    public Pose2d selectEndpoint() {
+        SendableChooser<Pose2d> poseChooser = new SendableChooser<>();
+        Pose2d row1BlueAlliance = new Pose2d(1.9, 0.46, Rotation2d.fromDegrees(0));
+        Pose2d row2BlueAlliance = new Pose2d(1.87, 1.09, Rotation2d.fromDegrees(0));
+        Pose2d row3BlueAlliance = new Pose2d(1.91, 1.62, Rotation2d.fromDegrees(0));
+        Pose2d row4BlueAlliance = new Pose2d(1.89, 2.19, Rotation2d.fromDegrees(0));
+        Pose2d row5BlueAlliance = new Pose2d(1.91, 2.72, Rotation2d.fromDegrees(0));
+        Pose2d row6BlueAlliance = new Pose2d(1.91, 3.28, Rotation2d.fromDegrees(0));
+        Pose2d row7BlueAlliance = new Pose2d(1.91, 3.84, Rotation2d.fromDegrees(0));
+        Pose2d row8BlueAlliance = new Pose2d(1.91, 4.39, Rotation2d.fromDegrees(0));
+        Pose2d row9BlueAlliance = new Pose2d(1.91, 5.02, Rotation2d.fromDegrees(0));
+        Pose2d row1RedAlliance = new Pose2d(14.61, 5.02, Rotation2d.fromDegrees(0));
+        Pose2d row2RedAlliance = new Pose2d(14.61, 4.39, Rotation2d.fromDegrees(0));
+        Pose2d row3RedAlliance = new Pose2d(14.61, 3.85, Rotation2d.fromDegrees(0));
+        Pose2d row4RedAlliance = new Pose2d(14.61, 3.29, Rotation2d.fromDegrees(0));
+        Pose2d row5RedAlliance = new Pose2d(14.61, 2.73, Rotation2d.fromDegrees(0));
+        Pose2d row6RedAlliance = new Pose2d(14.61, 2.16, Rotation2d.fromDegrees(0));
+        Pose2d row7RedAlliance = new Pose2d(14.61, 1.62, Rotation2d.fromDegrees(0));
+        Pose2d row8RedAlliance = new Pose2d(14.61, 1.06, Rotation2d.fromDegrees(0));
+        Pose2d row9RedAlliance = new Pose2d(14.61, 0.5, Rotation2d.fromDegrees(0));
+        poseChooser.setDefaultOption("Initial Pose", row1BlueAlliance);
+        poseChooser.addOption("ROW 1 CONE BLUE ALLIANCE", row1BlueAlliance );
+        poseChooser.addOption("ROW 2 CUBE BLUE ALLIANCE", row2BlueAlliance);
+        poseChooser.addOption("ROW 3 CONE BLUE ALLIANCE", row3BlueAlliance);
+        poseChooser.addOption("ROW 4 CONE BLUE ALLIANCE", row4BlueAlliance);
+        poseChooser.addOption("ROW 5 CUBE BLUE ALLIANCE", row5BlueAlliance);
+        poseChooser.addOption("ROW 6 CONE BLUE ALLIANCE", row6BlueAlliance);
+        poseChooser.addOption("ROW 7 CONE BLUE ALLIANCE", row7BlueAlliance);
+        poseChooser.addOption("ROW 8 CUBE BLUE ALLIANCE", row8BlueAlliance);
+        poseChooser.addOption("ROW 8 CONE BLUE ALLIANCE", row9BlueAlliance);
+        poseChooser.addOption("ROW 1 CONE RED ALLIANCE", row1RedAlliance);
+        poseChooser.addOption("ROW 2 CUBE RED ALLIANCE", row2RedAlliance);
+        poseChooser.addOption("ROW 3 CONE RED ALLIANCE", row3RedAlliance);
+        poseChooser.addOption("ROW 4 CONE RED ALLIANCE", row4RedAlliance);
+        poseChooser.addOption("ROW 5 CUBE RED ALLIANCE", row5RedAlliance);
+        poseChooser.addOption("ROW 6 CONE RED ALLIANCE", row6RedAlliance);
+        poseChooser.addOption("ROW 7 CONE RED ALLIANCE", row7RedAlliance);
+        poseChooser.addOption("ROW 8 CUBE RED ALLIANCE", row8RedAlliance);
+        poseChooser.addOption("ROW 9 CONE RED ALLIANCE", row9RedAlliance);
+        SmartDashboard.putData("Pose Selector", poseChooser);
+        Pose2d selectedPose = poseChooser.getSelected();
+        return selectedPose;
+    }
+    
     public void periodic() {
 
         goToScoringPosition();
@@ -63,7 +109,8 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
 
         var interiorWaypoints = new ArrayList<Translation2d>();
         // Define the endpoints for the trajectories here.
-        var endpoint1 = new Pose2d(14.6, 2.68, Rotation2d.fromDegrees(0));
+
+        Pose2d selectedPose = selectEndpoint();
 
         TrajectoryConfig config = new TrajectoryConfig(1, 1);
         // config.setReversed(true);
@@ -71,7 +118,7 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
             var TRAJECTORY1 = TrajectoryGenerator.generateTrajectory(
                     robotPose,
                     interiorWaypoints,
-                    endpoint1,
+                    selectedPose,
                     config);
             DASHBOARD_Field2d.getObject("trajectory").setTrajectory(TRAJECTORY1);
             return TRAJECTORY1;
