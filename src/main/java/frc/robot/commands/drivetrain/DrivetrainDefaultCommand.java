@@ -17,7 +17,7 @@ import edu.wpi.first.math.MathUtil;
 public class DrivetrainDefaultCommand extends CommandBase {
     private boolean _followLimelight = false;
     private boolean _autoSteer = true;
-    private PIDController _scoringRotationAlignPID = new PIDController(.13, 0, 0);
+    private PIDController _scoringRotationAlignPID = new PIDController(0.3, 0, 0);
     private PIDController _autoSteerPID = new PIDController(.035, 0, 0);
 
     public DrivetrainDefaultCommand() {
@@ -71,6 +71,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
         if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
             Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
             r = getAngularVelocityForScoringAlign();
+            SmartDashboard.putNumber("angular velocity pid", r);
         }
         else if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
             Robot.drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;
@@ -122,9 +123,22 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
     private double getAngularVelocityForScoringAlign() {
         // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
-        double currentRotationOffset = MathUtil.angleModulus(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians());
+        // double currentRotationOffset = MathUtil.angleModulus(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians());
+        // double pidCalculation = _scoringRotationAlignPID.calculate(Math.abs(currentRotationOffset));
+        // double angularVelocity = pidCalculation * (currentRotationOffset < 0 ? -1 : 1);
+        // if (angularVelocity > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
+        //     return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+        // }
         // This will need to be tested
-        return _scoringRotationAlignPID.calculate(currentRotationOffset); // angular velocity
+        double angularVelocity = _scoringRotationAlignPID.calculate(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+        boolean isAngularVelocityNegative = angularVelocity < 0 ? true : false;
+        if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
+            return isAngularVelocityNegative ? DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * -1 : DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+        }
+        else if (Math.abs(angularVelocity) < 0.5 && Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) > 0.02) {
+            return isAngularVelocityNegative ? -0.5 : 0.5;
+        }
+        return angularVelocity; // angular velocity
     }
 
     @Override
