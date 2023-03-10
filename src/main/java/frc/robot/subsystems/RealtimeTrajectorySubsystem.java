@@ -22,20 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 
-public class LimelightTrajectorySubsystem extends SubsystemBase {
-
-    /*
-     * This code defines a LimelightTrajectorySubsystem in Java for a robot in the
-     * First Robotics Competition.
-     * It creates two different trajectories, one for the left side of the robot and
-     * one for the right side, based on selected endpoints in Shuffleboard.
-     * The trajectories are defined based on starting poses, interior waypoints, and
-     * selected endpoints, which are specified as Pose2d objects.
-     * The code uses the TrajectoryGenerator class to generate the trajectories,
-     * which are then pushed to SmartDashboard. The interior waypoints, endpoints,
-     * and starting poses are all specified in units of meters and the code converts
-     * units from feet to meters.
-     */
+public class RealtimeTrajectorySubsystem extends SubsystemBase {
 
     private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
@@ -43,7 +30,7 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
 
     Pose2d pose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
 
-    public LimelightTrajectorySubsystem() {
+    public RealtimeTrajectorySubsystem() {
 
         SmartDashboard.putData("trajectory", DASHBOARD_Field2d);
 
