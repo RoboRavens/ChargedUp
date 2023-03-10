@@ -30,4 +30,18 @@ public class RobotMap {
     // public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(201.885); // practice
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = Math.toRadians(288); // competition
     public static final int PIECE_SENSOR = 9;
+
+    // ARM
+    public static final int ARM_ROTATION_MOTOR_1 = 10;
+    public static final int ARM_ROTATION_MOTOR_2 = 11;
+    public static final int ARM_ROTATION_MOTOR_LEADER = 12;
+    public static final int ARM_EXTENSION_MOTOR = 13;
+    public static final int ARM_BRAKE_DOUBLE_SOLENOID_FORWARD_CHANNEL = 2;
+    public static final int ARM_BRAKE_DOUBLE_SOLENOID_REVERSE_CHANNEL = 3;
+
+    // CLAW
+    public static final int CLAW_LEFT_DOUBLE_SOLENOID_FORWARD_CHANNEL = 5;
+    public static final int CLAW_LEFT_DOUBLE_SOLENOID_REVERSE_CHANNEL = 7;
+    public static final int CLAW_RIGHT_DOUBLE_SOLENOID_FORWARD_CHANNEL = 1;
+    public static final int CLAW_RIGHT_DOUBLE_SOLENOID_REVERSE_CHANNEL = 3;
 }

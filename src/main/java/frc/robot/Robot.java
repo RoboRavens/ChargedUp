@@ -26,15 +26,14 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import frc.controls.AxisCode;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
-import frc.robot.commands.ArmGoToSetpointCommand;
 import frc.robot.commands.arm.ArmExtendToRetrievalPositionCommand;
 import frc.robot.commands.arm.ArmExtendToRowPositionCommand;
-import frc.robot.commands.arm.ArmRetractCommand;
-import frc.robot.commands.arm.ArmRotateToRetrievalPositionCommand;
-import frc.robot.commands.arm.ArmRotateToRowPositionCommand;
+import frc.robot.commands.arm.ArmGoToSetpointCommand;
+import frc.robot.commands.arm.*;
 import frc.robot.commands.claw.ClawCloseCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
@@ -92,6 +91,8 @@ public class Robot extends TimedRobot {
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
+  
+  PneumaticHub pneumaticHub = new PneumaticHub(RobotMap.PNEUMATIC_HUB_MODULE);
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static boolean driverControlOverride = false;
 
@@ -328,6 +329,12 @@ public class Robot extends TimedRobot {
     // or directly in front of the drivetrain.
     // The EJECTING state is handled in the arm subsystem
     OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
+  }
+
+  // Checking for a cone specifically, as opposed to any game piece, is relevant
+  // since cones have weight and cubes mostly don't.
+  public static boolean hasCone() {
+    return loadState == LoadState.LOADED && pieceState == PieceState.CONE;
   }
 
   private void configureTriggers() {
