@@ -48,7 +48,7 @@ public class PoseEstimator extends SubsystemBase {
     public void addVisionMeasurment(Pose2d robotPose, double timestampSeconds) {
         m_poseEstimator.addVisionMeasurement(
             m_poseEstimator.getEstimatedPosition(),
-        Timer.getFPGATimestamp() - Robot.LIMELIGHT_SUBSYSTEM.getTl()/1000);
+        Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl()/1000) - (Robot.LIMELIGHT_SUBSYSTEM.getCl()/1000));
 
     }
 
