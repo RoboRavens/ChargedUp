@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.util.StateManagement.OverallState;
 
 public class DriveTwoInchesCommand extends CommandBase {
     private Pose2d _targetPose;
@@ -90,8 +91,14 @@ public class DriveTwoInchesCommand extends CommandBase {
             }
         }
         if (Robot.DRIVE_TRAIN_SUBSYSTEM.powerIsCut()) {
-            xSpeed *= 2;
-            ySpeed *= 2;
+            if (Robot.overallState == OverallState.ENDGAME) {
+                xSpeed *= 4;
+                ySpeed *= 4;
+            }
+            else {
+                xSpeed *= 2;
+                ySpeed *= 2;
+            }
         }
         SmartDashboard.putNumber("xOffset", xOffsetFromTarget);
         SmartDashboard.putNumber("yOffset", yOffsetFromTarget);
