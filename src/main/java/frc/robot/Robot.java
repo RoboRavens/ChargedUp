@@ -164,7 +164,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Drivetrain State", drivetrainState.toString());
     SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand() == null ? "No command" : ARM_SUBSYSTEM.getCurrentCommand().getName());
     SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand() == null ? "No command" : CLAW_SUBSYSTEM.getCurrentCommand().getName());
-    
+
     SmartDashboard.putString("Scheduled Drivetrain Command", DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand() == null ? "No command" : DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand().getName());
 
     setZoneStateFromFieldZone();
@@ -286,7 +286,9 @@ public class Robot extends TimedRobot {
     GAMEPAD.getButton(ButtonCode.Y).and(() -> overallState == OverallState.ENDGAME)
     .toggleOnTrue(new DriveTwoInchesCommand('F'));
     // Balance on the charge station while A is held.
-    GAMEPAD.getButton(ButtonCode.A).and(() -> overallState != OverallState.ENDGAME).whileTrue(chargeStationBalancingCommand);
+    GAMEPAD.getButton(ButtonCode.A).and(() -> overallState != OverallState.ENDGAME)
+    .whileTrue(chargeStationBalancingCommand
+    .andThen(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.holdPosition()).repeatedly()).withName("Balance and then X wheels"));
     GAMEPAD.getButton(ButtonCode.A).and(() -> overallState == OverallState.ENDGAME)
     .toggleOnTrue(new DriveTwoInchesCommand('B'));
     GAMEPAD.getButton(ButtonCode.X).and(() -> overallState == OverallState.ENDGAME)
