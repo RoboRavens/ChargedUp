@@ -263,6 +263,18 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
    
   }
 
+  public SwerveModulePosition[] getSwerveModulePositions() {
+   
+    return new SwerveModulePosition[] {
+      m_frontLeftModule.getPosition(),
+      m_frontRightModule.getPosition(),
+      m_backLeftModule.getPosition(),
+      m_backRightModule.getPosition()
+    };
+    
+  }
+
+
   /**
    * Sets the gyroscope angle to zero. This can be used to set the direction the robot is currently facing to the
    * 'forwards' direction.
@@ -287,7 +299,7 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     return _odometryFromHardware.getPoseMeters().getRotation();
   }
 
-  private Rotation2d getGyroscopeRotation() {
+  public Rotation2d getGyroscopeRotation() {
     if (m_navx.isMagnetometerCalibrated()) {
       // We will only get valid fused headings if the magnetometer is calibrated
       return Rotation2d.fromDegrees(m_navx.getFusedHeading());
