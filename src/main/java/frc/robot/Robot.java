@@ -45,8 +45,6 @@ import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.RealtimeTrajectorySubsystem;
-import frc.util.PoseEstimator;
 import frc.util.StateManagement;
 import frc.util.StateManagement.ArmExtensionState;
 import frc.util.StateManagement.ArmRotationState;
@@ -59,8 +57,12 @@ import frc.util.StateManagement.LoadTargetState;
 import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.PieceState;
 import frc.util.StateManagement.ScoringTargetState;
+import frc.util.StateManagement.ZoneState;
 import frc.robot.subsystems.DrivetrainSubsystemMock;
+import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.LimelightTrajectorySubsystem;
 import frc.robot.subsystems.TrajectoryTestingSubsystem;
+import frc.robot.subsystems.TabletScoring.TabletScoringSubsystem;
 import frc.util.field.*;
 
 /**
@@ -82,7 +84,7 @@ public class Robot extends TimedRobot {
   public static final Gamepad OP_PAD = new Gamepad(1);
   public static final Gamepad OP_PAD_BUTTONS = new Gamepad(2);
   public static final Gamepad OP_PAD_SWITCHES = new Gamepad(3);
-  public static final RealtimeTrajectorySubsystem REALTIME_TRAJECTORY_SUBSYSTEM = new RealtimeTrajectorySubsystem();
+  public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
   public static final DrivetrainChargeStationBalancingCommand chargeStationBalancingCommand = new DrivetrainChargeStationBalancingCommand();
   // public static GamePieceState gamePieceState = GamePieceState.CLEAR;
   // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
@@ -90,8 +92,8 @@ public class Robot extends TimedRobot {
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-  public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator();
-  public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
+  public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  
   PneumaticHub pneumaticHub = new PneumaticHub(RobotMap.PNEUMATIC_HUB_MODULE);
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static boolean driverControlOverride = false;
@@ -127,8 +129,8 @@ public class Robot extends TimedRobot {
     configureButtonBindings();
     configureTriggers();
 
-    GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.REALTIME_TRAJECTORY_SUBSYSTEM.driveTrajectory()));
-    
+    GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory()));
+    GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition()));
 
     // Temp button bindings to simulate zone and claw state
 
