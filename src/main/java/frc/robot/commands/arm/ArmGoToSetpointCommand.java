@@ -33,6 +33,7 @@ public class ArmGoToSetpointCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    arm.brakeDisable();
     System.out.println("default position command run");
     subSetpoints = new ArrayList<ArmSetpoint>();
     setpointIterator = 0;
@@ -49,9 +50,13 @@ public class ArmGoToSetpointCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    arm.brakeDisable();
+
     if (setpointIsFinished(currentSubSetpoint)) {
       setpointIterator++;
     }
+
+    setArmTargets();
 
     arm.setArmRotationPosition(arm.getArmRotationInstantaneousTarget(), Constants.ARM_ROTATION_VELOCITY, Constants.ARM_ROTATION_ACCELERATION);
     arm.setArmExtensionPosition(arm.getArmExtensionInstantaneousTarget(), Constants.ARM_ROTATION_VELOCITY, Constants.ARM_ROTATION_ACCELERATION);
