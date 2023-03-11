@@ -38,6 +38,10 @@ import frc.robot.commands.claw.ClawCloseCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.drivetrain.DriveTwoInchesCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
+import frc.robot.commands.auto.FourPieceAutoCommand;
+import frc.robot.commands.auto.PreloadAndBalanceAutoCommand;
+import frc.robot.commands.auto.TwoPieceAndBalanceAutoCommand;
+import frc.robot.commands.auto.TwoPieceAutoCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.groups.EjectPieceCommand;
 import frc.robot.commands.groups.ScorePieceCommand;
@@ -65,6 +69,7 @@ import frc.robot.subsystems.LimelightTrajectorySubsystem;
 import frc.robot.subsystems.TrajectoryTestingSubsystem;
 import frc.robot.subsystems.TabletScoring.TabletScoringSubsystem;
 import frc.util.field.*;
+import frc.robot.subsystems.TempConveyanceSubystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -96,6 +101,7 @@ public class Robot extends TimedRobot {
   
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static boolean driverControlOverride = false;
+  public static final TempConveyanceSubystem TEMP_CONVEYANCE_SUBYSTEM = new TempConveyanceSubystem();
 
   // Sets the default robot mechanism states (may need to be changed)
   public static OverallState overallState = OverallState.EMPTY_TRANSIT;
@@ -187,7 +193,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = FourPieceAutoCommand.getAutoMode().getAutoCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
