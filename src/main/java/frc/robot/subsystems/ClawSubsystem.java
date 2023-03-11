@@ -10,9 +10,9 @@ import frc.robot.RobotMap;
 import frc.util.StateManagement.ClawState;
 
 public class ClawSubsystem extends SubsystemBase {
-    PneumaticHub pneumaticHub = new PneumaticHub(0);
-    DoubleSolenoid leftDoubleSolenoid = new DoubleSolenoid(null, 5, 7) ;
-    DoubleSolenoid rightDoubleSolenoid = new DoubleSolenoid(null, 1, 3) ;
+    // PneumaticHub pneumaticHub = new PneumaticHub(0);
+    // DoubleSolenoid leftDoubleSolenoid = new DoubleSolenoid(null, 5, 7) ;
+    // DoubleSolenoid rightDoubleSolenoid = new DoubleSolenoid(null, 1, 3) ;
     DigitalInput pieceSensor = new DigitalInput(RobotMap.PIECE_SENSOR);
      
     // Returns true if the sensor detects a game piece,
@@ -38,13 +38,13 @@ public class ClawSubsystem extends SubsystemBase {
 
     public void open() {
         setClawState(ClawState.OPENING);
-        leftDoubleSolenoid.set(Value.kForward);
-        rightDoubleSolenoid.set(Value.kForward);
+        // leftDoubleSolenoid.set(Value.kForward);
+        // rightDoubleSolenoid.set(Value.kForward);
     }
 
     public void close() {
-        leftDoubleSolenoid.set(Value.kReverse);
-        rightDoubleSolenoid.set(Value.kReverse);
+        // leftDoubleSolenoid.set(Value.kReverse);
+        // rightDoubleSolenoid.set(Value.kReverse);
     }
 
     public void setClawState(ClawState newState) {
