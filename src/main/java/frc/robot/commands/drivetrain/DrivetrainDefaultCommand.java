@@ -131,12 +131,12 @@ public class DrivetrainDefaultCommand extends CommandBase {
         // }
         // This will need to be tested
         double angularVelocity = _scoringRotationAlignPID.calculate(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-        boolean isAngularVelocityNegative = angularVelocity < 0 ? true : false;
+        double velocityDirection = angularVelocity < 0 ? -1 : 1;
         if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
-            return isAngularVelocityNegative ? DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * -1 : DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+            return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * velocityDirection;
         }
         else if (Math.abs(angularVelocity) < 0.5 && Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) > 0.02) {
-            return isAngularVelocityNegative ? -0.5 : 0.5;
+            return 0.5 * velocityDirection;
         }
         return angularVelocity; // angular velocity
     }
