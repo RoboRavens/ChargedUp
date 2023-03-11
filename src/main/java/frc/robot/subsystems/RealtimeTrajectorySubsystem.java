@@ -28,7 +28,7 @@ public class RealtimeTrajectorySubsystem extends SubsystemBase {
     private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
     Field2d DASHBOARD_Field2d = new Field2d();
 
-    Pose2d pose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
+    Pose2d pose = Robot.POSE_ESTIMATOR.getCurrentPose();
 
     public RealtimeTrajectorySubsystem() {
 

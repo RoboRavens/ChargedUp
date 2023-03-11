@@ -46,6 +46,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystemBase;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.RealtimeTrajectorySubsystem;
+import frc.util.PoseEstimator;
 import frc.util.StateManagement;
 import frc.util.StateManagement.ArmExtensionState;
 import frc.util.StateManagement.ArmRotationState;
@@ -89,7 +90,8 @@ public class Robot extends TimedRobot {
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-  
+  public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator();
+  public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
   PneumaticHub pneumaticHub = new PneumaticHub(RobotMap.PNEUMATIC_HUB_MODULE);
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static boolean driverControlOverride = false;
