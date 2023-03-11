@@ -62,6 +62,7 @@ import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.LimelightTrajectorySubsystem;
 import frc.robot.subsystems.TrajectoryTestingSubsystem;
+import frc.robot.subsystems.TabletScoring.TabletScoringSubsystem;
 import frc.util.field.*;
 
 /**
@@ -91,6 +92,7 @@ public class Robot extends TimedRobot {
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
+  public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
   
   PneumaticHub pneumaticHub = new PneumaticHub(RobotMap.PNEUMATIC_HUB_MODULE);
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
