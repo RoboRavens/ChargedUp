@@ -142,13 +142,6 @@ public class Gamepad {
 		case EJECT_PIECE:
 			buttonNumber = 8;
 			break;
-		case TEMP_ALLIANCE_LOADING_ZONE:
-			buttonNumber = 12;
-			break;
-		case TEMP_ALLIANCE_COMMUNITY_ZONE:
-			buttonNumber = 10;
-			break;
-		// TODO: Update these button numbers
 		case TEMP_NEUTRAL_ZONE:
 			buttonNumber = 11;
 			break;
