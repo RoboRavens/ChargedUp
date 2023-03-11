@@ -280,6 +280,7 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
+    // Driver controller
     GAMEPAD.getButton(ButtonCode.B).and(() -> overallState != OverallState.ENDGAME)
     .onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory())
     .alongWith(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition())));

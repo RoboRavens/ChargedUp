@@ -12,11 +12,12 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.OverallState;
+import edu.wpi.first.math.MathUtil;
 
 public class DrivetrainDefaultCommand extends CommandBase {
     private boolean _followLimelight = false;
     private boolean _autoSteer = true;
-    private PIDController _followLimelightPID = new PIDController(.13, 0, 0);
+    private PIDController _scoringRotationAlignPID = new PIDController(0.3, 0, 0);
     private PIDController _autoSteerPID = new PIDController(.035, 0, 0);
 
     public DrivetrainDefaultCommand() {
@@ -69,11 +70,12 @@ public class DrivetrainDefaultCommand extends CommandBase {
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
         if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
             Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
-            r = getRValueSquareWithField();
+            r = getAngularVelocityForScoringAlign();
+            SmartDashboard.putNumber("angular velocity pid", r);
         }
         else if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
             Robot.drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;
-            r = getRValueSquareWithField();
+            r = getAngularVelocityForScoringAlign();
             // TODO: set x to align with a scoring node based on limelight input
             x = 0;
         }
@@ -117,12 +119,26 @@ public class DrivetrainDefaultCommand extends CommandBase {
                 )
             );
         }
-
     }
 
-    private double getRValueSquareWithField() {
-        // TODO: retrieve the R value for the drivetrain that allows the robot to square with the field
-        return 0;
+    private double getAngularVelocityForScoringAlign() {
+        // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
+        // double currentRotationOffset = MathUtil.angleModulus(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians());
+        // double pidCalculation = _scoringRotationAlignPID.calculate(Math.abs(currentRotationOffset));
+        // double angularVelocity = pidCalculation * (currentRotationOffset < 0 ? -1 : 1);
+        // if (angularVelocity > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
+        //     return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+        // }
+        // This will need to be tested
+        double angularVelocity = _scoringRotationAlignPID.calculate(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+        double velocityDirection = angularVelocity < 0 ? -1 : 1;
+        if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
+            return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * velocityDirection;
+        }
+        else if (Math.abs(angularVelocity) < 0.5 && Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) > 0.02) {
+            return 0.5 * velocityDirection;
+        }
+        return angularVelocity; // angular velocity
     }
 
     @Override
