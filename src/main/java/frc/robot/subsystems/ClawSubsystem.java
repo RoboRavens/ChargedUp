@@ -9,7 +9,6 @@ import frc.robot.RobotMap;
 import frc.util.StateManagement.ClawState;
 
 public class ClawSubsystem extends SubsystemBase {
-    PneumaticHub pneumaticHub = new PneumaticHub(0);
     DoubleSolenoid leftDoubleSolenoid = new DoubleSolenoid(null, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
     DoubleSolenoid rightDoubleSolenoid = new DoubleSolenoid(null, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
     DigitalInput pieceSensor = new DigitalInput(RobotMap.PIECE_SENSOR);
