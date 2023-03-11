@@ -148,4 +148,5 @@ public final class Constants {
   // CLAW
   public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
   public static final double CLAW_OPEN_TIMEOUT_SECONDS = .25;
+  public static final double RUMBLE_TIME = 1.2;
 }
