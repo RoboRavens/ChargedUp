@@ -1,26 +1,15 @@
 package frc.util;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
-import frc.robot.RobotContainer;
-
-import java.security.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * A class that estimates the robot's pose using a
@@ -42,18 +31,11 @@ public class PoseEstimator extends SubsystemBase {
         Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
         Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
 
-        // Robot.DRIVE_TRAIN_SUBSYSTEM._odometryFromHardware.update(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
-        // Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions());
-
         if (Robot.LIMELIGHT_SUBSYSTEM.getTv() == 1) {
             addVisionMeasurment(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose(), timeStamp);
         }
 
         updateOdometry();
-
-        // resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
-        // Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(),
-        // Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
 
     }
 
