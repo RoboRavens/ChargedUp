@@ -121,10 +121,10 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   
   private final AHRS m_navx = new AHRS(SPI.Port.kMXP, (byte) 200);
 
-  private final SwerveModule m_frontLeftModule;
-  private final SwerveModule m_frontRightModule;
-  private final SwerveModule m_backLeftModule;
-  private final SwerveModule m_backRightModule;
+  public final SwerveModule m_frontLeftModule;
+  public final SwerveModule m_frontRightModule;
+  public final SwerveModule m_backLeftModule;
+  public final SwerveModule m_backRightModule;
   public final SwerveDriveOdometry _odometryFromKinematics;
   private final SwerveDriveOdometry  _odometryFromHardware;
   private final DrivetrainDiagnosticsShuffleboard _diagnostics;

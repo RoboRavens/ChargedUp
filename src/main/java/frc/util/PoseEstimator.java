@@ -52,6 +52,17 @@ public class PoseEstimator extends SubsystemBase {
 
     }
 
+    public void updateOdometry() {
+        m_poseEstimator.update(
+            rotation,
+            new SwerveModulePosition[] {
+              Robot.DRIVE_TRAIN_SUBSYSTEM.m_frontLeftModule.getPosition(),
+              Robot.DRIVE_TRAIN_SUBSYSTEM.m_frontRightModule.getPosition(),
+              Robot.DRIVE_TRAIN_SUBSYSTEM.m_backLeftModule.getPosition(),
+              Robot.DRIVE_TRAIN_SUBSYSTEM.m_backRightModule.getPosition()
+            });
+        }
+    
     public Pose2d getCurrentPose() {
         return m_poseEstimator.getEstimatedPosition();
     }
