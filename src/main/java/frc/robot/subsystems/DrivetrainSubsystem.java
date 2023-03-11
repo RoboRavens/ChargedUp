@@ -487,11 +487,6 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
   }
 
   @Override
-  public double getRoll() {
-    return m_navx.getRoll();
-  }
-
-  @Override
   public TrajectoryConfig GetTrajectoryConfig() {
     // Create config for trajectory
     TrajectoryConfig config =

@@ -26,7 +26,7 @@ public class ArmSubsystem extends SubsystemBase {
     private WPI_TalonFX rotationMotor2 = new WPI_TalonFX(RobotMap.ARM_ROTATION_MOTOR_2);
     private WPI_TalonSRX rotationMotorsLeader = new WPI_TalonSRX(RobotMap.ARM_ROTATION_MOTOR_LEADER);
     private WPI_TalonFX extensionMotor = new WPI_TalonFX(RobotMap.ARM_EXTENSION_MOTOR);
-    private DoubleSolenoid brakeDoubleSolenoid = new DoubleSolenoid(null, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
+    // private DoubleSolenoid brakeDoubleSolenoid = new DoubleSolenoid(null, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
 
     private PIDController pidController;
     CommandXboxController _controller;
@@ -81,11 +81,11 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void brakeEnable() {
-        brakeDoubleSolenoid.set(Value.kForward);
+        // brakeDoubleSolenoid.set(Value.kForward);
     }
 
     public void brakeDisable() {
-        brakeDoubleSolenoid.set(Value.kReverse);
+        // brakeDoubleSolenoid.set(Value.kReverse);
     }
 
     public void setFinalTargetPositions(ArmSetpoint armSetpoint) {

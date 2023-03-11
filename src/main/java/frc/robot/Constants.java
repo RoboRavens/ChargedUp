@@ -18,6 +18,8 @@ import frc.util.arm.ArmSetpoint;
  */
 public final class Constants {
 
+  public static final double CONVEYANCE_ONE_FULL_SPEED = -1;
+  public static final double CONVEYANCE_ONE_STOP = 0;
   //Motion Magic
 	public static final int kSlotIdx = 0;
 	public static final int kPIDLoopIdx = 0;

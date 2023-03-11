@@ -39,7 +39,8 @@ import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.drivetrain.DriveTwoInchesCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
 import frc.robot.commands.auto.FourPieceAutoCommand;
-import frc.robot.commands.auto.PreloadAndBalanceAutoCommand;
+import frc.robot.commands.auto.PreloadAndBalanceCommand;
+import frc.robot.commands.auto.PreloadExitAllianceAndBalanceAutoCommand;
 import frc.robot.commands.auto.TwoPieceAndBalanceAutoCommand;
 import frc.robot.commands.auto.TwoPieceAutoCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
@@ -97,7 +98,7 @@ public class Robot extends TimedRobot {
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-  public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  // public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
   
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static boolean driverControlOverride = false;
@@ -193,7 +194,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    m_autonomousCommand = FourPieceAutoCommand.getAutoMode().getAutoCommand();
+    m_autonomousCommand = PreloadAndBalanceCommand.getAutoMode().getAutoCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

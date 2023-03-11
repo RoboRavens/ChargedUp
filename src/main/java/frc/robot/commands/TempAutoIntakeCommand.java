@@ -1,16 +1,17 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 
 public class TempAutoIntakeCommand extends CommandBase {
+    Timer _timer = new Timer();
     public TempAutoIntakeCommand() {
         addRequirements(Robot.TEMP_CONVEYANCE_SUBYSTEM);
     }
     @Override
     public void initialize() {
-        // TODO Auto-generated method stub
-        super.initialize();
+        _timer.restart();
     }
     @Override
     public void execute() {
@@ -22,7 +23,9 @@ public class TempAutoIntakeCommand extends CommandBase {
     }
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
-        return super.isFinished();
+        if (_timer.get() > 1) {
+            return true;
+        }
+        return false;
     }
 }
