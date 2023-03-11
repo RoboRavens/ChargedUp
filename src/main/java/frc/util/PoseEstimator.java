@@ -33,11 +33,7 @@ public class PoseEstimator extends SubsystemBase {
     public final Field2d field = new Field2d();
 
     double timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl() / 1000)
-    - (Robot.LIMELIGHT_SUBSYSTEM.getCl() / 1000);
-
-
-    
-
+            - (Robot.LIMELIGHT_SUBSYSTEM.getCl() / 1000);
 
     @Override
     public void periodic() {
@@ -46,26 +42,25 @@ public class PoseEstimator extends SubsystemBase {
         Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
         Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
 
-       // Robot.DRIVE_TRAIN_SUBSYSTEM._odometryFromHardware.update(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
-       //         Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions());
+        // Robot.DRIVE_TRAIN_SUBSYSTEM._odometryFromHardware.update(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
+        // Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions());
 
-            if(Robot.LIMELIGHT_SUBSYSTEM.getTv() == 1) {
-                addVisionMeasurment(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose(), timeStamp);
-            }
-            
-        
-            updateOdometry();
+        if (Robot.LIMELIGHT_SUBSYSTEM.getTv() == 1) {
+            addVisionMeasurment(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose(), timeStamp);
+        }
 
-        //    resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
-        //        Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(), Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
+        updateOdometry();
+
+        // resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
+        // Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(),
+        // Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
 
     }
 
-    
     public void init() {
-        
+
         resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
-            Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(), Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
+                Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(), Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
 
     }
 
@@ -85,10 +80,9 @@ public class PoseEstimator extends SubsystemBase {
 
     public void addVisionMeasurment(Pose2d robotPose, double timestampSeconds) {
         m_poseEstimator.addVisionMeasurement(
-                //m_poseEstimator.getEstimatedPosition(),
+                // m_poseEstimator.getEstimatedPosition(),
                 Robot.LIMELIGHT_SUBSYSTEM.getRobotPose(),
-                Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl() / 1000)
-                        - (Robot.LIMELIGHT_SUBSYSTEM.getCl() / 1000));
+                timeStamp);
 
     }
 
