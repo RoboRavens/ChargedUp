@@ -352,6 +352,16 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
       }
     }
 
+    boolean isStopped = chassisSpeeds.vxMetersPerSecond == 0 && chassisSpeeds.vyMetersPerSecond == 0 && chassisSpeeds.omegaRadiansPerSecond == 0;
+
+    if(isStopped && Robot.zoneState == ZoneState.ALLIANCE_CHARGE_STATION && Robot.overallState == OverallState.ENDGAME) {
+      SmartDashboard.putBoolean("hold", true);
+      holdPosition();
+    }
+    else {
+      SmartDashboard.putBoolean("hold", false);
+    }
+
     _moduleStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
   }
 

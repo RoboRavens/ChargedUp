@@ -291,8 +291,7 @@ public class Robot extends TimedRobot {
     .toggleOnTrue(new DriveTwoInchesCommand('F'));
     // Balance on the charge station while A is held.
     GAMEPAD.getButton(ButtonCode.A).and(() -> overallState != OverallState.ENDGAME)
-    .whileTrue(chargeStationBalancingCommand
-    .andThen(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.holdPosition()).repeatedly()).withName("Balance and then X wheels"));
+    .whileTrue(chargeStationBalancingCommand);
     GAMEPAD.getButton(ButtonCode.A).and(() -> overallState == OverallState.ENDGAME)
     .toggleOnTrue(new DriveTwoInchesCommand('B'));
     GAMEPAD.getButton(ButtonCode.X).and(() -> overallState == OverallState.ENDGAME)
