@@ -36,6 +36,7 @@ import frc.robot.commands.arm.ArmGoToSetpointCommand;
 import frc.robot.commands.arm.*;
 import frc.robot.commands.claw.ClawCloseCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
+import frc.robot.commands.claw.RumbleCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.groups.EjectPieceCommand;
@@ -93,8 +94,8 @@ public class Robot extends TimedRobot {
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
   public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
-  
-  PneumaticHub pneumaticHub = new PneumaticHub(RobotMap.PNEUMATIC_HUB_MODULE);
+  public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
+  // PneumaticHub pneumaticHub = new PneumaticHub(RobotMap.PNEUMATIC_HUB_MODULE);
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static boolean driverControlOverride = false;
 
@@ -287,6 +288,8 @@ public class Robot extends TimedRobot {
     GAMEPAD.getButton(ButtonCode.Y).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
     // Balance on the charge station while A is held.
     GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+    // Robot.GAMEPAD.setRumbleOn
+    GAMEPAD.getButton(ButtonCode.X).whileTrue(RUMBLE_COMMAND);
     // When the floor intake button is pressed, update the states
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;
@@ -329,7 +332,7 @@ public class Robot extends TimedRobot {
   public static boolean hasCone() {
     return loadState == LoadState.LOADED && pieceState == PieceState.CONE;
   }
-
+  
   private void configureTriggers() {
     // CLAW
     // If the claw closes and we have a game piece, we're loaded.
