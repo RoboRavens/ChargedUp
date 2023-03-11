@@ -31,38 +31,78 @@ import java.util.List;
 public class PoseEstimator extends SubsystemBase {
 
     public final Field2d field = new Field2d();
-    public final Pose2d robotPose = Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
-    public final Pose2d swervePose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
-    public final Rotation2d rotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
-     
+
+    double timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl() / 1000)
+    - (Robot.LIMELIGHT_SUBSYSTEM.getCl() / 1000);
+
+
+    
+
+
+    @Override
+    public void periodic() {
+        Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
+        Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
+        Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
+        Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
+
+       // Robot.DRIVE_TRAIN_SUBSYSTEM._odometryFromHardware.update(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
+       //         Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions());
+
+            if(Robot.LIMELIGHT_SUBSYSTEM.getTv() == 1) {
+                addVisionMeasurment(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose(), timeStamp);
+            }
+            
+        
+            updateOdometry();
+
+        //    resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
+        //        Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(), Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
+
+    }
+
+    
+    public void init() {
+        
+        resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
+            Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(), Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
+
+    }
+
     private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
             Robot.DRIVE_TRAIN_SUBSYSTEM.m_kinematics,
-            rotation,
+            Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
             Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(),
-            swervePose,
-                VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-                VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
-            
-           
- 
+            Robot.DRIVE_TRAIN_SUBSYSTEM.getPose(),
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+
+    public void resetPosition(Rotation2d rotation2d, SwerveModulePosition[] modulePositions, Pose2d poseMeters) {
+        // Reset state estimate and error covariance
+        m_poseEstimator.resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
+                Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(), Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
+    }
+
     public void addVisionMeasurment(Pose2d robotPose, double timestampSeconds) {
         m_poseEstimator.addVisionMeasurement(
-            m_poseEstimator.getEstimatedPosition(),
-        Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl()/1000) - (Robot.LIMELIGHT_SUBSYSTEM.getCl()/1000));
+                //m_poseEstimator.getEstimatedPosition(),
+                Robot.LIMELIGHT_SUBSYSTEM.getRobotPose(),
+                Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl() / 1000)
+                        - (Robot.LIMELIGHT_SUBSYSTEM.getCl() / 1000));
 
     }
 
     public void updateOdometry() {
         m_poseEstimator.update(
-            rotation,
-            new SwerveModulePosition[] {
-              Robot.DRIVE_TRAIN_SUBSYSTEM.m_frontLeftModule.getPosition(),
-              Robot.DRIVE_TRAIN_SUBSYSTEM.m_frontRightModule.getPosition(),
-              Robot.DRIVE_TRAIN_SUBSYSTEM.m_backLeftModule.getPosition(),
-              Robot.DRIVE_TRAIN_SUBSYSTEM.m_backRightModule.getPosition()
-            });
-        }
-    
+                Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
+                new SwerveModulePosition[] {
+                        Robot.DRIVE_TRAIN_SUBSYSTEM.m_frontLeftModule.getPosition(),
+                        Robot.DRIVE_TRAIN_SUBSYSTEM.m_frontRightModule.getPosition(),
+                        Robot.DRIVE_TRAIN_SUBSYSTEM.m_backLeftModule.getPosition(),
+                        Robot.DRIVE_TRAIN_SUBSYSTEM.m_backRightModule.getPosition()
+                });
+    }
+
     public Pose2d getCurrentPose() {
         return m_poseEstimator.getEstimatedPosition();
     }
