@@ -44,6 +44,7 @@ import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
 import frc.util.StateManagement.ClawState;
 import frc.util.StateManagement.DrivetrainState;
+import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ZoneState;
 import frc.util.field.FieldSubzone;
 import edu.wpi.first.wpilibj.SPI;
@@ -351,9 +352,16 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
   @Override
   public void drive(ChassisSpeeds chassisSpeeds) {
     if (_cutPower) {
-      chassisSpeeds.omegaRadiansPerSecond =  chassisSpeeds.omegaRadiansPerSecond * 0.5;
-      chassisSpeeds.vxMetersPerSecond =  chassisSpeeds.vxMetersPerSecond * 0.5;
-      chassisSpeeds.vyMetersPerSecond =  chassisSpeeds.vyMetersPerSecond * 0.5;
+      if (Robot.overallState == OverallState.ENDGAME) {
+        chassisSpeeds.omegaRadiansPerSecond =  chassisSpeeds.omegaRadiansPerSecond * 0.25;
+        chassisSpeeds.vxMetersPerSecond =  chassisSpeeds.vxMetersPerSecond * 0.25;
+        chassisSpeeds.vyMetersPerSecond =  chassisSpeeds.vyMetersPerSecond * 0.25;
+      }
+      else {
+        chassisSpeeds.omegaRadiansPerSecond =  chassisSpeeds.omegaRadiansPerSecond * 0.5;
+        chassisSpeeds.vxMetersPerSecond =  chassisSpeeds.vxMetersPerSecond * 0.5;
+        chassisSpeeds.vyMetersPerSecond =  chassisSpeeds.vyMetersPerSecond * 0.5;
+      }
     }
 
     _moduleStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
