@@ -3,6 +3,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Pose Selector": "String Chooser",
       "/SmartDashboard/field": "Field2d",
       "/SmartDashboard/trajectory": "Field2d"
     },
@@ -15,6 +16,9 @@
     }
   },
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
     "transitory": {
       "FMSInfo": {
         "open": true
@@ -29,11 +33,11 @@
         "open": true
       },
       "SmartDashboard": {
-        "open": true
+        "open": true,
+        "trajectory": {
+          "open": true
+        }
       }
     }
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

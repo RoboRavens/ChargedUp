@@ -13,6 +13,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Pose Selector": "String Chooser",
       "/SmartDashboard/field": "Field2d",
       "/SmartDashboard/trajectory": "Field2d"
     },
@@ -58,14 +59,13 @@
         "open": true
       },
       "open": true
-    },
-    "visible": true
-  },
-  "NetworkTables Log": {
-    "visible": true
+    }
   },
   "NetworkTables Settings": {
     "mode": "Client (NT4)",
     "serverTeam": "1188"
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

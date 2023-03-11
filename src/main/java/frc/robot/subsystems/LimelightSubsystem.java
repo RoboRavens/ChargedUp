@@ -54,16 +54,15 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Rotation", 0);
     }
 
-    if ((pose.getX() > 0 && pose.getY() > 0) && getTa() >= 0.2) {
-      Robot.DRIVE_TRAIN_SUBSYSTEM.resetOdometry(pose);
-    }
+
 
   }
 
   public Pose2d getRobotPose() {
 
-    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue")
-        .getDoubleArray(new double[6]);
+    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+    SmartDashboard.putNumber("Botpose length", botpose.length);
+    
     if (botpose.length == 6) {
       Translation2d translation = new Translation2d(botpose[0], botpose[1]);
       Rotation2d rotation = new Rotation2d(Math.toRadians(botpose[5]));

@@ -6,7 +6,7 @@ package frc.robot;
 
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.util.arm.ArmSetpoint;
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -120,15 +120,7 @@ public final class Constants {
   public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 200;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
 
-  public static final ArmSetpoint ARM_FULL_RETRACT_SETPOINT = new ArmSetpoint("Full Retract", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_FULL_RETRACT_ROTATION_SETPOINT);
-  public static final ArmSetpoint ARM_GROUND_PICKUP_SETPOINT = new ArmSetpoint("Ground Pickup", ARM_GROUND_PICKUP_EXTENSION_SETPOINT, ARM_GROUND_PICKUP_ROTATION_SETPOINT);
-  public static final ArmSetpoint ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT = new ArmSetpoint("Single Substation Pickup", ARM_SINGLE_SUBSTATION_PICKUP_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT);
-  public static final ArmSetpoint ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT = new ArmSetpoint("Double Substation Pickup", ARM_DOUBLE_SUBSTATION_PICKUP_EXTENSION_SETPOINT, ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_SETPOINT);
-  public static final ArmSetpoint ARM_SCORE_LOW_SETPOINT = new ArmSetpoint("Score Low", ARM_SCORE_LOW_EXTENSION_SETPOINT, ARM_SCORE_LOW_ROTATION_SETPOINT);
-  public static final ArmSetpoint ARM_SCORE_CONE_MID_SETPOINT = new ArmSetpoint("Score Cone Mid", ARM_SCORE_CONE_MID_EXTENSION_SETPOINT, ARM_SCORE_CONE_MID_ROTATION_SETPOINT);
-  public static final ArmSetpoint ARM_SCORE_CUBE_MID_SETPOINT = new ArmSetpoint("Score Cube Mid", ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT, ARM_SCORE_CUBE_MID_ROTATION_SETPOINT);
-  public static final ArmSetpoint ARM_SCORE_CONE_HIGH_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT);
-  public static final ArmSetpoint ARM_SCORE_CUBE_HIGH_SETPOINT = new ArmSetpoint("Score Cube High", ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT);
+
 
   public static final double ARM_ROTATION_VELOCITY = 3000;
   public static final double ARM_ROTATION_ACCELERATION = 800;

@@ -27,17 +27,20 @@ public class RealtimeTrajectorySubsystem extends SubsystemBase {
     private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
     private NetworkTable table = networkTableInstance.getTable("Shuffleboard");
     Field2d DASHBOARD_Field2d = new Field2d();
+    SendableChooser<Pose2d> poseChooser= new SendableChooser<>();
 
-    Pose2d pose = Robot.POSE_ESTIMATOR.getCurrentPose();
+
+
+        
 
     public RealtimeTrajectorySubsystem() {
 
         SmartDashboard.putData("trajectory", DASHBOARD_Field2d);
-
+        selectEndpoint();
     }
 
     public Pose2d selectEndpoint() {
-        SendableChooser<Pose2d> poseChooser = new SendableChooser<>();
+        
         Pose2d row1BlueAlliance = new Pose2d(1.9 + Constants.ROBOT_SCORING_OFFSET, 0.46, Rotation2d.fromDegrees(0));
         Pose2d row2BlueAlliance = new Pose2d(1.87 + Constants.ROBOT_SCORING_OFFSET, 1.09, Rotation2d.fromDegrees(0));
         Pose2d row3BlueAlliance = new Pose2d(1.91 + Constants.ROBOT_SCORING_OFFSET, 1.62, Rotation2d.fromDegrees(0));
@@ -83,12 +86,12 @@ public class RealtimeTrajectorySubsystem extends SubsystemBase {
     public void periodic() {
 
         goToScoringPosition();
-        DASHBOARD_Field2d.setRobotPose(Robot.DRIVE_TRAIN_SUBSYSTEM.getPose());
+        DASHBOARD_Field2d.setRobotPose(Robot.POSE_ESTIMATOR.getCurrentPose());
     }
 
     public Trajectory goToScoringPosition() {
 
-        var robotPose = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
+        var robotPose = Robot.POSE_ESTIMATOR.getCurrentPose();
 
         if (robotPose == null) {
             return null;
@@ -97,7 +100,8 @@ public class RealtimeTrajectorySubsystem extends SubsystemBase {
         var interiorWaypoints = new ArrayList<Translation2d>();
         // Define the endpoints for the trajectories here.
 
-        Pose2d selectedPose = selectEndpoint();
+        
+       Pose2d selectedPose = poseChooser.getSelected();
 
         TrajectoryConfig config = new TrajectoryConfig(1, 1);
         // config.setReversed(true);

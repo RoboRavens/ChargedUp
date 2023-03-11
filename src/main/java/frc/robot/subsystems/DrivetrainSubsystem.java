@@ -126,7 +126,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   public final SwerveModule m_backLeftModule;
   public final SwerveModule m_backRightModule;
   public final SwerveDriveOdometry _odometryFromKinematics;
-  private final SwerveDriveOdometry  _odometryFromHardware;
+  public final SwerveDriveOdometry  _odometryFromHardware;
   private final DrivetrainDiagnosticsShuffleboard _diagnostics;
 
   private ShuffleboardTab PID = Shuffleboard.getTab("PID");
