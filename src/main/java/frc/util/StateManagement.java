@@ -12,7 +12,8 @@ public class StateManagement {
         SCORING, // When the robot has a piece, the robot is positioned to score, and the driver intends to release it (while claw opens.)
         EJECTING, // When the robot has a piece and the driver intends to release it (while any ejection actions happen, such as the claw opening.)
         PREPARING_TO_SCORE, // When the robot is loaded and in the alliance community.
-        FINAL_SCORING_ALIGNMENT // When the robot is checking final scoring conditions. If met, the game piece is ready to be released.
+        FINAL_SCORING_ALIGNMENT, // When the robot is checking final scoring conditions. If met, the game piece is ready to be released.
+        ENDGAME // When the endgame override switch is flipped to true
     }
 
     public static boolean isManipulatingGamePiece(OverallState robotState, ClawState clawState) {
