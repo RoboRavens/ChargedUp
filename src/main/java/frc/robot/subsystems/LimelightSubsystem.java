@@ -29,6 +29,7 @@ public class LimelightSubsystem extends SubsystemBase {
   NetworkTableEntry ta = table.getEntry("ta");
   NetworkTableEntry ts = table.getEntry("ts");
   NetworkTableEntry tv = table.getEntry("tv");
+  NetworkTableEntry tl = table.getEntry("tl");
   int camMode = 0;
   
   public boolean isAlignedWithScoringNode() {
@@ -82,6 +83,10 @@ public class LimelightSubsystem extends SubsystemBase {
 
   // distance from the target to the floor
   double goalHeightInches = 60.0;
+
+  public double getTl() {
+    return tl.getDouble(0.0);
+  }
 
   public double getTx() {
     return tx.getDouble(0.0);
