@@ -36,13 +36,13 @@ public class ClawSubsystem extends SubsystemBase {
 
     public void open() {
         setClawState(ClawState.OPENING);
-        //leftDoubleSolenoid.set(Value.kForward);
-        //rightDoubleSolenoid.set(Value.kForward);
+        // leftDoubleSolenoid.set(Value.kForward);
+        // rightDoubleSolenoid.set(Value.kForward);
     }
 
     public void close() {
-        //leftDoubleSolenoid.set(Value.kReverse);
-        //rightDoubleSolenoid.set(Value.kReverse);
+        // leftDoubleSolenoid.set(Value.kReverse);
+        // rightDoubleSolenoid.set(Value.kReverse);
     }
 
     public void setClawState(ClawState newState) {
