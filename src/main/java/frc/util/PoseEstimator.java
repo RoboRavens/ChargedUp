@@ -11,12 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 
-/**
- * A class that estimates the robot's pose using a
- * {@link SwerveDrivePoseEstimator}, and robot pose sources.
- *
- * @author Shriqui - Captain, Omer - Programing Captain
- */
+
 public class PoseEstimator extends SubsystemBase {
 
     public final Field2d field = new Field2d();
