@@ -444,7 +444,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  private boolean isRobotReadyToScore() {
+  public static boolean isRobotReadyToScore() {
     // TODO: implement this method
 
     // Components:
