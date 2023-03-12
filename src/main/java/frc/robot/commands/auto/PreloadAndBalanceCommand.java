@@ -16,16 +16,16 @@ import frc.util.AutoMode;
 
 public class PreloadAndBalanceCommand {
     public static AutoMode getAutoMode() {
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Preload and Balance", new PathConstraints(1, 0.4));
+        PathPlannerTrajectory scoringToBridgeTrajectory = PathPlanner.loadPath("Preload and Balance", new PathConstraints(1, 0.4));
 
         HashMap<String, Command> eventMap = new HashMap<>();
 
         FollowPathWithEvents scoringToBridgePath = new FollowPathWithEvents(
-            Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(examplePath), 
-            examplePath.getMarkers(), 
+            Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(scoringToBridgeTrajectory), 
+            scoringToBridgeTrajectory.getMarkers(), 
             eventMap);
 
-        Command preloadAndBalanceCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(examplePath)
+        Command preloadAndBalanceCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scoringToBridgeTrajectory)
         .andThen(new InstantCommand().until(() -> Robot.isRobotReadyToScore())) // Do nothing until the robot is ready to score
         .andThen(new ScorePieceCommand()) // Replace with TempAutoIntakeCommand() for testing on the old robot
         .andThen(scoringToBridgePath)
