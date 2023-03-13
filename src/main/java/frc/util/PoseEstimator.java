@@ -46,8 +46,8 @@ public class PoseEstimator extends SubsystemBase {
             Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
             Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(),
             Robot.DRIVE_TRAIN_SUBSYSTEM.getPose(),
-            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+            VecBuilder.fill(0.1, 0.1, 0.1),
+            VecBuilder.fill(0.9, 0.9, 0.9));
 
     public void resetPosition(Rotation2d rotation2d, SwerveModulePosition[] modulePositions, Pose2d poseMeters) {
         // Reset state estimate and error covariance
