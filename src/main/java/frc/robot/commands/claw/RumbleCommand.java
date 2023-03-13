@@ -29,6 +29,11 @@ public class RumbleCommand extends CommandBase {
         }
         return isFinished;
     }
+
+    @Override
+    public boolean runsWhenDisabled() {
+      return true;
+    }
 }
 
 
