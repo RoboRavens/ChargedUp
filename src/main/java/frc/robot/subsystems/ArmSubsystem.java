@@ -80,6 +80,14 @@ public class ArmSubsystem extends SubsystemBase {
         extensionMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
     }
 
+    public void ignoreRotationLimit() {
+
+    }
+
+    public void ignoreExtensionLimit() {
+        
+    }
+
     public void brakeEnable() {
         brakeDoubleSolenoid.set(Value.kForward);
     }

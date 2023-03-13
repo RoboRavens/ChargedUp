@@ -52,6 +52,7 @@ import frc.util.StateManagement.ArmExtensionState;
 import frc.util.StateManagement.ArmRotationState;
 import frc.util.StateManagement.ClawState;
 import frc.util.StateManagement.ZoneState;
+import frc.util.arm.ArmSetpoint;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.LimelightState;
 import frc.util.StateManagement.LoadState;
@@ -128,15 +129,6 @@ public class Robot extends TimedRobot {
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
     configureButtonBindings();
     configureTriggers();
-
-    // Temp button bindings to simulate zone and claw state
-
-    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_LOADING_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));
-    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_COMMUNITY_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_COMMUNITY));
-    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_NEUTRAL_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.NEUTRAL));
-    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_OPPONENT_ZONES).onTrue(new InstantCommand(() -> zoneState = ZoneState.OPPONENT_COMMUNITY));
-    OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_IS_LOADED).toggleOnTrue(new InstantCommand(() -> {loadState = LoadState.LOADED; overallState = OverallState.LOADED_TRANSIT;}));
-    OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_IS_LOADED).toggleOnFalse(new InstantCommand(() -> {loadState = LoadState.EMPTY; overallState = OverallState.EMPTY_TRANSIT;}));
   }
 
   /**
@@ -353,6 +345,27 @@ public class Robot extends TimedRobot {
         overallState = OverallState.EMPTY_TRANSIT;
       }
     }));
+
+    // TODO: Implement the .toggleOnTrue command for these override switches
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS);
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS);
+
+    // Rotates the arm to the minimum rotation point (only if manual arm rotation is switched on)
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_TO_ZERO)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Rotate Arm To Zero", ARM_SUBSYSTEM.getCurrentExtensionNativeUnits(), Constants.ARM_STARTING_DEGREES)));
+    // Rotates the arm to the maximum rotation point (only if manual arm rotation is switched on)
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Rotate Arm To Max", ARM_SUBSYSTEM.getCurrentExtensionNativeUnits(), Constants.ARM_MAX_ROTATION_DEGREES)));
+    // Extends the arm to the maximum extension point (only if manual arm extension is switched on)
+    OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
+    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Extend Arm", Constants.ARM_MAX_EXTENSION_ENCODER_UNITS, ARM_SUBSYSTEM.getCurrentRotationNativeUnits())));
+    // Extends the arm to the maximum retraction point (only if the manual arm extension is switched on)
+    OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
+    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Retract Arm", Constants.ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SUBSYSTEM.getCurrentRotationNativeUnits())));
   }
 
   // Checking for a cone specifically, as opposed to any game piece, is relevant
