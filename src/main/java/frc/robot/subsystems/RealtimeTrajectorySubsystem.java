@@ -30,12 +30,46 @@ public class RealtimeTrajectorySubsystem extends SubsystemBase {
 
     Pose2d pose = Robot.POSE_ESTIMATOR.getCurrentPose();
 
+    
+    private double[] redAllianceColumnToYPos = new double[9];
+    private double[] blueAllianceColumnToYPos = new double[9];
+
     public RealtimeTrajectorySubsystem() {
-
+        blueAllianceColumnToYPos[8] = 5.04;
+        blueAllianceColumnToYPos[7] = 4.42;
+        blueAllianceColumnToYPos[6] = 3.88;
+        blueAllianceColumnToYPos[5] = 3.34;
+        blueAllianceColumnToYPos[4] = 2.78;
+        blueAllianceColumnToYPos[3] = 2.22;
+        blueAllianceColumnToYPos[2] = 1.66;
+        blueAllianceColumnToYPos[1] = 1.09;
+        blueAllianceColumnToYPos[0] = 0.47;
         SmartDashboard.putData("trajectory", DASHBOARD_Field2d);
-
+        redAllianceColumnToYPos[0] = 4.97;
+        redAllianceColumnToYPos[1] = 4.38;
+        redAllianceColumnToYPos[2] = 3.85;
+        redAllianceColumnToYPos[3] = 3.29;
+        redAllianceColumnToYPos[4] = 2.75;
+        redAllianceColumnToYPos[5] = 2.15;
+        redAllianceColumnToYPos[6] = 1.60;
+        redAllianceColumnToYPos[7] = 1.07;
+        redAllianceColumnToYPos[8] = 0.46;
+            
     }
+    Pose2d sideStart = new Pose2d(1.54, 2.72,Rotation2d.fromDegrees(180));  
 
+    
+   
+
+    /*
+    public Pose2d selectTargetPosition() {
+     var target =  Robot.TABLET_SCORING_SUBSYSTEM.GetScoringTarget();
+     var Position = target.GetPosition()
+     Position.
+    }
+     */
+
+/* 
     public Pose2d selectEndpoint() {
         SendableChooser<Pose2d> poseChooser = new SendableChooser<>();
         Pose2d row1BlueAlliance = new Pose2d(1.9 + Constants.ROBOT_SCORING_OFFSET, 0.46, Rotation2d.fromDegrees(0));
@@ -79,6 +113,7 @@ public class RealtimeTrajectorySubsystem extends SubsystemBase {
         Pose2d selectedPose = poseChooser.getSelected();
         return selectedPose;
     }
+    */
 
     public void periodic() {
 
@@ -97,7 +132,8 @@ public class RealtimeTrajectorySubsystem extends SubsystemBase {
         var interiorWaypoints = new ArrayList<Translation2d>();
         // Define the endpoints for the trajectories here.
 
-        Pose2d selectedPose = selectEndpoint();
+        //Pose2d selectedPose = selectEndpoint();
+        var endpoint1 = new Pose2d();
 
         TrajectoryConfig config = new TrajectoryConfig(1, 1);
         // config.setReversed(true);
@@ -105,7 +141,7 @@ public class RealtimeTrajectorySubsystem extends SubsystemBase {
             var TRAJECTORY1 = TrajectoryGenerator.generateTrajectory(
                     robotPose,
                     interiorWaypoints,
-                    selectedPose,
+                    endpoint1,
                     config);
             DASHBOARD_Field2d.getObject("trajectory").setTrajectory(TRAJECTORY1);
             return TRAJECTORY1;
