@@ -49,7 +49,7 @@ public class LimelightTrajectorySubsystem extends SubsystemBase {
 
     public void periodic() {
 
-        goToScoringPosition();
+        // goToScoringPosition();
         DASHBOARD_Field2d.setRobotPose(Robot.DRIVE_TRAIN_SUBSYSTEM.getPose());
     }
 
