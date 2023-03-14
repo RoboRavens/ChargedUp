@@ -344,8 +344,9 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     _moduleStates[3].speedMetersPerSecond = 0;
   }
 
+  
   public double getRobotVelocity() {
-    ChassisSpeeds chassisSpeeds = m_kinematics.toChassisSpeeds();
+    ChassisSpeeds chassisSpeeds = m_kinematics.toChassisSpeeds(_moduleStates);
     double forward = chassisSpeeds.vxMetersPerSecond;
     double sideways = chassisSpeeds.vyMetersPerSecond;
     double angular = chassisSpeeds.omegaRadiansPerSecond;
@@ -354,6 +355,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     return finalSpeed;
 
   }
+
+  
    
 
   

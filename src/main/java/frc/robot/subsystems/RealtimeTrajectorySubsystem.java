@@ -127,7 +127,11 @@ public class RealtimeTrajectorySubsystem extends SubsystemBase {
         //Pose2d selectedPose = selectEndpoint();
         var endpoint1 = new Pose2d();
 
-        TrajectoryConfig config = new TrajectoryConfig(Robot.DRIVE_TRAIN_SUBSYSTEM.getRobotVelocity(), 1);
+        double currentSpeed = Robot.DRIVE_TRAIN_SUBSYSTEM.getRobotVelocity();
+        // currentSpeed = 1;
+        TrajectoryConfig config = new TrajectoryConfig(1, 1);
+
+        config.setStartVelocity(currentSpeed);
         // config.setReversed(true);
         try {
             var TRAJECTORY1 = TrajectoryGenerator.generateTrajectory(
