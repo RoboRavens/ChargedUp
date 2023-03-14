@@ -346,10 +346,10 @@ public class Robot extends TimedRobot {
       }
     }));
 
-    // TODO: Implement the .toggleOnTrue command for these override switches
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS);
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS);
-
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(true)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(false)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(true)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
     // Rotates the arm to the minimum rotation point (only if manual arm rotation is switched on)
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_TO_ZERO)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
