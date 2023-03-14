@@ -97,6 +97,13 @@ public class DrivetrainDefaultCommand extends CommandBase {
             y = 0;
             r = 0;
         }
+        else if (Robot.overallState == OverallState.GO_TO_SCORING_LOCATION_TRIGGER) {
+            Robot.drivetrainState = DrivetrainState.GO_TO_SCORING_LOCATION;
+            r = getAngularVelocityForScoringAlign();
+            x = 0;
+            y = 0;
+            // TODO: update x and y velocity
+        }
         else {
             Robot.drivetrainState = DrivetrainState.FREEHAND;
         }
