@@ -13,8 +13,7 @@ public class StateManagement {
         EJECTING, // When the robot has a piece and the driver intends to release it (while any ejection actions happen, such as the claw opening.)
         PREPARING_TO_SCORE, // When the robot is loaded and in the alliance community.
         FINAL_SCORING_ALIGNMENT, // When the robot is checking final scoring conditions. If met, the game piece is ready to be released.
-        ENDGAME, // When the endgame override switch is flipped to true
-        GO_TO_SCORING_LOCATION_TRIGGER
+        ENDGAME // When the endgame override switch is flipped to true
     }
 
     public static boolean isManipulatingGamePiece(OverallState robotState, ClawState clawState) {
@@ -87,8 +86,7 @@ public class StateManagement {
         ACTIVELY_LOADING,   // All human control locked out (briefly, while claw closes.)
         FREEHAND_WITH_ROTATION_LOCK,    // Yaw locked parallel to grid, but no effect on translation.
         FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN, // Yaw locked and sideways translation delegated to limelight, but forward/backward accessible.
-        SCORING, // All human control locked out (briefly, while claw opens.) (May be identical to actively loading state.)
-        GO_TO_SCORING_LOCATION
+        SCORING // All human control locked out (briefly, while claw opens.) (May be identical to actively loading state.)
     }
 
     // Set in the claw subsystem periodic and open/close methods

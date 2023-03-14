@@ -310,16 +310,6 @@ public class Robot extends TimedRobot {
     new Trigger(() -> GAMEPAD.getAxisIsPressed(AxisCode.RIGHTTRIGGER))
       .whileTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.cutPower()))
       .onFalse(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.stopCutPower()));
-    new Trigger(() -> GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) // TODO: update trigger
-      .whileTrue(new InstantCommand(() -> overallState = OverallState.GO_TO_SCORING_LOCATION_TRIGGER))
-      .onFalse(new InstantCommand(() -> {
-        if (loadState == LoadState.LOADED) {
-          overallState = OverallState.LOADED_TRANSIT;
-        }
-        else {
-          overallState = OverallState.EMPTY_TRANSIT;
-        }
-      }));
     // When the floor intake button is released, the state needs to be updated:
     //  If it was released without a successful ground pickup, state goes back to empty transit
     //  If it was released AFTER a successful ground pickup, state goes to loaded transit or preparing to score
