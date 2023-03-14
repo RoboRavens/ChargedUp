@@ -18,6 +18,13 @@ import frc.util.arm.ArmSetpoint;
  */
 public final class Constants {
 
+    //LEDs
+public static final int FIRST_LEDS_SECTION = 29;
+public static final int SECOND_LEDS_SECTION = 56;
+public static final int THIRD_LEDS_SECTION = 86;
+public static final int FOURTH_LEDS_SECTION = 117;
+public static final int LEDS_LENGTH = 117;
+
   //Motion Magic
 	public static final int kSlotIdx = 0;
 	public static final int kPIDLoopIdx = 0;
