@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -8,8 +11,8 @@ import frc.util.StateManagement.ClawState;
 import frc.ravenhardware.BufferedDigitalInput;
 
 public class ClawSubsystem extends SubsystemBase {
-    //DoubleSolenoid leftDoubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
-    //DoubleSolenoid rightDoubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
+    DoubleSolenoid leftDoubleSolenoid = new DoubleSolenoid(RobotMap.REV_PNEUMATICS_MODULE_ID, PneumaticsModuleType.REVPH, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
+    DoubleSolenoid rightDoubleSolenoid = new DoubleSolenoid(RobotMap.REV_PNEUMATICS_MODULE_ID, PneumaticsModuleType.REVPH, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
     BufferedDigitalInput pieceSensor = new BufferedDigitalInput(RobotMap.PIECE_SENSOR, 3, false, false);
 
     // Returns true if the sensor detects a game piece,
@@ -36,13 +39,13 @@ public class ClawSubsystem extends SubsystemBase {
 
     public void open() {
         setClawState(ClawState.OPENING);
-        // leftDoubleSolenoid.set(Value.kForward);
-        // rightDoubleSolenoid.set(Value.kForward);
+        leftDoubleSolenoid.set(Value.kReverse);
+        rightDoubleSolenoid.set(Value.kReverse);
     }
 
     public void close() {
-        // leftDoubleSolenoid.set(Value.kReverse);
-        // rightDoubleSolenoid.set(Value.kReverse);
+        leftDoubleSolenoid.set(Value.kForward);
+        rightDoubleSolenoid.set(Value.kForward);
     }
 
     public void setClawState(ClawState newState) {
