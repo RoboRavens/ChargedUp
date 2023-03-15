@@ -67,23 +67,17 @@ public class DrivetrainDefaultCommand extends CommandBase {
             r = 0.0;
         }
 
-        // Set the drivetrain states and the x, y, and r values based on the overall robot state
-        if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
-            Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
-            r = getAngularVelocityForScoringAlign();
-            SmartDashboard.putNumber("angular velocity pid", r);
-        }
-        else if (Robot.overallState == OverallState.FINAL_SCORING_ALIGNMENT) {
-            Robot.drivetrainState = DrivetrainState.FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN;
-            r = getAngularVelocityForScoringAlign();
+        if (Robot.drivetrainState == DrivetrainState.ROBOT_ALIGN) {
+            r = getAngularVelocityForAlignment(); // TODO: change this to adjust the alignment based on the zone
             // TODO: set x to align with a scoring node based on limelight input
             x = 0;
+            y = 0;
         }
-        else if (Robot.overallState == OverallState.DOUBLE_SUBSTATION_PICKUP) {
-            Robot.drivetrainState = DrivetrainState.DOUBLE_SUBSTATION_ALIGN;
-            // TODO: set the r and x value to align with a piece on the HPS
-            x = 0;
-            r = 0;
+        // Set the drivetrain states and the x, y, and r values based on the overall robot state
+        else if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
+            Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
+            r = getAngularVelocityForAlignment();
+            SmartDashboard.putNumber("angular velocity pid", r);
         }
         else if (Robot.overallState == OverallState.LOADING) {
             Robot.drivetrainState = DrivetrainState.ACTIVELY_LOADING;
@@ -121,22 +115,17 @@ public class DrivetrainDefaultCommand extends CommandBase {
         }
     }
 
-    private double getAngularVelocityForScoringAlign() {
+    private double getAngularVelocityForAlignment() {
         // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
-        // double currentRotationOffset = MathUtil.angleModulus(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians());
-        // double pidCalculation = _scoringRotationAlignPID.calculate(Math.abs(currentRotationOffset));
-        // double angularVelocity = pidCalculation * (currentRotationOffset < 0 ? -1 : 1);
-        // if (angularVelocity > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
-        //     return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-        // }
-        // This will need to be tested
         double angularVelocity = _scoringRotationAlignPID.calculate(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
         double velocityDirection = angularVelocity < 0 ? -1 : 1;
+        // If the angular velocity is greater than the max angular velocity, set it to the max angular velocity
         if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
             return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * velocityDirection;
         }
-        else if (Math.abs(angularVelocity) < 0.5 && Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) > 0.02) {
-            return 0.5 * velocityDirection;
+        // If the angular velocity is less than 0.4 and the robot is not within 0.02 radians of 0 degrees, set the velocity to 0.4
+        else if (Math.abs(angularVelocity) < 0.4 && Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) > 0.02) {
+            return 0.4 * velocityDirection;
         }
         return angularVelocity; // angular velocity
     }
