@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-  public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  // public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static boolean driverControlOverride = false;
@@ -148,7 +148,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    setDriverStationData();
+    //setDriverStationData();
 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
@@ -172,7 +172,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putString("Scheduled Drivetrain Command", DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand() == null ? "No command" : DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand().getName());
 
-    setZoneStateFromFieldZone();
+    //setZoneStateFromFieldZone();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -244,14 +244,7 @@ public class Robot extends TimedRobot {
     // If the left trigger is pressed,
     // Set the overall state to either scoring alignment or hps pickup based on the zone state
     if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) {
-      if (zoneState == ZoneState.ALLIANCE_COMMUNITY) {
-        overallState = OverallState.FINAL_SCORING_ALIGNMENT;
-      }
-      else if (zoneState == ZoneState.ALLIANCE_LOADING_ZONE) {
-        // This will put the drivetrain into vision-assisted alignment mode.
-        // Not sure yet if we should handle that here, or somewhere in the drive code.
-        Robot.drivetrainState = DrivetrainState.DOUBLE_SUBSTATION_ALIGN;
-      }
+      drivetrainState = DrivetrainState.ROBOT_ALIGN;
     }
     // Changes the overall state to empty or loaded transit when the trigger is released
     else if (
@@ -281,6 +274,9 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
+    OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_ALLIANCE_COMMUNITY_ZONE)
+    .onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_COMMUNITY))
+    .onFalse(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));
     GAMEPAD.getButton(ButtonCode.B).and(() -> overallState != OverallState.ENDGAME)
     .onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory())
     .alongWith(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition())));

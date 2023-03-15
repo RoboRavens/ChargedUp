@@ -151,14 +151,15 @@ public class Gamepad {
 		case TEMP_ALLIANCE_LOADING_ZONE:
 			buttonNumber = 12;
 			break;
-		case TEMP_ALLIANCE_COMMUNITY_ZONE:
-			buttonNumber = 10;
 		// Switch buttons
 		case TEMP_IS_LOADED:
 			buttonNumber = 2;
 			break;
 		case ENDGAME_OVERRIDE:
 			buttonNumber = 1;
+			break;
+		case TEMP_ALLIANCE_COMMUNITY_ZONE:
+			buttonNumber = 7;
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid Button Code");
