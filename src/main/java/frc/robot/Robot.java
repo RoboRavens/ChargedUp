@@ -36,6 +36,8 @@ import frc.robot.commands.arm.ArmGoToSetpointCommand;
 import frc.robot.commands.arm.*;
 import frc.robot.commands.claw.ClawCloseCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
+import frc.robot.commands.claw.RumbleCommand;
+import frc.robot.commands.drivetrain.DriveTwoInchesCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.groups.EjectPieceCommand;
@@ -50,6 +52,7 @@ import frc.util.StateManagement.ArmExtensionState;
 import frc.util.StateManagement.ArmRotationState;
 import frc.util.StateManagement.ClawState;
 import frc.util.StateManagement.ZoneState;
+import frc.util.arm.ArmSetpoint;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.LimelightState;
 import frc.util.StateManagement.LoadState;
@@ -62,6 +65,7 @@ import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.LimelightTrajectorySubsystem;
 import frc.robot.subsystems.TrajectoryTestingSubsystem;
+import frc.robot.subsystems.TabletScoring.TabletScoringSubsystem;
 import frc.util.field.*;
 
 /**
@@ -80,9 +84,8 @@ public class Robot extends TimedRobot {
   public static final DrivetrainDefaultCommand drivetrainDefaultCommand = new DrivetrainDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
-  public static final Gamepad OP_PAD = new Gamepad(1);
   public static final Gamepad OP_PAD_BUTTONS = new Gamepad(2);
-  public static final Gamepad OP_PAD_SWITCHES = new Gamepad(3);
+  public static final Gamepad OP_PAD_SWITCHES = new Gamepad(1);
   public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
   public static final DrivetrainChargeStationBalancingCommand chargeStationBalancingCommand = new DrivetrainChargeStationBalancingCommand();
   // public static GamePieceState gamePieceState = GamePieceState.CLEAR;
@@ -91,8 +94,8 @@ public class Robot extends TimedRobot {
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-  
-  PneumaticHub pneumaticHub = new PneumaticHub(RobotMap.PNEUMATIC_HUB_MODULE);
+  public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static boolean driverControlOverride = false;
 
@@ -126,18 +129,6 @@ public class Robot extends TimedRobot {
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
     configureButtonBindings();
     configureTriggers();
-
-    GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory()));
-    GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition()));
-
-    // Temp button bindings to simulate zone and claw state
-
-    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_LOADING_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));
-    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_ALLIANCE_COMMUNITY_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_COMMUNITY));
-    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_NEUTRAL_ZONE).onTrue(new InstantCommand(() -> zoneState = ZoneState.NEUTRAL));
-    OP_PAD_BUTTONS.getButton(ButtonCode.TEMP_OPPONENT_ZONES).onTrue(new InstantCommand(() -> zoneState = ZoneState.OPPONENT_COMMUNITY));
-    OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_IS_LOADED).toggleOnTrue(new InstantCommand(() -> {loadState = LoadState.LOADED; overallState = OverallState.LOADED_TRANSIT;}));
-    OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_IS_LOADED).toggleOnFalse(new InstantCommand(() -> {loadState = LoadState.EMPTY; overallState = OverallState.EMPTY_TRANSIT;}));
   }
 
   /**
@@ -177,6 +168,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Drivetrain State", drivetrainState.toString());
     SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand() == null ? "No command" : ARM_SUBSYSTEM.getCurrentCommand().getName());
     SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand() == null ? "No command" : CLAW_SUBSYSTEM.getCurrentCommand().getName());
+
+    SmartDashboard.putString("Scheduled Drivetrain Command", DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand() == null ? "No command" : DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand().getName());
 
     setZoneStateFromFieldZone();
   }
@@ -287,21 +280,40 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
-    // Driver controller
+    GAMEPAD.getButton(ButtonCode.B).and(() -> overallState != OverallState.ENDGAME)
+    .onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory())
+    .alongWith(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition())));
+    GAMEPAD.getButton(ButtonCode.B).and(() -> overallState == OverallState.ENDGAME)
+    .toggleOnTrue(new DriveTwoInchesCommand('R'));
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece.
-    GAMEPAD.getButton(ButtonCode.Y).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
+    GAMEPAD.getButton(ButtonCode.Y).and(() -> overallState != OverallState.ENDGAME).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
+    GAMEPAD.getButton(ButtonCode.Y).and(() -> overallState == OverallState.ENDGAME)
+    .toggleOnTrue(new DriveTwoInchesCommand('F'));
     // Balance on the charge station while A is held.
-    GAMEPAD.getButton(ButtonCode.A).whileTrue(chargeStationBalancingCommand);
+    GAMEPAD.getButton(ButtonCode.A).and(() -> overallState != OverallState.ENDGAME)
+    .whileTrue(chargeStationBalancingCommand);
+    GAMEPAD.getButton(ButtonCode.A).and(() -> overallState == OverallState.ENDGAME)
+    .toggleOnTrue(new DriveTwoInchesCommand('B'));
+    GAMEPAD.getButton(ButtonCode.X).and(() -> overallState == OverallState.ENDGAME)
+    .toggleOnTrue(new DriveTwoInchesCommand('L'));
     // When the floor intake button is pressed, update the states
-    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnTrue(new InstantCommand(() -> {
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).toggleOnTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;
       loadTargetState = LoadTargetState.GROUND;
     }));
+    GAMEPAD.getButton(ButtonCode.LEFTBUMPER)
+    .and(GAMEPAD.getButton(ButtonCode.RIGHTBUMPER))
+    .and(GAMEPAD.getButton(ButtonCode.Y))
+    .onTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.zeroGyroscope()));
+    // Cuts power when the right trigger is held
+    new Trigger(() -> GAMEPAD.getAxisIsPressed(AxisCode.RIGHTTRIGGER))
+      .whileTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.cutPower()))
+      .onFalse(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.stopCutPower()));
     // When the floor intake button is released, the state needs to be updated:
     //  If it was released without a successful ground pickup, state goes back to empty transit
     //  If it was released AFTER a successful ground pickup, state goes to loaded transit or preparing to score
     //  Pickup target changes to HPS either way
-    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnFalse(new InstantCommand(() -> {
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).toggleOnFalse(new InstantCommand(() -> {
       if (loadState == LoadState.EMPTY) {
         overallState = OverallState.EMPTY_TRANSIT;
       }
@@ -315,18 +327,50 @@ public class Robot extends TimedRobot {
     // This should likely be part of driver control as well, but have to think about which button...
     GAMEPAD.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); // May not toggle as intended depending on the button type on the panel (i.e. button vs switch)
 
-    OP_PAD.getButton(ButtonCode.CUBE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CUBE));
-    OP_PAD.getButton(ButtonCode.CONE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CONE));
-    OP_PAD.getButton(ButtonCode.SCORE_LOW).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
-    OP_PAD.getButton(ButtonCode.SCORE_MID).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
-    OP_PAD.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
-    OP_PAD.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.DOUBLE_SUBSTATION));
+    OP_PAD_BUTTONS.getButton(ButtonCode.CUBE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CUBE));
+    OP_PAD_BUTTONS.getButton(ButtonCode.CONE).toggleOnTrue(new InstantCommand(() -> pieceState = PieceState.CONE));
+    OP_PAD_BUTTONS.getButton(ButtonCode.SCORE_LOW).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
+    OP_PAD_BUTTONS.getButton(ButtonCode.SCORE_MID).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
+    OP_PAD_BUTTONS.getButton(ButtonCode.SCORE_HIGH).toggleOnTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
+    OP_PAD_BUTTONS.getButton(ButtonCode.SUBSTATION_INTAKE).toggleOnTrue(new InstantCommand(() -> loadTargetState = LoadTargetState.DOUBLE_SUBSTATION));
 
     // This looks correct to me but the ejection process is likely a bit more complicated than simply opening the claw; if the piece falls in the wrong spot, it could be bad.
     // We probably want a command group that handles piece ejection. This could include rotating the robot and/or the arm to ensure the piece falls neither inside the robot,
     // or directly in front of the drivetrain.
     // The EJECTING state is handled in the arm subsystem
-    OP_PAD.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
+    OP_PAD_BUTTONS.getButton(ButtonCode.EJECT_PIECE).toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
+    
+    OP_PAD_SWITCHES.getButton(ButtonCode.ENDGAME_OVERRIDE)
+    .toggleOnTrue(new InstantCommand(() -> overallState = OverallState.ENDGAME))
+    .toggleOnFalse(new InstantCommand(() -> {
+      if (loadState == LoadState.LOADED) {
+        overallState = OverallState.LOADED_TRANSIT;
+      }
+      else {
+        overallState = OverallState.EMPTY_TRANSIT;
+      }
+    }));
+
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(true)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(false)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(true)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
+    // Rotates the arm to the minimum rotation point (only if manual arm rotation is switched on)
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_TO_ZERO)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Rotate Arm To Zero", ARM_SUBSYSTEM.getCurrentExtensionNativeUnits(), Constants.ARM_STARTING_DEGREES)));
+    // Rotates the arm to the maximum rotation point (only if manual arm rotation is switched on)
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Rotate Arm To Max", ARM_SUBSYSTEM.getCurrentExtensionNativeUnits(), Constants.ARM_MAX_ROTATION_DEGREES)));
+    // Extends the arm to the maximum extension point (only if manual arm extension is switched on)
+    OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
+    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Extend Arm", Constants.ARM_MAX_EXTENSION_ENCODER_UNITS, ARM_SUBSYSTEM.getCurrentRotationNativeUnits())));
+    // Extends the arm to the maximum retraction point (only if the manual arm extension is switched on)
+    OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
+    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Retract Arm", Constants.ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SUBSYSTEM.getCurrentRotationNativeUnits())));
   }
 
   // Checking for a cone specifically, as opposed to any game piece, is relevant
@@ -334,7 +378,7 @@ public class Robot extends TimedRobot {
   public static boolean hasCone() {
     return loadState == LoadState.LOADED && pieceState == PieceState.CONE;
   }
-
+  
   private void configureTriggers() {
     // CLAW
     // If the claw closes and we have a game piece, we're loaded.
@@ -371,6 +415,8 @@ public class Robot extends TimedRobot {
                         || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
                         || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
       .onTrue(new ArmGoToSetpointCommand(Constants.ARM_FULL_RETRACT_SETPOINT).withName("Retract arm"));
+
+    new Trigger(() -> Robot.hasCone()).whileTrue(RUMBLE_COMMAND);
   }
 
   private void setZoneStateFromFieldZone() {

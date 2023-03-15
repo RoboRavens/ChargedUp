@@ -114,44 +114,60 @@ public class Gamepad {
 		case SUBSTATION_INTAKE:
 			buttonNumber = 9;
 			break;
+		// Button locations will need to be tested and changed.
 		case FLOOR_INTAKE:
-			buttonNumber = 10;
-			break;
-		case SCORE_HIGH:
-			buttonNumber = 11;
-			break;
-		case SCORE_MID:
-			buttonNumber = 12;
-			break;
-		case SCORE_LOW:
 			buttonNumber = 6;
 			break;
-		case CUBE:
+		case SCORE_HIGH:
+			buttonNumber = 7;
+			break;
+		case SCORE_MID:
+			buttonNumber = 4;
+			break;
+		case SCORE_LOW:
 			buttonNumber = 1;
 			break;
-		case CONE:
+		case CUBE:
 			buttonNumber = 2;
+			break;
+		case CONE:
+			buttonNumber = 5;
 			break;
 		case SCORE_PIECE:
 			buttonNumber = 3;
 			break;
-		case TOGGLE_COLOR_SENSING_FEATURES:
-			buttonNumber = 4;
-			break;
+		// case TOGGLE_COLOR_SENSING_FEATURES:
+		// 	buttonNumber = 4;
+		// 	break;
 		case EJECT_PIECE:
-			buttonNumber = 3;
+			buttonNumber = 8;
 			break;
-		case TEMP_NEUTRAL_ZONE:
+		case EXTEND_ARM:
 			buttonNumber = 11;
 			break;
-		case TEMP_OPPONENT_ZONES:
+		case RETRACT_ARM:
 			buttonNumber = 9;
 			break;
+		case ROTATE_ARM_TO_ZERO:
+			buttonNumber = 12;
+			break;
+		case ROTATE_ARM_MAX_ROTATION:
+			buttonNumber = 10;
 		// Switch buttons
-		case TEMP_IS_LOADED:
+		case ARM_EXTENSION_MANUAL_OVERRIDE:
 			buttonNumber = 2;
 			break;
-
+		case ARM_ROTATION_MANUAL_OVERRIDE:
+			buttonNumber = 4;
+			break;
+		case ENDGAME_OVERRIDE:
+			buttonNumber = 1;
+			break;
+		case IGNORE_ROTATION_LIMITS:
+			buttonNumber = 8;
+			break;
+		case IGNORE_EXTENSION_LIMITS:
+			buttonNumber = 6;
 		default:
 			throw new IllegalArgumentException("Invalid Button Code");
 		}

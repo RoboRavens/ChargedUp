@@ -15,8 +15,8 @@ public class DrivetrainChargeStationBalancingCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        // TODO Auto-generated method stub
-        super.initialize();
+        SmartDashboard.putBoolean("balancing init", true);
+        SmartDashboard.putBoolean("balancing end", false);
     }
 
     @Override
@@ -48,11 +48,15 @@ public class DrivetrainChargeStationBalancingCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         Robot.DRIVE_TRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0, 0, 0));
+        SmartDashboard.putBoolean("balancing end", true);
+        SmartDashboard.putBoolean("balancing init", false);
     }
 
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
-        return super.isFinished();
+        if (Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll()) < 2.5) {
+            return true;
+        }
+        return false;
     }
 }
