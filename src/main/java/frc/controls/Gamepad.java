@@ -163,6 +163,9 @@ public class Gamepad {
 		case ENDGAME_OVERRIDE:
 			buttonNumber = 1;
 			break;
+		case TEMP_ALLIANCE_COMMUNITY_ZONE:
+			buttonNumber = 7;
+			break;
 		case IGNORE_ROTATION_LIMITS:
 			buttonNumber = 8;
 			break;

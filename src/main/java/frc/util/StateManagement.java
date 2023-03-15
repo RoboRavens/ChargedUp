@@ -81,11 +81,9 @@ public class StateManagement {
     // Set in the drivetrain subsystem
     public enum DrivetrainState {
         FREEHAND,   // Normal driving.
-        SINGLE_SUBSTATION_ALIGN,  // Yaw locked parallel to single substation, and translation auto-aligns to chute.
-        DOUBLE_SUBSTATION_ALIGN,  // Yaw locked parallel to double substation, and translation auto-aligns to shelf.
         ACTIVELY_LOADING,   // All human control locked out (briefly, while claw closes.)
         FREEHAND_WITH_ROTATION_LOCK,    // Yaw locked parallel to grid, but no effect on translation.
-        FINAL_SCORING_ROTATION_LOCK_AND_AUTO_ALIGN, // Yaw locked and sideways translation delegated to limelight, but forward/backward accessible.
+        ROBOT_ALIGN, // Yaw locked and sideways translation delegated to limelight, but forward/backward accessible.
         SCORING // All human control locked out (briefly, while claw opens.) (May be identical to actively loading state.)
     }
 
