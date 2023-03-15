@@ -3,6 +3,7 @@ package frc.controls;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
 public class Gamepad {
@@ -187,5 +188,13 @@ public class Gamepad {
 	public void setRumbleOff() {
 		_joystick.setRumble(RumbleType.kLeftRumble, 0);
         _joystick.setRumble(RumbleType.kRightRumble, 0);
+	}
+
+	public boolean getPOV(GamepadPOV pov) {
+		return _joystick.getPOV() == pov.Angle;
+	}
+
+	public Trigger getPOVTrigger(GamepadPOV pov) {
+		return new Trigger(() -> this.getPOV(pov));
 	}
 }
