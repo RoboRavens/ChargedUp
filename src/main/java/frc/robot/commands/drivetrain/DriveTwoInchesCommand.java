@@ -29,6 +29,7 @@ public class DriveTwoInchesCommand extends CommandBase {
     public DriveTwoInchesCommand(char direction) {
         addRequirements(Robot.DRIVE_TRAIN_SUBSYSTEM);
         _direction = direction;
+        _timer.start();
     }
 
     @Override
