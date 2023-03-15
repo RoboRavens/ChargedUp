@@ -142,6 +142,13 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     setDriverStationData();
 
+    
+    // SmartDashboard.putNumber("Power", ARM_SUBSYSTEM.testPower);
+
+    // ARM_SUBSYSTEM.setTestPower(SmartDashboard.getNumber("Power", 0));
+
+    
+
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
