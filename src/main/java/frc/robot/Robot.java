@@ -305,29 +305,13 @@ public class Robot extends TimedRobot {
     //GAMEPAD.getButton(ButtonCode.B).and(() -> overallState != OverallState.ENDGAME)
     //.onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory())
     //.alongWith(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition())));
-<<<<<<< Updated upstream
-
-=======
-   
-   
-/*
-    GAMEPAD.getButton(ButtonCode.B).and(() -> overallState == OverallState.ENDGAME)
-    .toggleOnTrue(new DriveTwoInchesCommand('R'));
->>>>>>> Stashed changes
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece.
     GAMEPAD.getButton(ButtonCode.Y).and(() -> overallState != OverallState.ENDGAME).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
     
     // Balance on the charge station while A is held.
     GAMEPAD.getButton(ButtonCode.A).and(() -> overallState != OverallState.ENDGAME)
     .whileTrue(chargeStationBalancingCommand);
-<<<<<<< Updated upstream
-=======
-    GAMEPAD.getButton(ButtonCode.A).and(() -> overallState == OverallState.ENDGAME)
-    .toggleOnTrue(new DriveTwoInchesCommand('B'));
-    GAMEPAD.getButton(ButtonCode.X).and(() -> overallState == OverallState.ENDGAME)
-    .toggleOnTrue(new DriveTwoInchesCommand('L'));
-  */
->>>>>>> Stashed changes
+
     // When the floor intake button is pressed, update the states
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).toggleOnTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;
