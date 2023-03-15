@@ -142,24 +142,32 @@ public class Gamepad {
 		case EJECT_PIECE:
 			buttonNumber = 8;
 			break;
-		case TEMP_NEUTRAL_ZONE:
+		case EXTEND_ARM:
 			buttonNumber = 11;
 			break;
-		case TEMP_OPPONENT_ZONES:
+		case RETRACT_ARM:
 			buttonNumber = 9;
 			break;
-		case TEMP_ALLIANCE_LOADING_ZONE:
+		case ROTATE_ARM_TO_ZERO:
 			buttonNumber = 12;
 			break;
-		case TEMP_ALLIANCE_COMMUNITY_ZONE:
+		case ROTATE_ARM_MAX_ROTATION:
 			buttonNumber = 10;
 		// Switch buttons
-		case TEMP_IS_LOADED:
+		case ARM_EXTENSION_MANUAL_OVERRIDE:
 			buttonNumber = 2;
+			break;
+		case ARM_ROTATION_MANUAL_OVERRIDE:
+			buttonNumber = 4;
 			break;
 		case ENDGAME_OVERRIDE:
 			buttonNumber = 1;
 			break;
+		case IGNORE_ROTATION_LIMITS:
+			buttonNumber = 8;
+			break;
+		case IGNORE_EXTENSION_LIMITS:
+			buttonNumber = 6;
 		default:
 			throw new IllegalArgumentException("Invalid Button Code");
 		}
