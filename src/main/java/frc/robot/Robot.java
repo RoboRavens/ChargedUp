@@ -287,10 +287,10 @@ public class Robot extends TimedRobot {
     GAMEPAD.getButton(ButtonCode.START).onTrue(new ClawOpenCommand());
     GAMEPAD.getButton(ButtonCode.BACK).onTrue(new ClawCloseCommand());
     
-    OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
+    GAMEPAD.getButton(ButtonCode.A).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
 
-    OP_PAD_SWITCHES.getButton(ButtonCode.CONE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));//
-    OP_PAD_SWITCHES.getButton(ButtonCode.EXTEND_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_EXTENSION_TEST_SETPOINT));
+    GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));//
+    GAMEPAD.getButton(ButtonCode.X).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_EXTENSION_TEST_SETPOINT));
     OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
     OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
     OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//
@@ -305,13 +305,29 @@ public class Robot extends TimedRobot {
     //GAMEPAD.getButton(ButtonCode.B).and(() -> overallState != OverallState.ENDGAME)
     //.onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory())
     //.alongWith(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition())));
+<<<<<<< Updated upstream
 
+=======
+   
+   
+/*
+    GAMEPAD.getButton(ButtonCode.B).and(() -> overallState == OverallState.ENDGAME)
+    .toggleOnTrue(new DriveTwoInchesCommand('R'));
+>>>>>>> Stashed changes
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece.
     GAMEPAD.getButton(ButtonCode.Y).and(() -> overallState != OverallState.ENDGAME).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
     
     // Balance on the charge station while A is held.
     GAMEPAD.getButton(ButtonCode.A).and(() -> overallState != OverallState.ENDGAME)
     .whileTrue(chargeStationBalancingCommand);
+<<<<<<< Updated upstream
+=======
+    GAMEPAD.getButton(ButtonCode.A).and(() -> overallState == OverallState.ENDGAME)
+    .toggleOnTrue(new DriveTwoInchesCommand('B'));
+    GAMEPAD.getButton(ButtonCode.X).and(() -> overallState == OverallState.ENDGAME)
+    .toggleOnTrue(new DriveTwoInchesCommand('L'));
+  */
+>>>>>>> Stashed changes
     // When the floor intake button is pressed, update the states
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).toggleOnTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;
@@ -372,9 +388,10 @@ public class Robot extends TimedRobot {
     OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(true)));
     OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
     // Rotates the arm to the minimum rotation point (only if manual arm rotation is switched on)
-    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_TO_ZERO)
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Rotate Arm To Zero", ARM_SUBSYSTEM.getCurrentExtensionNativeUnits(), Constants.ARM_STARTING_DEGREES)));
+    //OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_TO_ZERO)
+    //.and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+    //.toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Rotate Arm To Zero", ARM_SUBSYSTEM.getCurrentExtensionNativeUnits(), Constants.ARM_STARTING_DEGREES)));
+    
     // Rotates the arm to the maximum rotation point (only if manual arm rotation is switched on)
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
