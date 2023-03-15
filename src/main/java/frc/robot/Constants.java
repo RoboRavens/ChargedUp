@@ -29,7 +29,9 @@ public static final int LEDS_LENGTH = 117;
 	public static final int kSlotIdx = 0;
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
-  public static final Gains kGains = new Gains(0.09, 0.000009, 0.000005, 0.0, 0, 1.0);
+  public static final Gains rotationGains = new Gains(0.5, 0.0002, 0.00000, 0.0, 0, 1.0);
+  public static final Gains extensionGains = new Gains(1.1, 0.00018, 0.00000, 0.0, 0, 1.0);
+  
   // Position to degrees 4096 counts per revolution
   public static final int COUNTS_PER_REVOLUTION = 4096;
   public static final double ARM_DEGREES_TO_ENCODER_UNITS = COUNTS_PER_REVOLUTION / 360;
@@ -137,8 +139,8 @@ public static final int LEDS_LENGTH = 117;
 
   public static final double ARM_ROTATION_VELOCITY = 3000;
   public static final double ARM_ROTATION_ACCELERATION = 800;
-  public static final double ARM_EXTENSION_VELOCITY = 1000;
-  public static final double ARM_EXTENION_ACCELERATION = 100;
+  public static final double ARM_EXTENSION_VELOCITY = 7000;
+  public static final double ARM_EXTENSION_ACCELERATION = 5000;
 
   public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
   public static final double ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;

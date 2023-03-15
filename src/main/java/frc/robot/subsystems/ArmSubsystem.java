@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -27,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
     private WPI_TalonFX rotationMotor2 = new WPI_TalonFX(RobotMap.ARM_ROTATION_MOTOR_2);
     private WPI_TalonSRX rotationMotorsLeader = new WPI_TalonSRX(RobotMap.ARM_ROTATION_MOTOR_LEADER);
     private WPI_TalonFX extensionMotor = new WPI_TalonFX(RobotMap.ARM_EXTENSION_MOTOR);
-    private DoubleSolenoid brakeDoubleSolenoid = new DoubleSolenoid(RobotMap.REV_PNEUMATICS_MODULE_ID, PneumaticsModuleType.REVPH, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
+    private DoubleSolenoid brakeDoubleSolenoid = new DoubleSolenoid(RobotMap.REV_PNEUMATICS_MODULE_ID, PneumaticsModuleType.REVPH, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.ARM_BRAKE_DOUBLE_SOLENOID_REVERSE_CHANNEL);
 
     private PIDController pidController;
     CommandXboxController _controller;
@@ -37,36 +38,61 @@ public class ArmSubsystem extends SubsystemBase {
     private double _armRotationAcceleration;
 
     private ArmPose armPose = new ArmPose(Constants.ARM_STARTING_DEGREES);
-    private double armRotationFinalTarget = 0;
-    private double armRotationInstantaneousTarget = 0;
-    private double armExtensionFinalTarget = 0;
-    private double armExtensionInstantaneousTarget = 0;
+    private double armRotationSubSetpointFinalTargetNativeUnits = 0;
+    private double armRotationFinalTargetNativeUnits = 0;
+    private double armRotationInstantaneousTargetNativeUnits = 0;
+    private double armExtensionSubSetpointFinalTargetNativeUnits = 0;
+    private double armExtensionFinalTargetNativeUnits = 0;
+    private double armExtensionInstantaneousTargetNativeUnits = 0;
 
     private double extensionAFF = 0;
     private double rotationAFF = 0;
+
+    public double rotationTestPower = 0;
+
+    public double extensionTestPower = 0;
 
     public ArmSubsystem() {
         // configures motion magic setup
         rotationMotorsLeader.configFactoryDefault();
         rotationMotor1.configFactoryDefault();
         rotationMotor2.configFactoryDefault(100);
-        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
-                Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        rotationMotorsLeader.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-        rotationMotorsLeader.config_kF(Constants.kSlotIdx, Constants.kGains.kF, Constants.kTimeoutMs);
-        rotationMotorsLeader.config_kP(Constants.kSlotIdx, Constants.kGains.kP, Constants.kTimeoutMs);
-        rotationMotorsLeader.config_kI(Constants.kSlotIdx, Constants.kGains.kI, Constants.kTimeoutMs);
-        rotationMotorsLeader.config_kD(Constants.kSlotIdx, Constants.kGains.kD, Constants.kTimeoutMs);
-        rotationMotorsLeader.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        rotationMotor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        extensionMotor.configFactoryDefault();
 
-        // configures following
-        rotationMotorsLeader.setInverted(false);
+        rotationMotorsLeader.setInverted(true);
+
         rotationMotor2.follow(rotationMotorsLeader);
         rotationMotor2.setInverted(InvertType.FollowMaster);
         rotationMotor1.follow(rotationMotorsLeader);
         rotationMotor1.setInverted(InvertType.FollowMaster);
+
+        // rotationMotorsLeader.setSensorPhase(false);
+        //rotationMotorsLeader.setInverted(true);
+
+//        rotationMotor1.setInverted(null);
+
+        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
+                Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotorsLeader.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
+        rotationMotorsLeader.config_kF(Constants.kSlotIdx, Constants.rotationGains.kF, Constants.kTimeoutMs);
+        rotationMotorsLeader.config_kP(Constants.kSlotIdx, Constants.rotationGains.kP, Constants.kTimeoutMs);
+        rotationMotorsLeader.config_kI(Constants.kSlotIdx, Constants.rotationGains.kI, Constants.kTimeoutMs);
+        rotationMotorsLeader.config_kD(Constants.kSlotIdx, Constants.rotationGains.kD, Constants.kTimeoutMs);
+        extensionMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
+        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        extensionMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
+        extensionMotor.config_kF(Constants.kSlotIdx, Constants.extensionGains.kF, Constants.kTimeoutMs);
+        extensionMotor.config_kP(Constants.kSlotIdx, Constants.extensionGains.kP, Constants.kTimeoutMs);
+        extensionMotor.config_kI(Constants.kSlotIdx, Constants.extensionGains.kI, Constants.kTimeoutMs);
+        extensionMotor.config_kD(Constants.kSlotIdx, Constants.extensionGains.kD, Constants.kTimeoutMs);
+        extensionMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotorsLeader.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        extensionMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        
+        // configures following
+        // rotationMotorsLeader.setInverted(false);
 
         // Set limits. The rotation only has soft limits but the extension has a physical retraction limit switch.
         rotationMotorsLeader.configForwardSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS, 0);
@@ -75,10 +101,20 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotorsLeader.configReverseSoftLimitEnable(true, 0);
 
         extensionMotor.configForwardSoftLimitThreshold(Constants.ARM_MAX_EXTENSION_ENCODER_UNITS, 0);
-        extensionMotor.configReverseSoftLimitThreshold(0, 0);
+        extensionMotor.configReverseSoftLimitThreshold(5000, 0);
         extensionMotor.configForwardSoftLimitEnable(true, 0);
         extensionMotor.configReverseSoftLimitEnable(true, 0);
         extensionMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+    }
+
+    public void enableRotationLimit(boolean ignoreRotationLimit) {
+        rotationMotorsLeader.configForwardSoftLimitEnable(ignoreRotationLimit);
+        rotationMotorsLeader.configReverseSoftLimitEnable(ignoreRotationLimit);
+    }
+
+    public void enableExtensionLimit(boolean ignoreExtensionLimit) {
+        extensionMotor.configForwardSoftLimitEnable(ignoreExtensionLimit);
+        extensionMotor.configReverseSoftLimitEnable(ignoreExtensionLimit);
     }
 
     public void brakeEnable() {
@@ -89,26 +125,28 @@ public class ArmSubsystem extends SubsystemBase {
         // brakeDoubleSolenoid.set(Value.kReverse);
     }
 
-    public void setFinalTargetPositions(ArmSetpoint armSetpoint) {
-        armRotationFinalTarget = armSetpoint.getRotationSetpoint();
-        armExtensionFinalTarget = armSetpoint.getExtensionSetpoint();
+    public void setFinalTargetPositions(ArmSetpoint finalSetpoint, ArmSetpoint currentSetpoint) {
+        armRotationFinalTargetNativeUnits = finalSetpoint.getRotationSetpoint();
+        armExtensionFinalTargetNativeUnits = finalSetpoint.getExtensionSetpoint();
+        armRotationSubSetpointFinalTargetNativeUnits = currentSetpoint.getRotationSetpoint();
+        armExtensionSubSetpointFinalTargetNativeUnits = currentSetpoint.getExtensionSetpoint();
     }
 
     public void updateFinalTargetPositions() {
         // Length only has one constraint (maximum) so just min the constraint and the target.
-        armExtensionFinalTarget = Math.min(armExtensionFinalTarget, armPose.getArmLengthToHitConstraintNativeUnits());
+        armExtensionFinalTargetNativeUnits = Math.min(armExtensionFinalTargetNativeUnits, armPose.getArmLengthToHitConstraintNativeUnits());
 
         // Rotation is slightly trickier since it has constraints in either direction.
         // First, figure out which way the arm is rotating by checking the difference between the target and the actual.
         // Then, find the constraint that is in the proper direction relative to the current position out of the two constraints.
         // Remember to use max instead of min when looking at bounds that are lower than the current value.
-        if (_armRotationPosition < armRotationFinalTarget) {
+        if (_armRotationPosition < armRotationFinalTargetNativeUnits) {
             // The arm is moving forward.
-            armRotationFinalTarget = Math.min(armRotationFinalTarget, armPose.getArmRotationMaximumBoundNativeUnits());
+            armRotationFinalTargetNativeUnits = Math.min(armRotationFinalTargetNativeUnits, armPose.getArmRotationMaximumBoundNativeUnits());
         }
         else {
             // The arm is moving backward.
-            armRotationFinalTarget = Math.max(armRotationFinalTarget, armPose.getArmRotationMinimumBoundNativeUnits());
+            armRotationFinalTargetNativeUnits = Math.max(armRotationFinalTargetNativeUnits, armPose.getArmRotationMinimumBoundNativeUnits());
         }
     }
 
@@ -131,6 +169,9 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotorsLeader.configMotionAcceleration(rotationAcceleration, Constants.kTimeoutMs);
         rotationMotorsLeader.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, rotationAFF);
         SmartDashboard.putNumber("ArmRotationPosition", setpoint);
+        SmartDashboard.putNumber("Error", rotationMotorsLeader.getClosedLoopError());
+        SmartDashboard.putNumber("CL Target", rotationMotorsLeader.getClosedLoopTarget());
+        SmartDashboard.putNumber("ATP", rotationMotorsLeader.getActiveTrajectoryPosition());
     }
 
     public void setArmExtensionPosition(double setpoint, double extensionVelocity, double extensionAcceleration) {
@@ -160,7 +201,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void motionMagic() {
-        pidController = new PIDController(Constants.kGains.kP, Constants.kGains.kI, Constants.kGains.kD);
+        pidController = new PIDController(Constants.rotationGains.kP, Constants.rotationGains.kI, Constants.rotationGains.kD);
         pidController.setSetpoint(8);
         pidController.setP(0.0);
         pidController.getPositionError();
@@ -172,8 +213,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public double getCommandTimeoutSeconds() {
-        double rotationDifference = Math.abs(rotationMotorsLeader.getSelectedSensorPosition() - armRotationFinalTarget);
-        double extensionDifference = Math.abs(extensionMotor.getSelectedSensorPosition() - armExtensionFinalTarget);
+        double rotationDifference = Math.abs(rotationMotorsLeader.getSelectedSensorPosition() - armRotationFinalTargetNativeUnits);
+        double extensionDifference = Math.abs(extensionMotor.getSelectedSensorPosition() - armExtensionFinalTargetNativeUnits);
 
         // Need to test actual motion times at speeds we like and then come up with a reasonable timeout formula.
         return 4;
@@ -182,9 +223,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        armPose.setArmAngleDegrees(getCurrentAngleDegrees());
+        SmartDashboard.putNumber("Ext Encder", extensionMotor.getSelectedSensorPosition());
+
         SmartDashboard.putNumber("LeaderEncoderPosition", rotationMotorsLeader.getSelectedSensorPosition());
-        SmartDashboard.putNumber("motor1position", rotationMotor1.getSelectedSensorPosition());
-        SmartDashboard.putNumber("motor2position", rotationMotor2.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("motor1position", rotationMotor1.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("motor2position", rotationMotor2.getSelectedSensorPosition());
 
         double setAngle = getAngleFromPosition((SmartDashboard.getNumber("ArmSetPosition", 0.0)));
         SmartDashboard.putNumber("SetPositonInDegrees", setAngle);
@@ -196,8 +240,36 @@ public class ArmSubsystem extends SubsystemBase {
         // from degrees to position is ~11.377778
 
         armPose.calculateInstantaneousMaximums();
-        this.updateFinalTargetPositions();
+        this.updateInstantaneousMaximums();
+        // this.updateFinalTargetPositions();
         this.updateAFFs();
+    }
+
+    private void updateInstantaneousMaximums() {
+        armExtensionInstantaneousTargetNativeUnits = Math.min(armPose.getArmLengthToHitConstraintNativeUnits(), armExtensionFinalTargetNativeUnits);
+
+        // Update based on which direction the arm is moving.
+        if (armPose.getArmRotationNativeUnits() < this.armRotationFinalTargetNativeUnits) {
+            armRotationInstantaneousTargetNativeUnits = Math.min(armPose.getArmRotationMaximumBoundNativeUnits(), armRotationFinalTargetNativeUnits);
+        }
+        else {
+            armRotationInstantaneousTargetNativeUnits = Math.max(armPose.getArmRotationMinimumBoundNativeUnits(), armRotationFinalTargetNativeUnits);
+        }
+
+        SmartDashboard.putBoolean("UIM IF", (armPose.getArmRotationNativeUnits() < this.armRotationFinalTargetNativeUnits));
+        
+        SmartDashboard.putNumber("ARM ROT MIN", Math.min(armPose.getArmRotationMaximumBoundNativeUnits(), armRotationFinalTargetNativeUnits));
+        
+        SmartDashboard.putNumber("ARM ROT MAX", Math.max(armPose.getArmRotationMinimumBoundNativeUnits(), armRotationFinalTargetNativeUnits));
+        
+
+        SmartDashboard.putNumber("ExtInstTarg", armExtensionInstantaneousTargetNativeUnits);
+        
+        SmartDashboard.putNumber("RotInstTarg", armRotationInstantaneousTargetNativeUnits);
+        SmartDashboard.putNumber("ExtFinalTarg", armExtensionFinalTargetNativeUnits);
+        
+        SmartDashboard.putNumber("RotFinalTarg", armRotationFinalTargetNativeUnits);
+    
     }
 
     public void updateAFFs() {
@@ -247,7 +319,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public double getCurrentExtensionNativeUnits() {
-        return rotationMotorsLeader.getSelectedSensorPosition();
+        return extensionMotor.getSelectedSensorPosition();
     }
 
     public double getAngleFromPosition(double position) {
@@ -269,21 +341,29 @@ public class ArmSubsystem extends SubsystemBase {
 
     private void manageSetpoints() {
         int maxInstantaneousExtension = armPose.getArmLengthToHitConstraintNativeUnits();
-        this.armExtensionInstantaneousTarget = Math.min(this.armExtensionFinalTarget, maxInstantaneousExtension);
+        this.armExtensionInstantaneousTargetNativeUnits = Math.min(this.armExtensionFinalTargetNativeUnits, maxInstantaneousExtension);
     }
 
     private void setExtensionTarget(int encoderNativeUnits) {
-        this.armExtensionFinalTarget = encoderNativeUnits;
+        this.armExtensionFinalTargetNativeUnits = encoderNativeUnits;
     }
 
     private void setRotationTarget(int encoderNativeUnits) {
-        this.armRotationFinalTarget = encoderNativeUnits;
+        this.armRotationFinalTargetNativeUnits = encoderNativeUnits;
     }
-    public double getArmRotationInstantaneousTarget() {
-        return armRotationInstantaneousTarget;
+    public double getArmRotationInstantaneousTargetNativeUnits() {
+        return armRotationInstantaneousTargetNativeUnits;
     }
 
-    public double getArmExtensionInstantaneousTarget() {
-        return armExtensionInstantaneousTarget;
+    public double getArmExtensionInstantaneousTargetNativeUnits() {
+        return armExtensionInstantaneousTargetNativeUnits;
+    }
+
+    public void runRotationAtTestPower() {
+        rotationMotorsLeader.setVoltage(rotationTestPower);
+    }
+
+    public void runExtensionAtTestPower() {
+        extensionMotor.set(extensionTestPower);
     }
 }
