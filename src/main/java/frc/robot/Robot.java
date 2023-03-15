@@ -115,7 +115,6 @@ public class Robot extends TimedRobot {
   public static FieldSubzone fieldSubzone = FieldZones.noneSubzone;
   public static DriverStation.Alliance allianceColor = Alliance.Invalid;
 
-  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -245,6 +244,10 @@ public class Robot extends TimedRobot {
     // Set the overall state to either scoring alignment or hps pickup based on the zone state
     if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) {
       drivetrainState = DrivetrainState.ROBOT_ALIGN;
+    }
+    // Set the drive state back to freehand when the left trigger is released
+    else if (drivetrainState == DrivetrainState.ROBOT_ALIGN) {
+      drivetrainState = DrivetrainState.FREEHAND;
     }
     // Changes the overall state to empty or loaded transit when the trigger is released
     else if (

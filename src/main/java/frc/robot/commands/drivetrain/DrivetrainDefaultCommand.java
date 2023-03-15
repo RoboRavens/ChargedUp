@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.controls.AxisCode;
@@ -13,7 +14,10 @@ import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
 import frc.util.StateManagement.DrivetrainState;
+import frc.util.StateManagement.LoadState;
+import frc.util.StateManagement.LoadTargetState;
 import frc.util.StateManagement.OverallState;
+import frc.util.StateManagement.ZoneState;
 import edu.wpi.first.math.MathUtil;
 
 public class DrivetrainDefaultCommand extends CommandBase {
@@ -23,8 +27,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
     private PIDController _autoSteerPID = new PIDController(.035, 0, 0);
     private PIDController _yPID = new PIDController(1, 0, 0);
     private PIDController _xPID = new PIDController(1, 0, 0);
-    Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23),
-    Rotation2d.fromDegrees(-180));
+    private double _targetRotation = 0;
+    // Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
+    Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
     public DrivetrainDefaultCommand() {
         SmartDashboard.putString("DriveTrainDefaultCommandState", "constructed");
@@ -73,11 +78,31 @@ public class DrivetrainDefaultCommand extends CommandBase {
             r = 0.0;
         }
 
+        SmartDashboard.putNumber("x pos", Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getX());
+        SmartDashboard.putNumber("y pos", Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getY());
+
         if (Robot.drivetrainState == DrivetrainState.ROBOT_ALIGN) {
-            r = getAngularVelocityForAlignment(); // TODO: change this to adjust the alignment based on the zone
-            // TODO: set x to align with a scoring node based on limelight input
-            x = 0;
-            y = 0;
+            // Set the robot to score
+            // TODO: update _targetPose based on the selected scoring location
+            // Get rid of the above three lines after testing
+            if (Robot.overallState == OverallState.PREPARING_TO_SCORE || 
+            (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.DOUBLE_SUBSTATION)) {
+                _targetRotation = 0;
+                r = getAngularVelocityForAlignment();
+                x = getXVelocity();
+                y = getYVelocity();
+            }
+            else if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.SINGLE_SUBSTATION) {
+                if (DriverStation.getAlliance() == DriverStation.getAlliance().Red) {
+                    _targetRotation = 1.571; // 90 degrees
+                }
+                else {
+                    _targetRotation =  -1.571; // -90 degrees
+                }
+                r = getAngularVelocityForAlignment();
+                x = getXVelocity();
+                y = getYVelocity();
+            }
         }
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
         else if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
@@ -132,6 +157,10 @@ public class DrivetrainDefaultCommand extends CommandBase {
         else if (Math.abs(ySpeed) < 0.2 && Math.abs(yOffsetFromTarget) > 0.0127) {
             ySpeed = 0.2 * velocityDirection;
         }
+        // If the offset is within 0.5 inches, set the speed to 0 (exact value should be updated)
+        else if (Math.abs(yOffsetFromTarget) < 0.0127) {
+            ySpeed = 0;
+        }
         return ySpeed;
     }
 
@@ -142,22 +171,33 @@ public class DrivetrainDefaultCommand extends CommandBase {
         if (Math.abs(xSpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {
             xSpeed = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2 * velocityDirection;
         }
-        else if (Math.abs(xSpeed) < 0.2) {
+        else if (Math.abs(xSpeed) < 0.2 && Math.abs(xOffsetFromTarget) > 0.0127) {
             xSpeed = 0.2 * velocityDirection;
+        }
+        // If the offset is within 0.5 inches, set the speed to 0 (exact value should be updated)
+        else if (Math.abs(xOffsetFromTarget) < 0.0127) {
+            xSpeed = 0;
         }
         return xSpeed;
     }
 
     private double getAngularVelocityForAlignment() {
         // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
-        double angularVelocity = _scoringRotationAlignPID.calculate(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+        double currentRotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians();
+        double rotationOffset = currentRotation - _targetRotation;
+        SmartDashboard.putNumber("Rotation Offset", rotationOffset);
+        double angularVelocity = _scoringRotationAlignPID
+        .calculate(rotationOffset) 
+        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
         double velocityDirection = angularVelocity < 0 ? -1 : 1;
+        boolean isWithinTwoHundredthsRadianOfTargetRotation = currentRotation > _targetRotation - 0.02 && currentRotation < _targetRotation + 0.02;
+        SmartDashboard.putBoolean("isWithinTwoHundredthsRadianOfTargetRotation", isWithinTwoHundredthsRadianOfTargetRotation);
         // If the angular velocity is greater than the max angular velocity, set it to the max angular velocity
         if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
             return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * velocityDirection;
         }
         // If the angular velocity is less than 0.4 and the robot is not within 0.02 radians of 0 degrees, set the velocity to 0.4
-        else if (Math.abs(angularVelocity) < 0.4 && Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians()) > 0.02) {
+        else if (Math.abs(angularVelocity) < 0.4 && isWithinTwoHundredthsRadianOfTargetRotation == false) {
             return 0.4 * velocityDirection;
         }
         return angularVelocity; // angular velocity
