@@ -171,6 +171,7 @@ public class Gamepad {
 			break;
 		case IGNORE_EXTENSION_LIMITS:
 			buttonNumber = 6;
+			break;
 		default:
 			throw new IllegalArgumentException("Invalid Button Code");
 		}
