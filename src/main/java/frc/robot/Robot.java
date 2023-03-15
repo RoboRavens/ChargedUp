@@ -98,6 +98,7 @@ public class Robot extends TimedRobot {
   // public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
+  public static final LEDsSubsystem LED_SUBSYSTEM = new LEDsSubsystem();
   public static boolean driverControlOverride = false;
 
   // Sets the default robot mechanism states (may need to be changed)
@@ -122,7 +123,6 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
-  public LEDsSubsystem ledsSubsystem = new LEDsSubsystem();
   @Override
   public void robotInit() {
     //sets the relative encoders of the arm rotational motors position based off the position of the absolute encoder
@@ -281,9 +281,9 @@ public class Robot extends TimedRobot {
     OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_ALLIANCE_COMMUNITY_ZONE)
     .onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_COMMUNITY))
     .onFalse(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));
-    GAMEPAD.getButton(ButtonCode.B).and(() -> overallState != OverallState.ENDGAME)
-    .onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory())
-    .alongWith(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition())));
+    //GAMEPAD.getButton(ButtonCode.B).and(() -> overallState != OverallState.ENDGAME)
+    //.onTrue(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.driveTrajectory())
+    //.alongWith(new InstantCommand(() -> Robot.LIMELIGHT_TRAJECTORY_SUBSYSTEM.goToScoringPosition())));
     GAMEPAD.getButton(ButtonCode.B).and(() -> overallState == OverallState.ENDGAME)
     .toggleOnTrue(new DriveTwoInchesCommand('R'));
     // If the release button is pressed and the robot is aligned with a scoring node, score the piece.
