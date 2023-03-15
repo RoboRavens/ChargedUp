@@ -18,12 +18,15 @@ import frc.util.arm.ArmSetpoint;
  */
 public final class Constants {
 
-    //LEDs
-public static final int FIRST_LEDS_SECTION = 29;
-public static final int SECOND_LEDS_SECTION = 56;
-public static final int THIRD_LEDS_SECTION = 86;
-public static final int FOURTH_LEDS_SECTION = 117;
-public static final int LEDS_LENGTH = 117;
+  //Rotation Motor Absolute Encoder Position
+  public static final double ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO = 229;
+
+  //LEDs
+  public static final int TOTAL_LEDS_STRIP_LENGTH = 117;
+  public static final int END_OF_FIRST_LEDS_SECTION = 28;
+  public static final int END_OF_SECOND_LEDS_SECTION = 56;
+  public static final int END_OF_THIRD_LEDS_SECTION = 84;
+  public static final int END_OF_FOURTH_LEDS_SECTION = TOTAL_LEDS_STRIP_LENGTH;
 
   //Motion Magic
 	public static final int kSlotIdx = 0;
