@@ -278,6 +278,22 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
+
+    
+    OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
+
+    OP_PAD_SWITCHES.getButton(ButtonCode.CONE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));//
+    OP_PAD_SWITCHES.getButton(ButtonCode.EXTEND_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_EXTENSION_TEST_SETPOINT));
+    OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
+    OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
+    OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//
+    OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_LOW).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT));
+    OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_MID).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
+    OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_HIGH).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
+    OP_PAD_SWITCHES.getButton(ButtonCode.EJECT_PIECE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_HIGH_SETPOINT));
+
+
+
     OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_ALLIANCE_COMMUNITY_ZONE)
     .onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_COMMUNITY))
     .onFalse(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));

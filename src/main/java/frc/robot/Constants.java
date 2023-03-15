@@ -76,7 +76,7 @@ public final class Constants {
   public static final double MAX_TELEOP_HORIZONTAL_EXTENSION_INCHES = 48;
   public static final double ARM_BASE_LENGTH_INCHES = 33.524;
   public static final double ARM_EXTENDED_LENGTH_INCHES = 66.25;
-  public static final double ARM_MAX_EXTENSION_ENCODER_UNITS = 10000; // This number is a wild guess and liable to be very wrong.
+  public static final double ARM_MAX_EXTENSION_ENCODER_UNITS = 110000; // This number is a wild guess and liable to be very wrong.
   public static final double SAFETY_MARGIN_INCHES = 1;
   public static final double ARM_EXTENSION_PER_UNIT = Constants.ARM_EXTENDED_LENGTH_INCHES / Constants.ARM_MAX_EXTENSION_ENCODER_UNITS;
 
@@ -130,6 +130,9 @@ public final class Constants {
   public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 200;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
 
+  public static final ArmSetpoint ARM_EXTENSION_TEST_SETPOINT = new ArmSetpoint("Arm Extend", ARM_MAX_EXTENSION_ENCODER_UNITS, ARM_FULL_RETRACT_ROTATION_SETPOINT);
+
+  
   public static final ArmSetpoint ARM_FULL_RETRACT_SETPOINT = new ArmSetpoint("Full Retract", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_FULL_RETRACT_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_GROUND_PICKUP_SETPOINT = new ArmSetpoint("Ground Pickup", ARM_GROUND_PICKUP_EXTENSION_SETPOINT, ARM_GROUND_PICKUP_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT = new ArmSetpoint("Single Substation Pickup", ARM_SINGLE_SUBSTATION_PICKUP_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT);
