@@ -14,7 +14,7 @@ public class LEDsSubsystem extends SubsystemBase {
   boolean blinkOn = false;
   Timer timer = new Timer();
   AddressableLED m_light = new AddressableLED(9);
-  AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(Constants.LEDS_LENGTH);
+  AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(Constants.TOTAL_LEDS_STRIP_LENGTH);
 
   public LEDsSubsystem() {
     timer.reset();
@@ -85,16 +85,16 @@ public class LEDsSubsystem extends SubsystemBase {
   //sets different LEDs sections different colors
   public void ledsSection(int redInC1, int greenInC1, int blueInC1, int redInC2, int greenInC2, int blueInC2, int redInC3, int greenInC3, int blueInC3, int redInC4, int greenInC4, int blueInC4) {
     for (int i = 0; i < m_ledBuffer.getLength(); i++) {
-      if(i < Constants.FIRST_LEDS_SECTION) {
+      if(i < Constants.END_OF_FIRST_LEDS_SECTION) {
         m_ledBuffer.setRGB(i, redInC1, greenInC1, blueInC1);
       }
-      if(i < Constants.SECOND_LEDS_SECTION && i > Constants.FIRST_LEDS_SECTION) {
+      if(i < Constants.END_OF_SECOND_LEDS_SECTION && i > Constants.END_OF_FIRST_LEDS_SECTION) {
         m_ledBuffer.setRGB(i, redInC2, greenInC2, blueInC2);
       }
-      if(i < Constants.THIRD_LEDS_SECTION && i > Constants.SECOND_LEDS_SECTION) {
+      if(i < Constants.END_OF_THIRD_LEDS_SECTION && i > Constants.END_OF_SECOND_LEDS_SECTION) {
         m_ledBuffer.setRGB(i, redInC3, greenInC3, blueInC3);
       }
-      if(i < Constants.FOURTH_LEDS_SECTION && i > Constants.THIRD_LEDS_SECTION) {
+      if(i < Constants.END_OF_FOURTH_LEDS_SECTION && i > Constants.END_OF_THIRD_LEDS_SECTION) {
         m_ledBuffer.setRGB(i, redInC4, greenInC4, blueInC4);
       }
     }

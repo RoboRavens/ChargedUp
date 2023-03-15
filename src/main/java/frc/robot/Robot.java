@@ -62,6 +62,7 @@ import frc.util.StateManagement.PieceState;
 import frc.util.StateManagement.ScoringTargetState;
 import frc.util.StateManagement.ZoneState;
 import frc.robot.subsystems.DrivetrainSubsystemMock;
+import frc.robot.subsystems.LEDsSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.LimelightTrajectorySubsystem;
 import frc.robot.subsystems.TrajectoryTestingSubsystem;
@@ -121,8 +122,12 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+  public LEDsSubsystem ledsSubsystem = new LEDsSubsystem();
   @Override
   public void robotInit() {
+    //sets the relative encoders of the arm rotational motors position based off the position of the absolute encoder
+    ARM_SUBSYSTEM.armRotationAbsolutePosition();
+    
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();

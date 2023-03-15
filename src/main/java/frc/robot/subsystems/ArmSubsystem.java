@@ -90,7 +90,7 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         extensionMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        
+
         // configures following
         // rotationMotorsLeader.setInverted(false);
 
@@ -107,6 +107,25 @@ public class ArmSubsystem extends SubsystemBase {
         extensionMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
     }
 
+    //set the arms relative positon encoder based off of absolute encoder
+    //when absEncoder = 229 then relEncoder = 0
+    public void armRotationAbsolutePosition() {
+        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute,
+        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        double armRotationAbsolutePosition = rotationMotorsLeader.getSelectedSensorPosition();
+
+        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
+        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotorsLeader.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+
+        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
+        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        double armRotationRelativePositionBasedOnAbsolute = armRotationAbsolutePosition - Constants.ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO;
+        rotationMotorsLeader.setSelectedSensorPosition(armRotationRelativePositionBasedOnAbsolute);
+    }
+  
     public void enableRotationLimit(boolean ignoreRotationLimit) {
         rotationMotorsLeader.configForwardSoftLimitEnable(ignoreRotationLimit);
         rotationMotorsLeader.configReverseSoftLimitEnable(ignoreRotationLimit);
