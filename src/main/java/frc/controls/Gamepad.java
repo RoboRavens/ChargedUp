@@ -149,10 +149,10 @@ public class Gamepad {
 		case RETRACT_ARM:
 			buttonNumber = 9;
 			break;
-		case ROTATE_ARM_TO_ZERO:
+		case ROTATE_ARM_BACKWARD:
 			buttonNumber = 12;
 			break;
-		case ROTATE_ARM_MAX_ROTATION:
+		case ROTATE_ARM_FORWARD:
 			buttonNumber = 10;
 		// Switch buttons
 		case ARM_EXTENSION_MANUAL_OVERRIDE:

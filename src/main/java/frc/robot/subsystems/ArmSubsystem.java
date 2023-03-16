@@ -385,4 +385,12 @@ public class ArmSubsystem extends SubsystemBase {
     public void runExtensionAtTestPower() {
         extensionMotor.set(extensionTestPower);
     }
+
+    public void armRotateAtSetPower(double power) {
+        // TODO Implement this method
+    }
+
+    public void armExtendAtSetPower(double power) {
+        // TODO Implement this method
+    }
 }

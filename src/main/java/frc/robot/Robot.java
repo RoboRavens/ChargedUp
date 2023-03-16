@@ -292,8 +292,8 @@ public class Robot extends TimedRobot {
     GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));//
     GAMEPAD.getButton(ButtonCode.X).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_EXTENSION_TEST_SETPOINT));
     OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
-    OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
-    OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//
+    OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_FORWARD).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
+    OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_BACKWARD).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//
     OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_LOW).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT));
     OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_MID).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
     OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_HIGH).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
@@ -402,22 +402,25 @@ public class Robot extends TimedRobot {
     OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(true)));
     OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
     // Rotates the arm to the minimum rotation point (only if manual arm rotation is switched on)
-    //OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_TO_ZERO)
-    //.and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-    //.toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Rotate Arm To Zero", ARM_SUBSYSTEM.getCurrentExtensionNativeUnits(), Constants.ARM_STARTING_DEGREES)));
-    
-    // Rotates the arm to the maximum rotation point (only if manual arm rotation is switched on)
-    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION)
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Rotate Arm To Max", ARM_SUBSYSTEM.getCurrentExtensionNativeUnits(), Constants.ARM_MAX_ROTATION_DEGREES)));
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+    .toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.armRotateAtSetPower(-1)));
+    // Rotates the arm to the maximum rotation point (only if manual arm rotation is switched on)
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+    .toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.armRotateAtSetPower(1)));
     // Extends the arm to the maximum extension point (only if manual arm extension is switched on)
     OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
-    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Extend Arm", Constants.ARM_MAX_EXTENSION_ENCODER_UNITS, ARM_SUBSYSTEM.getCurrentRotationNativeUnits())));
+    .toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.armExtendAtSetPower(1)));
     // Extends the arm to the maximum retraction point (only if the manual arm extension is switched on)
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
-    .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Retract Arm", Constants.ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SUBSYSTEM.getCurrentRotationNativeUnits())));
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+    .toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.armExtendAtSetPower(-1)));
   }
 
   // Checking for a cone specifically, as opposed to any game piece, is relevant
