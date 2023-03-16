@@ -66,11 +66,6 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotor1.follow(rotationMotorsLeader);
         rotationMotor1.setInverted(InvertType.FollowMaster);
 
-        // rotationMotorsLeader.setSensorPhase(false);
-        //rotationMotorsLeader.setInverted(true);
-
-//        rotationMotor1.setInverted(null);
-
         rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
                 Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         rotationMotorsLeader.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
@@ -91,9 +86,6 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         extensionMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
-        // configures following
-        // rotationMotorsLeader.setInverted(false);
-
         // Set limits. The rotation only has soft limits but the extension has a physical retraction limit switch.
         rotationMotorsLeader.configForwardSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS, 0);
         rotationMotorsLeader.configReverseSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS * -1, 0);
@@ -110,20 +102,14 @@ public class ArmSubsystem extends SubsystemBase {
     //set the arms relative positon encoder based off of absolute encoder
     //when absEncoder = 229 then relEncoder = 0
     public void armRotationAbsolutePosition() {
-        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute,
-        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        double armRotationAbsolutePosition = rotationMotorsLeader.getSelectedSensorPosition();
-
-        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
-        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        rotationMotorsLeader.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        double armRotationAbsolutePosition = rotationMotorsLeader.getSensorCollection().getPulseWidthPosition();
+        
+        double armRotationRelativePositionBasedOnAbsolute = armRotationAbsolutePosition - Constants.ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO;
+        rotationMotorsLeader.setSelectedSensorPosition(armRotationRelativePositionBasedOnAbsolute);
+        
         rotationMotor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
-        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
-        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        double armRotationRelativePositionBasedOnAbsolute = armRotationAbsolutePosition - Constants.ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO;
-        rotationMotorsLeader.setSelectedSensorPosition(armRotationRelativePositionBasedOnAbsolute);
     }
   
     public void enableRotationLimit(boolean ignoreRotationLimit) {
@@ -169,6 +155,7 @@ public class ArmSubsystem extends SubsystemBase {
         }
     }
 
+    /*
     public void setArmRotationAngularPosition(double _armAngle, double _armVelocity, double _armAcceleration) {
         //replace _armPosition with getPositionFromAngle(_armPosition) so that _armPosition can just be an angle
         if (getPositionFromAngle(_armAngle) - (rotationMotorsLeader.getSelectedSensorPosition()) < 0) {
@@ -182,6 +169,7 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotorsLeader.set(ControlMode.Position, getPositionFromAngle(_armAngle));
         SmartDashboard.putNumber("ArmSetPosition", getPositionFromAngle(_armAngle));
     }
+    */
 
     public void setArmRotationPosition(double setpoint, double rotationVelocity, double rotationAcceleration) {
         rotationMotorsLeader.configMotionCruiseVelocity(rotationVelocity, Constants.kTimeoutMs);
@@ -249,11 +237,16 @@ public class ArmSubsystem extends SubsystemBase {
         //SmartDashboard.putNumber("motor1position", rotationMotor1.getSelectedSensorPosition());
         //SmartDashboard.putNumber("motor2position", rotationMotor2.getSelectedSensorPosition());
 
-        double setAngle = getAngleFromPosition((SmartDashboard.getNumber("ArmSetPosition", 0.0)));
-        SmartDashboard.putNumber("SetPositonInDegrees", setAngle);
+        // double setAngle = getAngleFromPosition((SmartDashboard.getNumber("ArmSetPosition", 0.0)));
+        // double setAngle = getAngleFromPosition((SmartDashboard.getNumber("ArmSetPosition", 0.0)));
+        // arm.get
+        // double setAngle = this.
+        // SmartDashboard.putNumber("SetPositonInDegrees", setAngle);
 
-        double actualAngle = getAngleFromPosition((SmartDashboard.getNumber("LeaderEncoderPosition", 0.0)));
-        SmartDashboard.putNumber("ActualPositionInDegrees", actualAngle);
+
+        // double actualAngle = getAngleFromPosition((SmartDashboard.getNumber("LeaderEncoderPosition", 0.0)));
+        
+        SmartDashboard.putNumber("ActualPositionInDegrees", getCurrentAngleDegrees());
         // Angle (in 360) = 360 * ((ArmSetPosition / CountsPerRevolution) % 360)
         // ArmSetPosition = (Angle/360) * CountsPerRevolution
         // from degrees to position is ~11.377778
@@ -341,6 +334,7 @@ public class ArmSubsystem extends SubsystemBase {
         return extensionMotor.getSelectedSensorPosition();
     }
 
+    /*
     public double getAngleFromPosition(double position) {
         double angle =  (360 * (((position) / Constants.COUNTS_PER_REVOLUTION) % 360));
         if (angle < -180) {
@@ -352,6 +346,7 @@ public class ArmSubsystem extends SubsystemBase {
             return angle;
         }
     }
+    */
 
     public double getPositionFromAngle(double intendedAngle) {
         double position = (intendedAngle/360) * Constants.COUNTS_PER_REVOLUTION;

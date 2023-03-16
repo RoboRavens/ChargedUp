@@ -34,6 +34,7 @@ import frc.controls.GamepadPOV;
 import frc.robot.commands.arm.ArmExtendToRetrievalPositionCommand;
 import frc.robot.commands.arm.ArmExtendToRowPositionCommand;
 import frc.robot.commands.arm.ArmGoToSetpointCommand;
+import frc.robot.commands.LEDs.*;
 import frc.robot.commands.arm.*;
 import frc.robot.commands.claw.ClawCloseCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
@@ -96,11 +97,15 @@ public class Robot extends TimedRobot {
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-  // public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static final LEDsSubsystem LED_SUBSYSTEM = new LEDsSubsystem();
   public static boolean driverControlOverride = false;
+
+  public LEDsRainbowCommand ledsRainbowCommand = new LEDsRainbowCommand(LED_SUBSYSTEM);
+  public LEDsBlinkColorsCommand ledsBlinkColorsCommand = new LEDsBlinkColorsCommand(LED_SUBSYSTEM);
+  public LEDsSolidColorCommand ledsSolidColorCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM);
 
   // Sets the default robot mechanism states (may need to be changed)
   public static OverallState overallState = OverallState.EMPTY_TRANSIT;
@@ -433,7 +438,8 @@ public class Robot extends TimedRobot {
                         || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
       .onTrue(new ArmGoToSetpointCommand(Constants.ARM_FULL_RETRACT_SETPOINT).withName("Retract arm"));
 
-    new Trigger(() -> Robot.hasCone()).whileTrue(RUMBLE_COMMAND);
+    // new Trigger(() -> Robot.hasCone()).whileTrue(RUMBLE_COMMAND);
+    new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);
   }
 
   private void setZoneStateFromFieldZone() {
