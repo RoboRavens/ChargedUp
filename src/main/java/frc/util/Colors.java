@@ -3,7 +3,7 @@ package frc.util;
 public final class Colors {
     // Game piece colors
     public static final Color ORANGE = new Color("Orange", 241, 196, 15);
-    public static final Color PURPLE = new Color("Purple", 136, 78, 160);
+    public static final Color PURPLE = new Color("Purple", 99, 57, 116);
 
     // Primary colors
     public static final Color RED = new Color("Red", 255, 0, 0);

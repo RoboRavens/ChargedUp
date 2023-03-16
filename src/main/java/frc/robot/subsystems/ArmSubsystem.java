@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
+import frc.util.StateManagement.PieceState;
 import frc.util.arm.ArmPose;
 import frc.util.arm.ArmSetpoint;
 
@@ -387,5 +389,35 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void runExtensionAtTestPower() {
         extensionMotor.set(extensionTestPower);
+    }
+
+    public void moveArmToTarget() {
+        ArmSetpoint targetArmSetpoint;
+        switch (Robot.scoringTargetState) {
+            case HIGH:
+              if (Robot.pieceState == PieceState.CONE) {
+                targetArmSetpoint = Constants.ARM_SCORE_CONE_HIGH_SETPOINT;
+              }
+              else {
+                targetArmSetpoint = Constants.ARM_SCORE_CUBE_HIGH_SETPOINT;
+              }
+              break;
+            case MID:
+              if (Robot.pieceState == PieceState.CONE) {
+                targetArmSetpoint = Constants.ARM_SCORE_CONE_MID_SETPOINT;
+              }
+              else {
+                targetArmSetpoint = Constants.ARM_SCORE_CUBE_MID_SETPOINT;
+              }
+              break;
+            case LOW:
+              targetArmSetpoint = Constants.ARM_SCORE_LOW_SETPOINT;
+              break;
+            default:
+              targetArmSetpoint = Constants.ARM_FULL_RETRACT_SETPOINT;
+              break;
+          }
+          System.out.println(targetArmSetpoint.getName());
+          new ArmGoToSetpointDangerousCommand(targetArmSetpoint).schedule();
     }
 }

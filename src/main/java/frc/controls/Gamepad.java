@@ -119,20 +119,26 @@ public class Gamepad {
 		case FLOOR_INTAKE:
 			buttonNumber = 6;
 			break;
-		case SCORE_HIGH:
-			buttonNumber = 7;
-			break;
-		case SCORE_MID:
-			buttonNumber = 4;
-			break;
-		case SCORE_LOW:
-			buttonNumber = 1;
-			break;
-		case CUBE:
+		// case SCORE_HIGH:
+		// 	buttonNumber = 7;
+		// 	break;
+		// case SCORE_MID:
+		// 	buttonNumber = 4;
+		// 	break;
+		// case SCORE_LOW:
+		// 	buttonNumber = 1;
+		// 	break;
+		// case CUBE:
+		// 	buttonNumber = 2;
+		// 	break;
+		// case CONE:
+		// 	buttonNumber = 5;
+		// 	break;
+		case SET_ARM_TO_SCORE_TARGET_STATE:
 			buttonNumber = 2;
 			break;
-		case CONE:
-			buttonNumber = 5;
+		case RETRACT_ARM_FULL:
+			buttonNumber = 1;
 			break;
 		case SCORE_PIECE:
 			buttonNumber = 3;

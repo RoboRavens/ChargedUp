@@ -80,7 +80,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
         SmartDashboard.putNumber("x pos", Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getX());
         SmartDashboard.putNumber("y pos", Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getY());
-
+        
         if (Robot.drivetrainState == DrivetrainState.ROBOT_ALIGN) {
             // Set the robot to score
             // TODO: update _targetPose based on the selected scoring location
@@ -125,6 +125,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
         else {
             Robot.drivetrainState = DrivetrainState.FREEHAND;
         }
+
 
         // apply the x, y, and r values to the drivetrain
         if (x == 0 && y == 0 && r == 0) {
