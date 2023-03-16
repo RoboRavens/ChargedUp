@@ -15,11 +15,21 @@ public class ScoringPosition {
   }
 
   public int GetRow() {
-    return this.Row;
+    if (this.Row == null) {
+      return -1;
+    }
+    else {
+      return this.Row;
+    }
   }
 
   public int GetColumn() {
-    return this.Column;
+    if (this.Column == null) {
+      return -1;
+    }
+    else {
+      return this.Column;
+    }
   }
 
   public boolean IsNoneSelected() {
