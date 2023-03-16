@@ -28,8 +28,8 @@ public class DrivetrainDefaultCommand extends CommandBase {
     private PIDController _yPID = new PIDController(1, 0, 0);
     private PIDController _xPID = new PIDController(1, 0, 0);
     private double _targetRotation = 0;
-    // Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
-    Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
+    Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
+    // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
     public DrivetrainDefaultCommand() {
         SmartDashboard.putString("DriveTrainDefaultCommandState", "constructed");
