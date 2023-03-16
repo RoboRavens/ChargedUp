@@ -19,7 +19,7 @@ import frc.util.arm.ArmSetpoint;
 public final class Constants {
 
   //Rotation Motor Absolute Encoder Position
-  public static final double ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO = 241;
+  public static final double ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO = 222;
 
   //LEDs
   public static final int TOTAL_LEDS_STRIP_LENGTH = 117;
@@ -101,7 +101,7 @@ public final class Constants {
   public static final double ARM_STARTING_DEGREES = 0;
 
   public static final int ARM_FULL_RETRACT_ROTATION_ANGLE = 0;
-  public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 114;
+  public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 117;
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 75;
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 60;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
@@ -143,10 +143,13 @@ public final class Constants {
   public static final ArmSetpoint ARM_SCORE_CONE_HIGH_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_SCORE_CUBE_HIGH_SETPOINT = new ArmSetpoint("Score Cube High", ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT);
 
+  public static final ArmSetpoint ARM_REVERSE_TEST_SETPOINT = new ArmSetpoint("Reverse Test", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT * -1);
+
+
   public static final double ARM_ROTATION_VELOCITY = 3000;
   public static final double ARM_ROTATION_ACCELERATION = 800;
-  public static final double ARM_EXTENSION_VELOCITY = 7000;
-  public static final double ARM_EXTENSION_ACCELERATION = 5000;
+  public static final double ARM_EXTENSION_VELOCITY = 4000;
+  public static final double ARM_EXTENSION_ACCELERATION = 4000;
 
   public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
   public static final double ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;

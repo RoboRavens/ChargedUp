@@ -6,11 +6,19 @@ package frc.robot.commands.LEDs;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LEDsSubsystem;
+import frc.util.Color;
 
 public class LEDsSolidColorCommand extends CommandBase {
   LEDsSubsystem leds;
+  int red = 0;
+  int green = 0;
+  int blue = 0;
+
   /** Creates a new DefualtLEDs. */
-  public LEDsSolidColorCommand(LEDsSubsystem subsystem) {
+  public LEDsSolidColorCommand(LEDsSubsystem subsystem, Color color) {
+    this.red = color.getRed();
+    this.green = color.getGreen();
+    this.blue = color.getBlue();
     leds = subsystem;
     addRequirements(leds);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -19,7 +27,7 @@ public class LEDsSolidColorCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    leds.ledsSolidColor(255, 0, 0);
+    leds.ledsSolidColor(red, green, blue);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

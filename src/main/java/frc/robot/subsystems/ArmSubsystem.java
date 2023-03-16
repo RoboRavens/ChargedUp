@@ -104,7 +104,13 @@ public class ArmSubsystem extends SubsystemBase {
     public void armRotationAbsolutePosition() {
         double armRotationAbsolutePosition = rotationMotorsLeader.getSensorCollection().getPulseWidthPosition();
         
-        double armRotationRelativePositionBasedOnAbsolute = armRotationAbsolutePosition - Constants.ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO;
+
+        double armRotationRelativePositionBasedOnAbsolute = (armRotationAbsolutePosition - Constants.ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO) * -1;
+
+        if (armRotationAbsolutePosition < Constants.ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO) {
+            armRotationRelativePositionBasedOnAbsolute = (armRotationAbsolutePosition * -1) + Constants.ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO;
+        }
+        
         rotationMotorsLeader.setSelectedSensorPosition(armRotationRelativePositionBasedOnAbsolute);
         
         rotationMotor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
@@ -234,6 +240,8 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Ext Encder", extensionMotor.getSelectedSensorPosition());
 
         SmartDashboard.putNumber("LeaderEncoderPosition", rotationMotorsLeader.getSelectedSensorPosition());
+        
+        SmartDashboard.putNumber("Absolute position", rotationMotorsLeader.getSensorCollection().getPulseWidthPosition());
         //SmartDashboard.putNumber("motor1position", rotationMotor1.getSelectedSensorPosition());
         //SmartDashboard.putNumber("motor2position", rotationMotor2.getSelectedSensorPosition());
 
