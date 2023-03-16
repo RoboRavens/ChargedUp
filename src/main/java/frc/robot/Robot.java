@@ -299,6 +299,36 @@ public class Robot extends TimedRobot {
     OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_HIGH).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
     OP_PAD_SWITCHES.getButton(ButtonCode.EJECT_PIECE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_HIGH_SETPOINT));
 
+    // This should likely be bound to a button and not a switch, although all of the buttons on the button panel are currently being used
+    // Maybe we can get rid of the buttons that set the piece state to cube/cone because these are now buttons on the touchscreen?
+    OP_PAD_SWITCHES.getButton(ButtonCode.SET_ARM_TO_SCORE_TARGET_STATE).onTrue(new InstantCommand(() -> {
+      if (loadState == LoadState.LOADED && zoneState == ZoneState.ALLIANCE_COMMUNITY) {
+        switch (scoringTargetState) {
+          case HIGH:
+            if (pieceState == PieceState.CONE) {
+              new ArmGoToSetpointCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT).schedule();
+            }
+            else {
+              new ArmGoToSetpointCommand(Constants.ARM_SCORE_CUBE_HIGH_SETPOINT).schedule();
+            }
+            break;
+          case MID:
+            if (pieceState == PieceState.CONE) {
+              new ArmGoToSetpointCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT).schedule();
+            }
+            else {
+              new ArmGoToSetpointCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT).schedule();
+            }
+            break;
+          case LOW:
+            new ArmGoToSetpointCommand(Constants.ARM_SCORE_LOW_SETPOINT).schedule();
+            break;
+          default:
+            break;
+        }
+      }
+    }));
+
     OP_PAD_SWITCHES.getButton(ButtonCode.TEMP_ALLIANCE_COMMUNITY_ZONE)
     .onTrue(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_COMMUNITY))
     .onFalse(new InstantCommand(() -> zoneState = ZoneState.ALLIANCE_LOADING_ZONE));
@@ -309,8 +339,8 @@ public class Robot extends TimedRobot {
     GAMEPAD.getButton(ButtonCode.Y).and(() -> overallState != OverallState.ENDGAME).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
     
     // Balance on the charge station while A is held.
-    GAMEPAD.getButton(ButtonCode.A).and(() -> overallState != OverallState.ENDGAME)
-    .whileTrue(chargeStationBalancingCommand);
+    // GAMEPAD.getButton(ButtonCode.A).and(() -> overallState != OverallState.ENDGAME)
+    // .whileTrue(chargeStationBalancingCommand);
 
     // When the floor intake button is pressed, update the states
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).toggleOnTrue(new InstantCommand(() -> {
