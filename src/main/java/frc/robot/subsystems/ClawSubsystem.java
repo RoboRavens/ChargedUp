@@ -56,6 +56,7 @@ public class ClawSubsystem extends SubsystemBase {
     public void periodic() {
         pieceSensor.maintainState();
         SmartDashboard.putBoolean("Sense game piece", detectsGamePiece());
+        SmartDashboard.putString("Clawstate", Robot.clawState.name());
     }
 }
 
