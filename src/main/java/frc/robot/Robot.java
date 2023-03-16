@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
-  // public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static final LEDsSubsystem LED_SUBSYSTEM = new LEDsSubsystem();
@@ -455,14 +455,14 @@ public class Robot extends TimedRobot {
     // new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);
   
 
-    /* 
+    
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CONE).onTrue(ledsSignalConeCommand);
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CUBE).onTrue(ledsSignalCubeCommand);
   
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().GetRow() == 1).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().GetRow() == 2).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().GetRow() == 3).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
-*/
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(3)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
+
   }
 
   private void setZoneStateFromFieldZone() {
