@@ -156,9 +156,7 @@ public class Robot extends TimedRobot {
     
     TabletScoringResult tabletResult = TABLET_SCORING_SUBSYSTEM.GetScoringTarget();
     SmartDashboard.putString("TABLET PIECE", tabletResult.GetShape().name());
-
     SmartDashboard.putNumber("TABLET ROW", tabletResult.GetPosition().GetRow());
-    
     SmartDashboard.putNumber("TABLET COLUMN", tabletResult.GetPosition().GetColumn());
     
     // SmartDashboard.putNumber("Power", ARM_SUBSYSTEM.testPower);
@@ -190,6 +188,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Scheduled Drivetrain Command", DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand() == null ? "No command" : DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand().getName());
 
     setZoneStateFromFieldZone();
+
+    SmartDashboard.putString("FieldSubzone", fieldSubzone.getName());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -288,6 +288,11 @@ public class Robot extends TimedRobot {
       Robot.overallState = OverallState.PREPARING_TO_SCORE;
     }
 
+    // If we were preparing to score but leave the community, undo the state.
+    if (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.overallState == OverallState.PREPARING_TO_SCORE) {
+      Robot.overallState = OverallState.LOADED_TRANSIT;
+    }
+
     // Same thing but for preparing to collect a game piece when entering the loading zone.
     if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.overallState == OverallState.EMPTY_TRANSIT) {
       Robot.overallState = OverallState.DOUBLE_SUBSTATION_PICKUP;
@@ -310,6 +315,9 @@ public class Robot extends TimedRobot {
     
     GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
     
+
+    GAMEPAD.getButton(ButtonCode.LEFTSTICK).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
+
     OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
     OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
     OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//

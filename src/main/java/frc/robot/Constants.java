@@ -101,7 +101,7 @@ public final class Constants {
   public static final double ARM_STARTING_DEGREES = 0;
 
   public static final int ARM_FULL_RETRACT_ROTATION_ANGLE = 0;
-  public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 117;
+  public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 119;
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 75;
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 60;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
@@ -121,13 +121,13 @@ public final class Constants {
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_LOW_EXTENSION_SETPOINT = 0;
   public static final int ARM_SCORE_LOW_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_LOW_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 100;
+  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 20000;
   public static final int ARM_SCORE_CONE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 100;
+  public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 25000;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 200;
+  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 100000;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 200;
+  public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 100000;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
 
   public static final ArmSetpoint ARM_EXTENSION_TEST_SETPOINT = new ArmSetpoint("Arm Extend", ARM_MAX_EXTENSION_ENCODER_UNITS, ARM_FULL_RETRACT_ROTATION_SETPOINT);
@@ -165,6 +165,6 @@ public final class Constants {
 
   // CLAW
   public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
-  public static final double CLAW_OPEN_TIMEOUT_SECONDS = .25;
+  public static final double CLAW_OPEN_TIMEOUT_SECONDS = .75;
   public static final double RUMBLE_TIME = 0.2;
 }
