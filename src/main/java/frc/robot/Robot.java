@@ -64,7 +64,6 @@ import frc.util.StateManagement.ZoneState;
 import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LEDsSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.LimelightTrajectorySubsystem;
 import frc.robot.subsystems.TrajectoryTestingSubsystem;
 import frc.robot.subsystems.TabletScoring.ScoringShape;
 import frc.robot.subsystems.TabletScoring.TabletScoringResult;
@@ -89,7 +88,6 @@ public class Robot extends TimedRobot {
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final Gamepad OP_PAD_BUTTONS = new Gamepad(3);
   public static final Gamepad OP_PAD_SWITCHES = new Gamepad(2);
-  public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
   public static final DrivetrainChargeStationBalancingCommand chargeStationBalancingCommand = new DrivetrainChargeStationBalancingCommand();
   // public static GamePieceState gamePieceState = GamePieceState.CLEAR;
   // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;

@@ -1,24 +1,14 @@
 package frc.robot.subsystems;
 
-import javax.swing.text.Position;
-
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.networktables.DoubleArraySubscriber;
-import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
-import frc.robot.LimelightHelpers;
 
 public class LimelightSubsystem extends SubsystemBase {
 
@@ -29,6 +19,8 @@ public class LimelightSubsystem extends SubsystemBase {
   NetworkTableEntry ta = table.getEntry("ta");
   NetworkTableEntry ts = table.getEntry("ts");
   NetworkTableEntry tv = table.getEntry("tv");
+  NetworkTableEntry tl = table.getEntry("tl");
+  NetworkTableEntry cl = table.getEntry("cl");
   int camMode = 0;
   
   public boolean isAlignedWithScoringNode() {
@@ -52,9 +44,6 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Rotation", 0);
     }
 
-    if ((pose.getX() > 0 && pose.getY() > 0) && getTa() >= 0.2) {
-      Robot.DRIVE_TRAIN_SUBSYSTEM.resetOdometry(pose);
-    }
 
   }
 
@@ -72,16 +61,13 @@ public class LimelightSubsystem extends SubsystemBase {
     return null;
   }
 
+  public double getCl() {
+    return cl.getDouble(0.0);
+  }
 
-
-  // how many degrees back is your limelight rotated from perfectly vertical?
-  double limelightMountAngleDegrees = 25.0;
-
-  // distance from the center of the Limelight lens to the floor
-  double limelightLensHeightInches = 20.0;
-
-  // distance from the target to the floor
-  double goalHeightInches = 60.0;
+  public double getTl() {
+    return tl.getDouble(0.0);
+  }
 
   public double getTx() {
     return tx.getDouble(0.0);
@@ -98,18 +84,4 @@ public class LimelightSubsystem extends SubsystemBase {
   public double getTv() {
     return tv.getDouble(0);
   }
-
-  public double getDistance() {
-    double targetOffsetAngle_Vertical = getTy();
-
-    double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-    double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-
-    // calculate distance
-    double distanceFromLimelightToTargetInches = (goalHeightInches - limelightLensHeightInches)
-        / Math.tan(angleToGoalRadians);
-    SmartDashboard.putNumber("DISTANCE FROM TARGET", distanceFromLimelightToTargetInches);
-    return distanceFromLimelightToTargetInches;
-  }
-
 }
