@@ -102,6 +102,7 @@ public class Robot extends TimedRobot {
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static final LEDsSubsystem LED_SUBSYSTEM = new LEDsSubsystem();
   public static boolean driverControlOverride = false;
+  public static boolean limelightOverride = false;
 
   public LEDsRainbowCommand ledsRainbowCommand = new LEDsRainbowCommand(LED_SUBSYSTEM);
   public LEDsBlinkColorsCommand ledsBlinkColorsCommand = new LEDsBlinkColorsCommand(LED_SUBSYSTEM);
@@ -421,6 +422,8 @@ public class Robot extends TimedRobot {
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
     .toggleOnTrue(new ArmGoToSetpointCommand(new ArmSetpoint("Retract Arm", Constants.ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SUBSYSTEM.getCurrentRotationNativeUnits())));
+    
+    OP_PAD_SWITCHES.getButton(ButtonCode.LIMELIGHT_LIGHT_OFF_OVERRIDE).onTrue(new InstantCommand(() -> limelightOverride = true)).onFalse(new InstantCommand(() -> limelightOverride = false));
   }
 
   // Checking for a cone specifically, as opposed to any game piece, is relevant
@@ -538,5 +541,9 @@ public class Robot extends TimedRobot {
     if (allianceColor == Alliance.Invalid) {
       allianceColor = DriverStation.getAlliance();
     }
+  }
+
+  public boolean getLimelightOverride() {
+    return limelightOverride;
   }
 }

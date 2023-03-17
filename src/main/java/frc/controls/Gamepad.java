@@ -99,9 +99,9 @@ public class Gamepad {
 		case RIGHTSTICK:
 			buttonNumber = 10;
 			break;
-		case LIMELIGHT_LIGHT_OFF_OVERRIDE:
-			buttonNumber = 1;
-			break;
+		// case LIMELIGHT_LIGHT_OFF_OVERRIDE:
+		// 	buttonNumber = 1;
+		// 	break;
 		case SHOOTER_REV:
 			buttonNumber = 2;
 			break;
@@ -178,6 +178,9 @@ public class Gamepad {
 			break;
 		case IGNORE_EXTENSION_LIMITS:
 			buttonNumber = 6;
+			break;
+		case LIMELIGHT_LIGHT_OFF_OVERRIDE:
+			buttonNumber = 5;
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid Button Code");
