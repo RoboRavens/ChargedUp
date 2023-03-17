@@ -285,10 +285,10 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
   public SwerveModulePosition[] getSwerveModulePositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
-    positions[1] = m_frontLeftModule.getPosition();
-    positions[2] = m_frontRightModule.getPosition();
-    positions[3] = m_backLeftModule.getPosition();
-    positions[4] = m_backRightModule.getPosition();
+    positions[0] = m_frontLeftModule.getPosition();
+    positions[1] = m_frontRightModule.getPosition();
+    positions[2] = m_backLeftModule.getPosition();
+    positions[3] = m_backRightModule.getPosition();
     return positions;
  }
 
