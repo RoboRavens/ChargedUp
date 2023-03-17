@@ -6,27 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import java.util.List;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PneumaticHub;
 import frc.controls.AxisCode;
 import frc.controls.ButtonCode;
 import frc.controls.Gamepad;
@@ -44,7 +31,6 @@ import frc.robot.commands.groups.ScorePieceCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.DrivetrainSubsystemBase;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.util.Colors;
 import frc.util.StateManagement;
@@ -52,7 +38,6 @@ import frc.util.StateManagement.ArmExtensionState;
 import frc.util.StateManagement.ArmRotationState;
 import frc.util.StateManagement.ClawState;
 import frc.util.StateManagement.ZoneState;
-import frc.util.arm.ArmSetpoint;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.LimelightState;
 import frc.util.StateManagement.LoadState;
@@ -335,7 +320,7 @@ public class Robot extends TimedRobot {
       .whileTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.cutPower()))
       .onFalse(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.stopCutPower()));
 
-    GAMEPAD.getButton(ButtonCode.B)
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER)
     .and(() -> overallState != OverallState.ENDGAME)
     .toggleOnTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;
@@ -346,7 +331,7 @@ public class Robot extends TimedRobot {
     //  If it was released without a successful ground pickup, state goes back to empty transit
     //  If it was released AFTER a successful ground pickup, state goes to loaded transit or preparing to score
     //  Pickup target changes to HPS either way
-    GAMEPAD.getButton(ButtonCode.B).toggleOnFalse(new InstantCommand(() -> {
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnFalse(new InstantCommand(() -> {
       if (loadState == LoadState.EMPTY) {
         overallState = OverallState.EMPTY_TRANSIT;
       }
