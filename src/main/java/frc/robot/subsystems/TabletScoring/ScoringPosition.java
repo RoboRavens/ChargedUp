@@ -6,6 +6,7 @@ public class ScoringPosition {
   private Integer Column = null;
 
   public ScoringPosition() {
+
   }
 
   public ScoringPosition(int row, int column) {
@@ -14,11 +15,21 @@ public class ScoringPosition {
   }
 
   public int GetRow() {
-    return this.Row;
+    if (this.Row == null) {
+      return -1;
+    }
+    else {
+      return this.Row;
+    }
   }
 
   public int GetColumn() {
-    return this.Column;
+    if (this.Column == null) {
+      return -1;
+    }
+    else {
+      return this.Column;
+    }
   }
 
   public boolean IsNoneSelected() {
@@ -31,5 +42,21 @@ public class ScoringPosition {
     }
 
     return this.Row == row && this.Column == column;
+  }
+
+  public boolean RowEquals(int row) {
+    if (this.Row == null) {
+      return false;
+    }
+
+    return this.Row == row;
+  }
+
+  public boolean ColumnEquals(int column) {
+    if (this.Column == null) {
+      return false;
+    }
+
+    return this.Column == column;
   }
 }

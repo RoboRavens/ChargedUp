@@ -131,6 +131,7 @@ public class ArmPose {
 
         // Last step is to return the window.
         AngularConstraintWindow window = new AngularConstraintWindow(Math.min(finalWidthConstraintAngleDegrees, finalHeightConstraintAngleDegrees), Math.max(finalWidthConstraintAngleDegrees, finalHeightConstraintAngleDegrees));
+       /*
         SmartDashboard.putNumber("WindowMin", window.getLowerBound());
         SmartDashboard.putNumber("WindowMax", window.getUpperBound());
 
@@ -140,6 +141,7 @@ public class ArmPose {
         SmartDashboard.putNumber("HCAD", heightConstraintAngleDegrees);
         SmartDashboard.putNumber("NHCAD", negativeHeightConstraintAngleDegrees);
         SmartDashboard.putNumber("WCAD", widthConstraintAngleDegrees);
+        */
         /* 
         if (Double.isNaN(this.armRotationMinimumBoundDegrees)) {
             this.armRotationMinimumBoundDegrees = -1 * Constants.ARM_MAX_ROTATION_DEGREES;

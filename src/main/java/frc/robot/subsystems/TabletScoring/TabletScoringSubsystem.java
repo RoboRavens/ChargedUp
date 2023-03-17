@@ -98,9 +98,9 @@ public class TabletScoringSubsystem extends SubsystemBase {
       case 1:
       case 4:
       case 7:
-        return " ☐";
+        return "";
       default:
-        return " ∆";
+        return "";
     }
   }
 
@@ -113,12 +113,12 @@ public class TabletScoringSubsystem extends SubsystemBase {
         _cubeMode.setBoolean(false);
         break;
       case CONE:
-        _selectedScoringShapeEntry.setString("CONE ∆");
+        _selectedScoringShapeEntry.setString("CONE");
         _coneMode.setBoolean(true);
         _cubeMode.setBoolean(false);
         break;
       case CUBE:
-        _selectedScoringShapeEntry.setString("CUBE ☐");
+        _selectedScoringShapeEntry.setString("CUBE");
         _coneMode.setBoolean(false);
         _cubeMode.setBoolean(true);
         break;
@@ -139,14 +139,14 @@ public class TabletScoringSubsystem extends SubsystemBase {
       .getEntry();
 
     _coneMode = _tab
-      .add("CONE ∆", false)
+      .add("CONE", false)
       .withWidget(BuiltInWidgets.kToggleButton)
       .withPosition(4, 3)
       .withSize(2, 2)
       .getEntry();
 
     _cubeMode = _tab
-      .add("CUBE ☐", false)
+      .add("CUBE", false)
       .withWidget(BuiltInWidgets.kToggleButton)
       .withPosition(6, 3)
       .withSize(2, 2)

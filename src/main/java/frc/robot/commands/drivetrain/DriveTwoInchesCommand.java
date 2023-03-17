@@ -56,13 +56,13 @@ public class DriveTwoInchesCommand extends CommandBase {
         }
         xOffsetFromTarget = _targetPose.getX() - currentXPosition;
         yOffsetFromTarget = _targetPose.getY() - currentYPostition;
-        SmartDashboard.putNumber("Original xOffset", _targetPose.getX() - currentXPosition);
-        SmartDashboard.putNumber("Original yOffset", _targetPose.getY() - currentYPostition);
+        // SmartDashboard.putNumber("Original xOffset", _targetPose.getX() - currentXPosition);
+        // SmartDashboard.putNumber("Original yOffset", _targetPose.getY() - currentYPostition);
     }
 
     @Override
     public void execute() {
-        SmartDashboard.putBoolean("execute 2 in", true);
+        // SmartDashboard.putBoolean("execute 2 in", true);
         if (xOffsetFromTarget != 0) {
             xOffsetFromTarget = _targetPose.getX() - Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getX();
             xSpeed = _drivePID.calculate(xOffsetFromTarget) * Robot.DRIVE_TRAIN_SUBSYSTEM.MAX_VELOCITY_METERS_PER_SECOND * -1;
@@ -101,10 +101,12 @@ public class DriveTwoInchesCommand extends CommandBase {
                 ySpeed *= 2;
             }
         }
+        /*
         SmartDashboard.putNumber("xOffset", xOffsetFromTarget);
         SmartDashboard.putNumber("yOffset", yOffsetFromTarget);
         SmartDashboard.putNumber("xSpeed", xSpeed);
         SmartDashboard.putNumber("ySpeed", ySpeed);
+        */
         Robot.DRIVE_TRAIN_SUBSYSTEM.drive(
             ChassisSpeeds.fromFieldRelativeSpeeds(
                 xSpeed, // x translation
@@ -123,7 +125,7 @@ public class DriveTwoInchesCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         if (_timer.get() > 1 || (Math.abs(xOffsetFromTarget) < 0.00254 && Math.abs(yOffsetFromTarget) < 0.00254)) { // 1/10 of an inch
-            SmartDashboard.putNumber("Time taken", _timer.get());
+            // SmartDashboard.putNumber("Time taken", _timer.get());
             return true;
         }
         return false;

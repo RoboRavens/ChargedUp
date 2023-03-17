@@ -8,10 +8,10 @@ package frc.robot.commands.LEDs;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LEDsSubsystem;
 
-public class LEDsBlinkColors extends CommandBase {
+public class LEDsBlinkColorsCommand extends CommandBase {
   LEDsSubsystem leds;
   /** Creates a new LEDsBlinkingCommand. */
-  public LEDsBlinkColors(LEDsSubsystem subsystem) {
+  public LEDsBlinkColorsCommand(LEDsSubsystem subsystem) {
     leds = subsystem;
     addRequirements(leds);
     // Use addRequirements() here to declare subsystem dependencies.
