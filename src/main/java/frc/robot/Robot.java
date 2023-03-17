@@ -356,6 +356,7 @@ public class Robot extends TimedRobot {
       loadTargetState = LoadTargetState.DOUBLE_SUBSTATION;
     }));
 
+    // TODO: bind this to a button
     OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE)
     .toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); 
 
