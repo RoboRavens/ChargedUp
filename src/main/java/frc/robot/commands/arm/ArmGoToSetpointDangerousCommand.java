@@ -135,9 +135,9 @@ public class ArmGoToSetpointDangerousCommand extends CommandBase {
   }
 
   public void setArmTargets() {
-    SmartDashboard.putNumber("SSP SIZE", subSetpoints.size());
+    // SmartDashboard.putNumber("SSP SIZE", subSetpoints.size());
     
-    SmartDashboard.putNumber("Setpoint Iterator", setpointIterator);
+    // SmartDashboard.putNumber("Setpoint Iterator", setpointIterator);
     // If there sub-setpoints remaining, set the target to be the current point.
     // Otherwise just set to the overall setpoint.
     // No points at all is equivalent to none remaining.
@@ -157,11 +157,13 @@ public class ArmGoToSetpointDangerousCommand extends CommandBase {
     boolean rotationIsFinished = rotationError < Constants.ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS;
     boolean extensionIsFinished = extensionError < Constants.ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS;
 
+    /*
     SmartDashboard.putBoolean("EXT FIN", extensionIsFinished);
     SmartDashboard.putNumber("EXT error", extensionError);
 
     SmartDashboard.putBoolean("ROT FIN", rotationIsFinished);
     SmartDashboard.putNumber("ROT error", rotationError);
+*/
 
     return rotationIsFinished && extensionIsFinished;
   }

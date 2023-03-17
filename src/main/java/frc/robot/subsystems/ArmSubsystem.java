@@ -104,6 +104,10 @@ public class ArmSubsystem extends SubsystemBase {
     //set the arms relative positon encoder based off of absolute encoder
     //when absEncoder = 229 then relEncoder = 0
     public void armRotationAbsolutePosition() {
+
+        /* 
+        The absolute position of the encoder somehow changed, so I am commenting this out until further notice.
+
         double armRotationAbsolutePosition = rotationMotorsLeader.getSensorCollection().getPulseWidthPosition();
         
 
@@ -118,6 +122,7 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
+        */
     }
   
     public void enableRotationLimit(boolean ignoreRotationLimit) {
@@ -183,17 +188,19 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotorsLeader.configMotionCruiseVelocity(rotationVelocity, Constants.kTimeoutMs);
         rotationMotorsLeader.configMotionAcceleration(rotationAcceleration, Constants.kTimeoutMs);
         rotationMotorsLeader.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, rotationAFF);
+        /*
         SmartDashboard.putNumber("ArmRotationPosition", setpoint);
         SmartDashboard.putNumber("Error", rotationMotorsLeader.getClosedLoopError());
         SmartDashboard.putNumber("CL Target", rotationMotorsLeader.getClosedLoopTarget());
         SmartDashboard.putNumber("ATP", rotationMotorsLeader.getActiveTrajectoryPosition());
+        */
     }
 
     public void setArmExtensionPosition(double setpoint, double extensionVelocity, double extensionAcceleration) {
         extensionMotor.configMotionCruiseVelocity(extensionVelocity, Constants.kTimeoutMs);
         extensionMotor.configMotionAcceleration(extensionAcceleration, Constants.kTimeoutMs);
         extensionMotor.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, extensionAFF);
-        SmartDashboard.putNumber("ArmExtensionPosition", setpoint);
+        // SmartDashboard.putNumber("ArmExtensionPosition", setpoint);
     }
 
     public void stopArm() {
@@ -239,6 +246,8 @@ public class ArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         armPose.setArmAngleDegrees(getCurrentAngleDegrees());
+
+        
         SmartDashboard.putNumber("Ext Encder", extensionMotor.getSelectedSensorPosition());
 
         SmartDashboard.putNumber("LeaderEncoderPosition", rotationMotorsLeader.getSelectedSensorPosition());
@@ -277,7 +286,7 @@ public class ArmSubsystem extends SubsystemBase {
         else {
             armRotationInstantaneousTargetNativeUnits = Math.max(armPose.getArmRotationMinimumBoundNativeUnits(), armRotationFinalTargetNativeUnits);
         }
-
+/*
         SmartDashboard.putBoolean("UIM IF", (armPose.getArmRotationNativeUnits() < this.armRotationFinalTargetNativeUnits));
         
         SmartDashboard.putNumber("ARM ROT MIN", Math.min(armPose.getArmRotationMaximumBoundNativeUnits(), armRotationFinalTargetNativeUnits));
@@ -291,7 +300,7 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("ExtFinalTarg", armExtensionFinalTargetNativeUnits);
         
         SmartDashboard.putNumber("RotFinalTarg", armRotationFinalTargetNativeUnits);
-    
+    */
     }
 
     public void updateAFFs() {
