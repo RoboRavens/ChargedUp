@@ -429,4 +429,20 @@ public class ArmSubsystem extends SubsystemBase {
           System.out.println(targetArmSetpoint.getName());
           new ArmGoToSetpointDangerousCommand(targetArmSetpoint).schedule();
     }
+
+    public void rotateArmForwardPower() {
+        // TODO: implement this method
+    }
+
+    public void rotateArmBackwardPower() {
+        // TODO: implement this method
+    }
+
+    public void extendArmPower() {
+        // TODO: implement this method
+    }
+
+    public void retractArmPower() {
+        // TODO: implement this method
+    }
 }
