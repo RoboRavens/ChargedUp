@@ -120,5 +120,30 @@
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 0.65,
+      "names": [
+        "Extend To Ground 1"
+      ]
+    },
+    {
+      "position": 1.93,
+      "names": [
+        "Extend To Score High 1"
+      ]
+    },
+    {
+      "position": 2.7636363636363632,
+      "names": [
+        "Extend To Ground 2"
+      ]
+    },
+    {
+      "position": 3.927272727272509,
+      "names": [
+        "Extend Arm To Mid 1"
+      ]
+    }
+  ]
 }
