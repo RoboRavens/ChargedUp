@@ -79,27 +79,23 @@ public class ScoreTwoLoadAndBalanceCommand {
         Command loadCone2ToBridgePathCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(loadCone2ToBridgeTrajectory)
         .andThen(loadCone2ToBridgeWithEvents);
 
-        // Open claw and retract command
-        Command openClawAndRetractCommand = new AutoClawOpenCommand()
-        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-
-        // Close claw and retract command
-        Command closeClawAndRetractCommand = new AutoClawCloseCommand()
-        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-
 
         Command scoreTwoLoadAndBalanceCommand = 
         new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT)
-        .andThen(openClawAndRetractCommand)
+        .andThen(new AutoClawOpenCommand())
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
         .andThen(scorePreloadHighToLoadCone1PathCommand)
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT)) 
-        .andThen(closeClawAndRetractCommand)
+        .andThen(new AutoClawCloseCommand())
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
         .andThen(loadCone1ToScoreMidPathCommand)
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT))
-        .andThen(openClawAndRetractCommand)
+        .andThen(new AutoClawOpenCommand())
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
         .andThen(scoreMidToLoadCone2PathCommand)
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT)) 
-        .andThen(closeClawAndRetractCommand)
+        .andThen(new AutoClawCloseCommand())
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
         .andThen(loadCone2ToBridgePathCommand)
         .andThen(new ChargeStationBalancingCommand());
 
