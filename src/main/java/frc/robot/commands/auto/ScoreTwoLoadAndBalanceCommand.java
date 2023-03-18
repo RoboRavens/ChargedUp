@@ -16,7 +16,7 @@ import frc.util.AutoMode;
 
 public class ScoreTwoLoadAndBalanceCommand {
     public static AutoMode getAutoMode() {
-        List<PathPlannerTrajectory> examplePath = PathPlanner.loadPathGroup("2056 2.5 + balance path", new PathConstraints(1.6, 0.6));
+        List<PathPlannerTrajectory> examplePath = PathPlanner.loadPathGroup("2056 2.5 + Balance", new PathConstraints(1.6, 0.6));
         
         PathPlannerTrajectory scorePreloadHighToLoadCone1Trajectory = examplePath.get(0);
         HashMap<String, Command> scorePreloadHighToLoadCone1EventMap = new HashMap<>();
