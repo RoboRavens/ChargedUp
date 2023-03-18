@@ -30,7 +30,6 @@ public class RealtimeTrajectory extends SubsystemBase {
         blueAllianceColumnToYPos[2] = 1.66;
         blueAllianceColumnToYPos[1] = 1.09;
         blueAllianceColumnToYPos[0] = 0.47;
-        SmartDashboard.putData("trajectory", DASHBOARD_Field2d);
         redAllianceColumnToYPos[0] = 4.97;
         redAllianceColumnToYPos[1] = 4.38;
         redAllianceColumnToYPos[2] = 3.85;

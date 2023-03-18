@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 
@@ -30,7 +31,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY() - Robot.LIMELIGHT_SUBSYSTEM.getRobotPose().getY() < 2) {
             addVisionMeasurment(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose(), timeStamp);
         }
-
+        SmartDashboard.putData(field);
+        field.setRobotPose(getCurrentPose());
         updateOdometry();
 
     }
