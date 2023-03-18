@@ -16,7 +16,7 @@ import frc.util.arm.ArmMaximumConstraint;
 import frc.util.arm.ArmPose;
 import frc.util.arm.ArmSetpoint;
 
-public class ArmGoToSetpointCommand extends CommandBase {
+public class ArmGoToSetpointDangerousCommand extends CommandBase {
   private ArrayList<ArmSetpoint> subSetpoints = new ArrayList<ArmSetpoint>();
   private ArmSubsystem arm = Robot.ARM_SUBSYSTEM;
   private ArmSetpoint finalSetpoint;
@@ -25,7 +25,7 @@ public class ArmGoToSetpointCommand extends CommandBase {
   private double timeoutSeconds = 0;
   private ArmSetpoint currentSubSetpoint;
 
-  public ArmGoToSetpointCommand(ArmSetpoint setpoint) {
+  public ArmGoToSetpointDangerousCommand(ArmSetpoint setpoint) {
     this.finalSetpoint = setpoint;
     this.currentSubSetpoint = setpoint;
     addRequirements(arm);
@@ -35,12 +35,12 @@ public class ArmGoToSetpointCommand extends CommandBase {
   @Override
   public void initialize() {
     arm.brakeDisable();
-    System.out.println("default position command run");
-    subSetpoints = new ArrayList<ArmSetpoint>();
-    setpointIterator = 0;
-    calculateSubSetpoints();
-    setArmTargets();
-    arm.periodic();
+    //System.out.println("default position command run");
+    //subSetpoints = new ArrayList<ArmSetpoint>();
+    //setpointIterator = 0;
+    //calculateSubSetpoints();
+    //setArmTargets();
+    //arm.periodic();
     
     timeoutSeconds = arm.getCommandTimeoutSeconds();
 
@@ -57,16 +57,16 @@ public class ArmGoToSetpointCommand extends CommandBase {
     arm.brakeDisable();
 
 
-    SmartDashboard.putBoolean("SetPIF", setpointIsFinished(currentSubSetpoint));
+    //SmartDashboard.putBoolean("SetPIF", setpointIsFinished(currentSubSetpoint));
 
-    if (setpointIsFinished(currentSubSetpoint)) {
-      setpointIterator++;
-    }
+    //if (setpointIsFinished(currentSubSetpoint)) {
+    //  setpointIterator++;
+    //}
 
-    setArmTargets();
+    //setArmTargets();
 
-    arm.setArmRotationPosition(arm.getArmRotationInstantaneousTargetNativeUnits(), Constants.ARM_ROTATION_VELOCITY, Constants.ARM_ROTATION_ACCELERATION);
-    arm.setArmExtensionPosition(arm.getArmExtensionInstantaneousTargetNativeUnits(), Constants.ARM_EXTENSION_VELOCITY, Constants.ARM_EXTENSION_ACCELERATION);
+    arm.setArmRotationPosition(finalSetpoint.getRotationSetpoint(), Constants.ARM_ROTATION_VELOCITY, Constants.ARM_ROTATION_ACCELERATION);
+    arm.setArmExtensionPosition(finalSetpoint.getExtensionSetpoint(), Constants.ARM_EXTENSION_VELOCITY, Constants.ARM_EXTENSION_ACCELERATION);
   }
 
   private void calculateSubSetpoints() {
@@ -135,9 +135,9 @@ public class ArmGoToSetpointCommand extends CommandBase {
   }
 
   public void setArmTargets() {
-    SmartDashboard.putNumber("SSP SIZE", subSetpoints.size());
+    // SmartDashboard.putNumber("SSP SIZE", subSetpoints.size());
     
-    SmartDashboard.putNumber("Setpoint Iterator", setpointIterator);
+    // SmartDashboard.putNumber("Setpoint Iterator", setpointIterator);
     // If there sub-setpoints remaining, set the target to be the current point.
     // Otherwise just set to the overall setpoint.
     // No points at all is equivalent to none remaining.
@@ -156,6 +156,14 @@ public class ArmGoToSetpointCommand extends CommandBase {
 
     boolean rotationIsFinished = rotationError < Constants.ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS;
     boolean extensionIsFinished = extensionError < Constants.ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS;
+
+    /*
+    SmartDashboard.putBoolean("EXT FIN", extensionIsFinished);
+    SmartDashboard.putNumber("EXT error", extensionError);
+
+    SmartDashboard.putBoolean("ROT FIN", rotationIsFinished);
+    SmartDashboard.putNumber("ROT error", rotationError);
+*/
 
     return rotationIsFinished && extensionIsFinished;
   }

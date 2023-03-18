@@ -15,8 +15,8 @@ public class DrivetrainChargeStationBalancingCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        SmartDashboard.putBoolean("balancing init", true);
-        SmartDashboard.putBoolean("balancing end", false);
+        // SmartDashboard.putBoolean("balancing init", true);
+        // SmartDashboard.putBoolean("balancing end", false);
     }
 
     @Override
@@ -33,8 +33,8 @@ public class DrivetrainChargeStationBalancingCommand extends CommandBase {
         if (currentRoll < 2.5 && currentRoll > -2.5) {
             xVelocity = 0;
         }
-        SmartDashboard.putNumber("Roll (ChargeStationBalancingCommand)", currentRoll);
-        SmartDashboard.putNumber("Velocity (ChargeStationBalancingCommand)", xVelocity);
+        // SmartDashboard.putNumber("Roll (ChargeStationBalancingCommand)", currentRoll);
+        // SmartDashboard.putNumber("Velocity (ChargeStationBalancingCommand)", xVelocity);
         Robot.DRIVE_TRAIN_SUBSYSTEM.drive(
             ChassisSpeeds.fromFieldRelativeSpeeds(
                 xVelocity, // x translation
@@ -48,8 +48,8 @@ public class DrivetrainChargeStationBalancingCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         Robot.DRIVE_TRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0, 0, 0));
-        SmartDashboard.putBoolean("balancing end", true);
-        SmartDashboard.putBoolean("balancing init", false);
+        // SmartDashboard.putBoolean("balancing end", true);
+        // SmartDashboard.putBoolean("balancing init", false);
     }
 
     @Override

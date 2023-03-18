@@ -4,6 +4,7 @@
 
 package frc.util.arm;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class ArmPose {
@@ -67,13 +68,49 @@ public class ArmPose {
         double widthConstraintAngle = Math.acos(cosOfWidthConstraintAngle);
         double widthConstraintAngleDegrees = Math.toDegrees(widthConstraintAngle);
 
+
+        if (Double.isNaN(heightConstraintAngleDegrees)) {
+            heightConstraintAngleDegrees = 90;
+        }
+
+        if (Double.isNaN(negativeHeightConstraintAngleDegrees)) {
+            negativeHeightConstraintAngleDegrees = 90;
+        }
+
+        if (Double.isNaN(widthConstraintAngleDegrees)) {
+            widthConstraintAngleDegrees = 0;
+        }
+        
+
         // Lower quadrants width constraint angle.
         double lowerQuadrantsWidthConstraintAngleDegrees = widthConstraintAngleDegrees + 90;
+
 
         // Translate the raw angles to our coordinate system.
         heightConstraintAngleDegrees = 90 - heightConstraintAngleDegrees;
         negativeHeightConstraintAngleDegrees += 90;
         widthConstraintAngleDegrees = 90 - widthConstraintAngleDegrees;
+
+
+        // Special cases, if the arm is EXACTLY at a quadrant boundary.
+        // These aren't technically mathematically correct,
+        // but it doesn't matter because these boundaries
+        // will be erased as soon as the arm moves a single encoder tick
+        // in either direction.
+        if (angleDegrees == 0) {
+            // Arm is straight up.
+            heightConstraintAngleDegrees = widthConstraintAngleDegrees * -1;
+        }
+
+        if (angleDegrees == 90) {
+            // Arm is straight forward.
+            widthConstraintAngleDegrees = negativeHeightConstraintAngleDegrees;
+        }
+
+        if (angleDegrees == -90) {
+            // Arm is straight backward.
+            widthConstraintAngleDegrees = negativeHeightConstraintAngleDegrees;
+        }
 
         // Once we have all the constraints, create a window based on which quadrant the arm is actually in.
         // Constraints in other quadrants are not relevant.
@@ -92,9 +129,31 @@ public class ArmPose {
             finalHeightConstraintAngleDegrees  *= -1;
         }
 
-        
         // Last step is to return the window.
         AngularConstraintWindow window = new AngularConstraintWindow(Math.min(finalWidthConstraintAngleDegrees, finalHeightConstraintAngleDegrees), Math.max(finalWidthConstraintAngleDegrees, finalHeightConstraintAngleDegrees));
+       /*
+        SmartDashboard.putNumber("WindowMin", window.getLowerBound());
+        SmartDashboard.putNumber("WindowMax", window.getUpperBound());
+
+        
+        SmartDashboard.putNumber("WindowDegress", angleDegrees);
+        SmartDashboard.putNumber("LQWCAD", lowerQuadrantsWidthConstraintAngleDegrees);
+        SmartDashboard.putNumber("HCAD", heightConstraintAngleDegrees);
+        SmartDashboard.putNumber("NHCAD", negativeHeightConstraintAngleDegrees);
+        SmartDashboard.putNumber("WCAD", widthConstraintAngleDegrees);
+        */
+        /* 
+        if (Double.isNaN(this.armRotationMinimumBoundDegrees)) {
+            this.armRotationMinimumBoundDegrees = -1 * Constants.ARM_MAX_ROTATION_DEGREES;
+            this.armRotationMinimumBoundDegrees = -1 * Constants.ARM_MAX_ROTATION_DEGREES * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+        }
+
+        if (Double.isNaN(this.armRotationMaximumBoundDegrees)) {
+            this.armRotationMaximumBoundDegrees = Constants.ARM_MAX_ROTATION_DEGREES;
+            this.armRotationMaximumBoundDegrees = Constants.ARM_MAX_ROTATION_DEGREES * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+        }
+        */
+
 
         return window;
     }
@@ -170,6 +229,11 @@ public class ArmPose {
 
     public double getArmAngleRadians() {
         return armAngleRadians;
+    }
+
+    public double getArmRotationNativeUnits() {
+        return armAngleDegrees * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+
     }
 
     public void setArmAngleRadians(double armAngleRadians) {

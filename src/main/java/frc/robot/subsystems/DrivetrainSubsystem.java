@@ -190,8 +190,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     );
     */
 
-    SmartDashboard.putNumber("GearRatio L1 wheel diameter", GearRatio.L1.getConfiguration().getWheelDiameter());
-    SmartDashboard.putNumber("GearRatio L1 drive reduction", GearRatio.L1.getConfiguration().getDriveReduction());
+    // SmartDashboard.putNumber("GearRatio L1 wheel diameter", GearRatio.L1.getConfiguration().getWheelDiameter());
+    // SmartDashboard.putNumber("GearRatio L1 drive reduction", GearRatio.L1.getConfiguration().getDriveReduction());
 
     m_frontLeftModule = new MkSwerveModuleBuilder(moduleConfig)
     // .withGearRatio(MkSwerveModuleBuilder.GearRatio.L1)
@@ -352,6 +352,16 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
       }
     }
 
+    boolean isStopped = chassisSpeeds.vxMetersPerSecond == 0 && chassisSpeeds.vyMetersPerSecond == 0 && chassisSpeeds.omegaRadiansPerSecond == 0;
+
+    if(isStopped && Robot.zoneState == ZoneState.ALLIANCE_CHARGE_STATION && Robot.overallState == OverallState.ENDGAME) {
+      SmartDashboard.putBoolean("hold", true);
+      holdPosition();
+    }
+    else {
+      SmartDashboard.putBoolean("hold", false);
+    }
+
     _moduleStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
   }
 
@@ -367,8 +377,8 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
       m_backRightModule.getPosition()
     });
 
-    SmartDashboard.putNumber("FL angle degrees", m_frontLeftModule.getPosition().angle.getDegrees());
-    SmartDashboard.putNumber("FL drive velocity", m_frontLeftModule.getDriveVelocity());
+    // SmartDashboard.putNumber("FL angle degrees", m_frontLeftModule.getPosition().angle.getDegrees());
+    // SmartDashboard.putNumber("FL drive velocity", m_frontLeftModule.getDriveVelocity());
 
     _diagnostics.updateKinematics(_odometryFromKinematics, states);
 
@@ -390,8 +400,8 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
     _diagnostics.updateHardware(_odometryFromHardware, statesHardware);
     
-    SmartDashboard.putNumber("FL steer angle degrees (state)", states[0].angle.getDegrees());
-    SmartDashboard.putNumber("FL drive voltage (state)", states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE);
+    // SmartDashboard.putNumber("FL steer angle degrees (state)", states[0].angle.getDegrees());
+    // SmartDashboard.putNumber("FL drive voltage (state)", states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE);
 
     Deadband.adjustRotationWhenStopped(states, statesHardware);
     
@@ -400,16 +410,18 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
 
-    SmartDashboard.putString("Control Mode", ((WPI_TalonFX) m_frontLeftModule.getSteerMotor()).getControlMode().name()); 
-    SmartDashboard.putNumber("Control Mode Value", ((WPI_TalonFX) m_frontLeftModule.getSteerMotor()).getSelectedSensorPosition());
+    // SmartDashboard.putString("Control Mode", ((WPI_TalonFX) m_frontLeftModule.getSteerMotor()).getControlMode().name()); 
+    // SmartDashboard.putNumber("Control Mode Value", ((WPI_TalonFX) m_frontLeftModule.getSteerMotor()).getSelectedSensorPosition());
 
     // _driveCharacteristics.update(_odometryFromHardware.getPoseMeters(), 360 - m_navx.getAngle());
-
+/* 
     SmartDashboard.putNumber("Yaw: ", m_navx.getYaw());
     SmartDashboard.putNumber("Pitch: ", m_navx.getPitch());
     SmartDashboard.putNumber("Roll: ", m_navx.getRoll());
 
     SmartDashboard.putNumber("Max Robot Speed", MAX_VELOCITY_METERS_PER_SECOND);
+    
+    */
     pid_test.setP(kpEntry.getDouble(0.0));
     pid_test.setI(kiEntry.getDouble(0.0));
     pid_test.setD(kdEntry.getDouble(0.0));

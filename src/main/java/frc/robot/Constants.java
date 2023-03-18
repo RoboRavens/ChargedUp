@@ -18,13 +18,23 @@ import frc.util.arm.ArmSetpoint;
  */
 public final class Constants {
 
-  public static final double CONVEYANCE_ONE_FULL_SPEED = -1;
-  public static final double CONVEYANCE_ONE_STOP = 0;
+  //Rotation Motor Absolute Encoder Position
+  public static final double ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO = 222;
+
+  //LEDs
+  public static final int TOTAL_LEDS_STRIP_LENGTH = 117;
+  public static final int END_OF_FIRST_LEDS_SECTION = 28;
+  public static final int END_OF_SECOND_LEDS_SECTION = 56;
+  public static final int END_OF_THIRD_LEDS_SECTION = 84;
+  public static final int END_OF_FOURTH_LEDS_SECTION = TOTAL_LEDS_STRIP_LENGTH;
+
   //Motion Magic
 	public static final int kSlotIdx = 0;
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
-  public static final Gains kGains = new Gains(0.09, 0.000009, 0.000005, 0.0, 0, 1.0);
+  public static final Gains rotationGains = new Gains(0.5, 0.0002, 0.00000, 0.0, 0, 1.0);
+  public static final Gains extensionGains = new Gains(1.1, 0.00018, 0.00000, 0.0, 0, 1.0);
+  
   // Position to degrees 4096 counts per revolution
   public static final int COUNTS_PER_REVOLUTION = 4096;
   public static final double ARM_DEGREES_TO_ENCODER_UNITS = COUNTS_PER_REVOLUTION / 360;
@@ -66,7 +76,7 @@ public final class Constants {
   public static final double MAX_TELEOP_HORIZONTAL_EXTENSION_INCHES = 48;
   public static final double ARM_BASE_LENGTH_INCHES = 33.524;
   public static final double ARM_EXTENDED_LENGTH_INCHES = 66.25;
-  public static final double ARM_MAX_EXTENSION_ENCODER_UNITS = 10000; // This number is a wild guess and liable to be very wrong.
+  public static final double ARM_MAX_EXTENSION_ENCODER_UNITS = 110000; // This number is a wild guess and liable to be very wrong.
   public static final double SAFETY_MARGIN_INCHES = 1;
   public static final double ARM_EXTENSION_PER_UNIT = Constants.ARM_EXTENDED_LENGTH_INCHES / Constants.ARM_MAX_EXTENSION_ENCODER_UNITS;
 
@@ -91,7 +101,7 @@ public final class Constants {
   public static final double ARM_STARTING_DEGREES = 0;
 
   public static final int ARM_FULL_RETRACT_ROTATION_ANGLE = 0;
-  public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 114;
+  public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 119;
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 75;
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 60;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
@@ -111,15 +121,18 @@ public final class Constants {
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_LOW_EXTENSION_SETPOINT = 0;
   public static final int ARM_SCORE_LOW_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_LOW_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 100;
+  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 20000;
   public static final int ARM_SCORE_CONE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 100;
+  public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 25000;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 200;
+  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 100000;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 200;
+  public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 100000;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
 
+  public static final ArmSetpoint ARM_EXTENSION_TEST_SETPOINT = new ArmSetpoint("Arm Extend", ARM_MAX_EXTENSION_ENCODER_UNITS, ARM_FULL_RETRACT_ROTATION_SETPOINT);
+
+  
   public static final ArmSetpoint ARM_FULL_RETRACT_SETPOINT = new ArmSetpoint("Full Retract", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_FULL_RETRACT_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_GROUND_PICKUP_SETPOINT = new ArmSetpoint("Ground Pickup", ARM_GROUND_PICKUP_EXTENSION_SETPOINT, ARM_GROUND_PICKUP_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT = new ArmSetpoint("Single Substation Pickup", ARM_SINGLE_SUBSTATION_PICKUP_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT);
@@ -130,10 +143,13 @@ public final class Constants {
   public static final ArmSetpoint ARM_SCORE_CONE_HIGH_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_SCORE_CUBE_HIGH_SETPOINT = new ArmSetpoint("Score Cube High", ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT);
 
+  public static final ArmSetpoint ARM_REVERSE_TEST_SETPOINT = new ArmSetpoint("Reverse Test", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT * -1);
+
+
   public static final double ARM_ROTATION_VELOCITY = 3000;
   public static final double ARM_ROTATION_ACCELERATION = 800;
-  public static final double ARM_EXTENSION_VELOCITY = 1000;
-  public static final double ARM_EXTENION_ACCELERATION = 100;
+  public static final double ARM_EXTENSION_VELOCITY = 4000;
+  public static final double ARM_EXTENSION_ACCELERATION = 4000;
 
   public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
   public static final double ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
@@ -149,7 +165,8 @@ public final class Constants {
 
   // CLAW
   public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
-  public static final double CLAW_OPEN_TIMEOUT_SECONDS = .25;
   public static final double AUTO_CLAW_CLOSE_TIMEOUT_SECONDS = .25;
   public static final double AUTO_CLAW_OPEN_TIMEOUT_SECONDS = .25;
+  public static final double CLAW_OPEN_TIMEOUT_SECONDS = .75;
+  public static final double RUMBLE_TIME = 0.2;
 }
