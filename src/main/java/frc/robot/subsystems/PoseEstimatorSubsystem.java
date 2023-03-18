@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 
 
@@ -30,7 +31,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
 
         if (Robot.LIMELIGHT_SUBSYSTEM.getTv() == 1  && (Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX() - Robot.LIMELIGHT_SUBSYSTEM.getRobotPose().getX() < 2) &&
-        Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY() - Robot.LIMELIGHT_SUBSYSTEM.getRobotPose().getY() < 2) {
+        Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY() - Robot.LIMELIGHT_SUBSYSTEM.getRobotPose().getY() < 2 || Robot.LIMELIGHT_SUBSYSTEM.getTa() >= 0.2 && LimelightHelpers.getFiducialID("limelight") <= 8) {
             addVisionMeasurment(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose(), timeStamp);
         }
         SmartDashboard.putData(field);
