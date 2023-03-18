@@ -435,9 +435,9 @@ public class Robot extends TimedRobot {
     // new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);
     
 
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CONE).onTrue(ledsSignalConeCommand.andThen(new InstantCommand(() -> pieceState = PieceState.CONE)));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CUBE).onTrue(ledsSignalCubeCommand.andThen(new InstantCommand(() -> pieceState = PieceState.CUBE)));
-  
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
+    
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
