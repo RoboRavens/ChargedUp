@@ -32,7 +32,7 @@ public final class Constants {
 	public static final int kSlotIdx = 0;
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
-  public static final Gains rotationGains = new Gains(0.5, 0.0002, 0.00000, 0.0, 0, 1.0);
+  public static final Gains rotationGains = new Gains(0.6, 0.0002, 0.00000, 0.0, 0, 1.0);
   public static final Gains extensionGains = new Gains(1.1, 0.00018, 0.00000, 0.0, 0, 1.0);
   
   // Position to degrees 4096 counts per revolution
@@ -108,7 +108,7 @@ public final class Constants {
   public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 55;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 70;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 55;
-  public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 60;
+  public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 65;
 
   public static final int ARM_FULL_RETRACT_EXTENSION_SETPOINT = 0;
   public static final int ARM_FULL_RETRACT_ROTATION_SETPOINT = (int) Math.round(ARM_FULL_RETRACT_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
@@ -146,8 +146,8 @@ public final class Constants {
   public static final ArmSetpoint ARM_REVERSE_TEST_SETPOINT = new ArmSetpoint("Reverse Test", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT * -1);
 
 
-  public static final double ARM_ROTATION_VELOCITY = 3000;
-  public static final double ARM_ROTATION_ACCELERATION = 800;
+  public static final double ARM_ROTATION_VELOCITY = 600;
+  public static final double ARM_ROTATION_ACCELERATION = 400;
   public static final double ARM_EXTENSION_VELOCITY = 4000;
   public static final double ARM_EXTENSION_ACCELERATION = 4000;
 
@@ -160,8 +160,8 @@ public final class Constants {
   
   public static final double EXTENSION_UPRIGHT_EMPTY_AFF = .1;
   public static final double EXTENSION_UPRIGHT_LOADED_AFF = .11;
-  public static final double ROTATION_SIDEWAYS_EMPTY_AFF = .2;
-  public static final double ROTATION_SIDEWAYS_LOADED_AFF = .21;
+  public static final double ROTATION_SIDEWAYS_EMPTY_AFF = .05;
+  public static final double ROTATION_SIDEWAYS_LOADED_AFF = .055;
 
   // CLAW
   public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;

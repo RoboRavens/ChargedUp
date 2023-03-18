@@ -266,6 +266,7 @@ public class ArmSubsystem extends SubsystemBase {
         // double actualAngle = getAngleFromPosition((SmartDashboard.getNumber("LeaderEncoderPosition", 0.0)));
         
         SmartDashboard.putNumber("ActualPositionInDegrees", getCurrentAngleDegrees());
+        
         // Angle (in 360) = 360 * ((ArmSetPosition / CountsPerRevolution) % 360)
         // ArmSetPosition = (Angle/360) * CountsPerRevolution
         // from degrees to position is ~11.377778
@@ -320,6 +321,10 @@ public class ArmSubsystem extends SubsystemBase {
 
         if (Robot.hasCone()) {
             maxAFF = Constants.ROTATION_SIDEWAYS_LOADED_AFF;
+        }
+
+        if (this.getCurrentAngleDegrees() > 0) {
+            maxAFF = maxAFF * -1;
         }
 
         rotationAFF = maxAFF * rotationScaling * extensionScaling;
