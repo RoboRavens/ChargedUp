@@ -25,7 +25,6 @@ public class ScoreTwoLoadAndBalanceCommand {
         PathPlannerTrajectory scorePreloadHighToLoadCone1Trajectory = pathGroup.get(0);
         
         HashMap<String, Command> scorePreloadHighToLoadCone1EventMap = new HashMap<>();
-        // Setpoint may need to be changed to be on the opposite side of the robot
         scorePreloadHighToLoadCone1EventMap.put("Extend To Ground 1", new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
 
         FollowPathWithEvents scorePreloadHighToLoadCone1WithEvents = new FollowPathWithEvents(
@@ -33,7 +32,7 @@ public class ScoreTwoLoadAndBalanceCommand {
             scorePreloadHighToLoadCone1Trajectory.getMarkers(),
             scorePreloadHighToLoadCone1EventMap);
 
-        Command scorePreloadHighToLoadCone1Command = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scorePreloadHighToLoadCone1Trajectory)
+        Command scorePreloadHighToLoadCone1PathCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scorePreloadHighToLoadCone1Trajectory)
         .andThen(scorePreloadHighToLoadCone1WithEvents);
 
 
@@ -48,7 +47,7 @@ public class ScoreTwoLoadAndBalanceCommand {
             loadCone1ToScoreMidTrajectory.getMarkers(),
             loadCone1ToScoreMidEventMap);
 
-        Command loadCone1ToScoreMidCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(loadCone1ToScoreMidTrajectory)
+        Command loadCone1ToScoreMidPathCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(loadCone1ToScoreMidTrajectory)
         .andThen(loadCone1ToScoreMidWithEvents);
 
 
@@ -63,7 +62,7 @@ public class ScoreTwoLoadAndBalanceCommand {
             scoreMidToLoadCone2Trajectory.getMarkers(),
             scoreMidToLoadCone2EventMap);
 
-        Command scoreMidToLoadCone2Command = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scoreMidToLoadCone2Trajectory)
+        Command scoreMidToLoadCone2PathCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scoreMidToLoadCone2Trajectory)
         .andThen(scoreMidToLoadCone2WithEvents);
 
 
@@ -77,7 +76,7 @@ public class ScoreTwoLoadAndBalanceCommand {
             loadCone2ToBridgeTrajectory.getMarkers(),
             loadCone2ToBridgeEventMap);
 
-        Command loadCone2ToBridgeCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(loadCone2ToBridgeTrajectory)
+        Command loadCone2ToBridgePathCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(loadCone2ToBridgeTrajectory)
         .andThen(loadCone2ToBridgeWithEvents);
 
         // Open claw and retract command
@@ -90,18 +89,18 @@ public class ScoreTwoLoadAndBalanceCommand {
 
 
         Command scoreTwoLoadAndBalanceCommand = 
-        new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT)
+        new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT)
         .andThen(openClawAndRetractCommand)
-        .andThen(scorePreloadHighToLoadCone1Command)
+        .andThen(scorePreloadHighToLoadCone1PathCommand)
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT)) 
         .andThen(closeClawAndRetractCommand)
-        .andThen(loadCone1ToScoreMidCommand)
+        .andThen(loadCone1ToScoreMidPathCommand)
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT))
         .andThen(openClawAndRetractCommand)
-        .andThen(scoreMidToLoadCone2Command)
+        .andThen(scoreMidToLoadCone2PathCommand)
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT)) 
         .andThen(closeClawAndRetractCommand)
-        .andThen(loadCone2ToBridgeCommand)
+        .andThen(loadCone2ToBridgePathCommand)
         .andThen(new ChargeStationBalancingCommand());
 
         return new AutoMode("Score Two Pieces, Load, and Balance Auto", scoreTwoLoadAndBalanceCommand);
