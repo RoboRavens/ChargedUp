@@ -8,10 +8,11 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
+import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
-import frc.robot.commands.groups.ScorePieceCommand;
 import frc.util.AutoMode;
 
 public class PreloadAndBalanceCommand {
@@ -26,8 +27,9 @@ public class PreloadAndBalanceCommand {
             eventMap);
 
         Command preloadAndBalanceCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scoringToBridgeTrajectory)
-        .andThen(new InstantCommand().until(() -> Robot.isRobotReadyToScore())) // Do nothing until the robot is ready to score
-        .andThen(new ScorePieceCommand()) // Replace with TempAutoIntakeCommand() for testing on the old robot
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT))
+        .andThen(new AutoClawOpenCommand())
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
         .andThen(scoringToBridgePath)
         .andThen(new ChargeStationBalancingCommand());
 
