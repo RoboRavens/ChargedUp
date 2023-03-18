@@ -99,53 +99,16 @@ public class Gamepad {
 		case RIGHTSTICK:
 			buttonNumber = 10;
 			break;
-		case LIMELIGHT_LIGHT_OFF_OVERRIDE:
-			buttonNumber = 1;
-			break;
-		case SHOOTER_REV:
-			buttonNumber = 2;
-			break;
-		case DRIVER_CONTROL_OVERRIDE:
-			buttonNumber = 4;
-			break;
-		case SHOOTER_OVERRIDE:
-			buttonNumber = 7;
-			break;
 		// Button locations will need to be tested and changed.
 		case SUBSTATION_INTAKE:
 			buttonNumber = 9;
 			break;
-		// Button locations will need to be tested and changed.
-		case FLOOR_INTAKE:
-			buttonNumber = 6;
-			break;
-		// case SCORE_HIGH:
-		// 	buttonNumber = 7;
-		// 	break;
-		// case SCORE_MID:
-		// 	buttonNumber = 4;
-		// 	break;
-		// case SCORE_LOW:
-		// 	buttonNumber = 1;
-		// 	break;
-		// case CUBE:
-		// 	buttonNumber = 2;
-		// 	break;
-		// case CONE:
-		// 	buttonNumber = 5;
-		// 	break;
 		case SET_ARM_TO_SCORE_TARGET_STATE:
 			buttonNumber = 2;
 			break;
 		case RETRACT_ARM_FULL:
 			buttonNumber = 1;
 			break;
-		case SCORE_PIECE:
-			buttonNumber = 3;
-			break;
-		// case TOGGLE_COLOR_SENSING_FEATURES:
-		// 	buttonNumber = 4;
-		// 	break;
 		case EJECT_PIECE:
 			buttonNumber = 8;
 			break;
@@ -155,10 +118,10 @@ public class Gamepad {
 		case RETRACT_ARM:
 			buttonNumber = 9;
 			break;
-		case ROTATE_ARM_TO_ZERO:
+		case ROTATE_ARM_FORWARD:
 			buttonNumber = 12;
 			break;
-		case ROTATE_ARM_MAX_ROTATION:
+		case ROTATE_ARM_BACKWARD:
 			buttonNumber = 10;
 		// Switch buttons
 		case ARM_EXTENSION_MANUAL_OVERRIDE:
@@ -170,14 +133,14 @@ public class Gamepad {
 		case ENDGAME_OVERRIDE:
 			buttonNumber = 1;
 			break;
-		case TEMP_ALLIANCE_COMMUNITY_ZONE:
-			buttonNumber = 7;
-			break;
 		case IGNORE_ROTATION_LIMITS:
 			buttonNumber = 8;
 			break;
 		case IGNORE_EXTENSION_LIMITS:
 			buttonNumber = 6;
+			break;
+		case LIMELIGHT_LIGHT_OFF_OVERRIDE:
+			buttonNumber = 7;
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid Button Code");
