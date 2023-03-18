@@ -26,7 +26,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
         Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
 
-        if (Robot.LIMELIGHT_SUBSYSTEM.getTv() == 1) {
+        if (Robot.LIMELIGHT_SUBSYSTEM.getTv() == 1  && (Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX() - Robot.LIMELIGHT_SUBSYSTEM.getRobotPose().getX() < 2) &&
+        Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY() - Robot.LIMELIGHT_SUBSYSTEM.getRobotPose().getY() < 2) {
             addVisionMeasurment(Robot.LIMELIGHT_SUBSYSTEM.getRobotPose(), timeStamp);
         }
 
