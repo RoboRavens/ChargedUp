@@ -300,6 +300,13 @@ public class Robot extends TimedRobot {
     // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
     // GAMEPAD.getButton(ButtonCode.LEFTSTICK).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
     // OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
+
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onFalse(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
+    OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
+    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
+    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//
+
     // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_LOW).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT));
     // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_MID).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
     // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_HIGH).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
@@ -311,6 +318,12 @@ public class Robot extends TimedRobot {
     GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
     GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
 
+    // When the floor intake button is pressed, update the states
+    GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).onTrue(new InstantCommand(() -> {
+      overallState = OverallState.GROUND_PICKUP;
+      loadTargetState = LoadTargetState.GROUND;
+    }));
+    
     GAMEPAD.getButton(ButtonCode.LEFTBUMPER)
     .and(GAMEPAD.getButton(ButtonCode.RIGHTBUMPER))
     .and(GAMEPAD.getButton(ButtonCode.Y))
@@ -412,15 +425,15 @@ public class Robot extends TimedRobot {
     // ARM
     new Trigger(() -> Robot.overallState == OverallState.EJECTING).onTrue(new EjectPieceCommand());
 
-    // Extend and rotate the arm to the loading target
-    new Trigger(() -> Robot.loadState == LoadState.EMPTY && (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE || Robot.overallState == OverallState.GROUND_PICKUP))
-        .whileTrue(new ArmRotateToRetrievalPositionCommand(Robot.loadTargetState)
-        .andThen(new ArmExtendToRetrievalPositionCommand(Robot.loadTargetState)).withName("Extend and rotate arm to loading target"));
+    // // Extend and rotate the arm to the loading target
+    // new Trigger(() -> Robot.loadState == LoadState.EMPTY && (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE || Robot.overallState == OverallState.GROUND_PICKUP))
+    //     .whileTrue(new ArmRotateToRetrievalPositionCommand(Robot.loadTargetState)
+    //     .andThen(new ArmExtendToRetrievalPositionCommand(Robot.loadTargetState)).withName("Extend and rotate arm to loading target"));
     
-    // Extend and rotate the arm to the scoring target
-    new Trigger(() -> Robot.loadState == LoadState.LOADED && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
-      .onTrue(new ArmRotateToRowPositionCommand(Robot.scoringTargetState)
-      .andThen(new ArmExtendToRowPositionCommand(Robot.scoringTargetState)).withName("Extend and rotate arm to scoring target"));
+    // // Extend and rotate the arm to the scoring target
+    // new Trigger(() -> Robot.loadState == LoadState.LOADED && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
+    //   .onTrue(new ArmRotateToRowPositionCommand(Robot.scoringTargetState)
+    //   .andThen(new ArmExtendToRowPositionCommand(Robot.scoringTargetState)).withName("Extend and rotate arm to scoring target"));
     
     // Retract the arm and rotate it upwards if the robot
     // - has just loaded
