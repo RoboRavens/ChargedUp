@@ -54,6 +54,10 @@ public class ArmGoToSetpointDangerousCommand extends CommandBase {
   public void execute() {
     
     SmartDashboard.putString("ArmSetpoint", finalSetpoint.getName());
+
+    SmartDashboard.putNumber("Arm Target", finalSetpoint.getRotationSetpointDegrees());
+    
+
     arm.brakeDisable();
 
 

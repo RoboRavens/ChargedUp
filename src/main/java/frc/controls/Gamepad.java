@@ -142,8 +142,11 @@ public class Gamepad {
 		case LIMELIGHT_LIGHT_OFF_OVERRIDE:
 			buttonNumber = 7;
 			break;
+		case DRIVER_CONTROL_OVERRIDE:
+			buttonNumber = 5;
+			break;
 		default:
-			throw new IllegalArgumentException("Invalid Button Code");
+			throw new IllegalArgumentException("Button code " + button.name() + " was not setup correctly.");
 		}
 
 		return buttonNumber;

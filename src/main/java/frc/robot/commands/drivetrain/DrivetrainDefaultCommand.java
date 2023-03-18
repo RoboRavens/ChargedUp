@@ -87,7 +87,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
             // Get rid of the above three lines after testing
             if (Robot.overallState == OverallState.PREPARING_TO_SCORE || 
             (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.DOUBLE_SUBSTATION)) {
-                _targetRotation = 0;
+                _targetRotation = 3.1415;
                 r = getAngularVelocityForAlignment();
                 x = getXVelocity();
                 y = getYVelocity();
