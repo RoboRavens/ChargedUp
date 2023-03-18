@@ -42,7 +42,7 @@ public class AutoClawOpenCommand extends CommandBase {
     public boolean isFinished() {
         boolean isFinished = false;
 
-        if (timer.get() >= Constants.CLAW_OPEN_TIMEOUT_SECONDS) {
+        if (timer.get() >= Constants.AUTO_CLAW_OPEN_TIMEOUT_SECONDS) {
             isFinished = true;
         }
 

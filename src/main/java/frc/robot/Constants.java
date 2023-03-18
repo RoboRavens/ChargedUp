@@ -151,5 +151,5 @@ public final class Constants {
   public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
   public static final double CLAW_OPEN_TIMEOUT_SECONDS = .25;
   public static final double AUTO_CLAW_CLOSE_TIMEOUT_SECONDS = .25;
-
+  public static final double AUTO_CLAW_OPEN_TIMEOUT_SECONDS = .25;
 }

@@ -7,11 +7,11 @@ import frc.robot.Robot;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.util.StateManagement.ClawState;
 
-public class ClawCloseCommand extends CommandBase {
+public class AutoClawCloseCommand extends CommandBase {
     Timer timer = new Timer();
     ClawSubsystem claw = Robot.CLAW_SUBSYSTEM;
 
-    public ClawCloseCommand() {
+    public AutoClawCloseCommand() {
         addRequirements(claw);
     }
 
@@ -42,7 +42,7 @@ public class ClawCloseCommand extends CommandBase {
     public boolean isFinished() {
         boolean isFinished = false;
 
-        if (timer.get() >= Constants.CLAW_CLOSE_TIMEOUT_SECONDS) {
+        if (timer.get() >= Constants.AUTO_CLAW_CLOSE_TIMEOUT_SECONDS) {
             isFinished = true;
         }
 
