@@ -4,6 +4,8 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.Interpolatable;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,7 +18,7 @@ import frc.robot.Robot;
 public class PoseEstimatorSubsystem extends SubsystemBase {
 
     public final Field2d field = new Field2d();
-
+      
     double timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl() / 1000)
             - (Robot.LIMELIGHT_SUBSYSTEM.getCl() / 1000);
 
@@ -37,12 +39,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     }
 
-    public void init() {
-
+    public void resetPosition() {
         resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
-                Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(), Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
-
+        Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(), Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
     }
+   
 
     private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
             Robot.DRIVE_TRAIN_SUBSYSTEM.m_kinematics,

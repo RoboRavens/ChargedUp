@@ -137,6 +137,8 @@ public class Robot extends TimedRobot {
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
     configureButtonBindings();
     configureTriggers();
+
+    GAMEPAD.getButton(ButtonCode.LEFTBUMPER).onTrue(new InstantCommand(() -> Robot.POSE_ESTIMATOR_SUBSYSTEM.resetPosition()));
   }
 
   /**
