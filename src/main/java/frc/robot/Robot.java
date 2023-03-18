@@ -61,7 +61,6 @@ import frc.robot.subsystems.TabletScoring.ScoringShape;
 import frc.robot.subsystems.TabletScoring.TabletScoringResult;
 import frc.robot.subsystems.TabletScoring.TabletScoringSubsystem;
 import frc.util.field.*;
-import frc.robot.subsystems.TempConveyanceSubystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -349,8 +348,8 @@ public class Robot extends TimedRobot {
     }));
 
     // TODO: bind this to a button
-    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE)
-    .toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); 
+    // OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE)
+    // .toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); 
 
     OP_PAD_BUTTONS.getButton(ButtonCode.EJECT_PIECE)
     .toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));

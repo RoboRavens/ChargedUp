@@ -10,7 +10,7 @@ import com.pathplanner.lib.commands.FollowPathWithEvents;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
-import frc.robot.commands.TempAutoIntakeCommand;
+import frc.robot.commands.groups.ScorePieceCommand;
 import frc.util.AutoMode;
 
 public class FourPieceAutoCommand {
@@ -19,11 +19,11 @@ public class FourPieceAutoCommand {
         PathPlannerTrajectory examplePath = PathPlanner.loadPath("Four Piece Auto", new PathConstraints(2, 1));
 
         HashMap<String, Command> eventMap = new HashMap<>();
-        eventMap.put("Retrieve Piece 2", new WaitCommand(1).deadlineWith(new TempAutoIntakeCommand()));
-        eventMap.put("Score Piece 2", new WaitCommand(1).deadlineWith(new TempAutoIntakeCommand()));
-        eventMap.put("Retrieve Piece 3", new WaitCommand(1).deadlineWith(new TempAutoIntakeCommand()));
-        eventMap.put("Score Piece 3", new WaitCommand(1).deadlineWith(new TempAutoIntakeCommand()));
-        eventMap.put("Retrieve Piece 4", new WaitCommand(1).deadlineWith(new TempAutoIntakeCommand()));        
+        eventMap.put("Retrieve Piece 2", new WaitCommand(1).deadlineWith(new ScorePieceCommand()));
+        eventMap.put("Score Piece 2", new WaitCommand(1).deadlineWith(new ScorePieceCommand()));
+        eventMap.put("Retrieve Piece 3", new WaitCommand(1).deadlineWith(new ScorePieceCommand()));
+        eventMap.put("Score Piece 3", new WaitCommand(1).deadlineWith(new ScorePieceCommand()));
+        eventMap.put("Retrieve Piece 4", new WaitCommand(1).deadlineWith(new ScorePieceCommand()));        
 
         FollowPathWithEvents examplePathWithEvents = new FollowPathWithEvents(
             Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(examplePath), 
@@ -31,9 +31,9 @@ public class FourPieceAutoCommand {
             eventMap);
 
         Command testCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(examplePath)
-        .andThen(new WaitCommand(1).deadlineWith(new TempAutoIntakeCommand()))
+        .andThen(new WaitCommand(1).deadlineWith(new ScorePieceCommand()))
         .andThen(examplePathWithEvents)
-        .andThen(new WaitCommand(1).deadlineWith(new TempAutoIntakeCommand()));
+        .andThen(new WaitCommand(1).deadlineWith(new ScorePieceCommand()));
 
         return new AutoMode("Test Auto", testCommand);
     }

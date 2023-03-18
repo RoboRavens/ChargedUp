@@ -12,16 +12,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import frc.robot.Robot;
-import frc.robot.commands.TempAutoIntakeCommand;
+import frc.robot.commands.groups.ScorePieceCommand;
 import frc.util.AutoMode;
 
 public class TwoPieceAutoCommand {
     public static AutoMode getAutoMode() {
-        Command tempAutoIntakeCommand = new TempAutoIntakeCommand();
         PathPlannerTrajectory examplePath = PathPlanner.loadPath("Two Piece Auto", new PathConstraints(1.5, 0.6));
 
         HashMap<String, Command> eventMap = new HashMap<>();
-        eventMap.put("Get Game Piece", new WaitCommand(1.5).deadlineWith(tempAutoIntakeCommand));
+        eventMap.put("Get Game Piece", new WaitCommand(1.5).deadlineWith(new ScorePieceCommand()));
 
         FollowPathWithEvents examplePathWithEvents = new FollowPathWithEvents(
             Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(examplePath), 
