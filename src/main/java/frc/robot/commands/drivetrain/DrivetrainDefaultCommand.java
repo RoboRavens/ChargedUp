@@ -37,6 +37,11 @@ public class DrivetrainDefaultCommand extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        AngularPositionHolder.GetInstance().reset();
+    }
+
+    @Override
     public void execute() {
         double x = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKY) * -1; // Positive x is away from your alliance wall.
         double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * -1; // Positive y is to your left when standing behind the alliance wall.

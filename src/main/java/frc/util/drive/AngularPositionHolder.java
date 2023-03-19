@@ -29,9 +29,7 @@ public class AngularPositionHolder {
   public double getAngularVelocity(double desiredAngularVelocity, double gyroAngleRadians) {
     // robot wants to rotate, so reset everything
     if (desiredAngularVelocity != 0) {
-      _angleToHold = null;
-      _holdRobotAngleTimer.reset();
-      _holdRobotAnglePID.reset();
+      this.reset();
 
       return desiredAngularVelocity;
     }
@@ -47,5 +45,11 @@ public class AngularPositionHolder {
     }
 
     return correctionPower;
+  }
+
+  public void reset(){
+    _angleToHold = null;
+    _holdRobotAngleTimer.reset();
+    _holdRobotAnglePID.reset();
   }
 }
