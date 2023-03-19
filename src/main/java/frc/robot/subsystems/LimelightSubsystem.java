@@ -23,10 +23,10 @@ public class LimelightSubsystem extends SubsystemBase {
   NetworkTableEntry tl = table.getEntry("tl");
   NetworkTableEntry cl = table.getEntry("cl");
   int camMode = 0;
-  
+
   public boolean isAlignedWithScoringNode() {
-     // TODO: Implement this method
-     return false;
+    // TODO: Implement this method
+    return false;
   }
 
   public void switchToScoringPipeline() {
@@ -45,16 +45,13 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Rotation", 0);
     }
 
-
   }
-
-
 
   public Pose2d getRobotPose() {
 
     double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue")
         .getDoubleArray(new double[6]);
-    if (botpose.length >= 6 ) {
+    if (botpose.length >= 6) {
       Translation2d translation = new Translation2d(botpose[0], botpose[1]);
       Rotation2d rotation = new Rotation2d(Math.toRadians(botpose[5]));
       Pose2d position = new Pose2d(translation, rotation);
@@ -63,7 +60,7 @@ public class LimelightSubsystem extends SubsystemBase {
     }
     return null;
   }
-   
+
   public double getCl() {
     return cl.getDouble(0.0);
   }
