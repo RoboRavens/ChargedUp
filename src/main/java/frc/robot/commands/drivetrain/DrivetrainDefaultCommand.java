@@ -1,11 +1,10 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.controls.AxisCode;
@@ -13,93 +12,69 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
+import frc.util.Scale;
+import frc.util.Slew;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.LoadTargetState;
 import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ZoneState;
-import edu.wpi.first.math.MathUtil;
+import frc.util.drive.AngularPositionHolder;
+import frc.util.drive.ChassisSpeedsExtensions;
 
 public class DrivetrainDefaultCommand extends CommandBase {
-    private boolean _followLimelight = false;
-    private boolean _autoSteer = true;
     private PIDController _scoringRotationAlignPID = new PIDController(0.3, 0, 0);
-    private PIDController _autoSteerPID = new PIDController(.035, 0, 0);
     private PIDController _yPID = new PIDController(1, 0, 0);
     private PIDController _xPID = new PIDController(1, 0, 0);
-    private double _targetRotation = 0;
-    Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
+
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
+    private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
+    private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
+    private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
+    private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY;
+
+    public boolean CutPower = false;
+
     public DrivetrainDefaultCommand() {
-        SmartDashboard.putString("DriveTrainDefaultCommandState", "constructed");
         addRequirements(Robot.DRIVE_TRAIN_SUBSYSTEM);
     }
 
     @Override
+    public void initialize() {
+        AngularPositionHolder.GetInstance().reset();
+        _chassisSpeeds = new ChassisSpeeds(0, 0, 0);
+    }
+
+    @Override
     public void execute() {
-        SmartDashboard.putString("DriveTrainDefaultCommandState", "execute");
-        // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
-        double x = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKY) * -1; // Robot.JOYSTICK.getRawAxis(1); // Positive x is away from your alliance wall.
-        double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * -1; // Robot.JOYSTICK.getRawAxis(0); // Positive y is to your left when standing behind the alliance wall.
-        double r; // The angular rate of the robot.
+        double x = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKY) * -1; // Positive x is away from your alliance wall.
+        double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * -1; // Positive y is to your left when standing behind the alliance wall.
+        double r = Robot.GAMEPAD.getAxis(AxisCode.RIGHTSTICKX) * -1; // The angular rate of the robot.
         Rotation2d a = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.
-        // System.out.println("x before deadband: " + x);
-        // System.out.println("y before deadband: " + y);
+
         x = Deadband.adjustValueToZero(x, Constants.JOYSTICK_DEADBAND);
         y = Deadband.adjustValueToZero(y, Constants.JOYSTICK_DEADBAND);
-
-        double rightJoystickInput = Robot.GAMEPAD.getAxis(AxisCode.RIGHTSTICKX) * -1; // Robot.JOYSTICK.getRawAxis(2);
-        // System.out.println("rightJoystickInput before deadband: " + rightJoystickInput);
-        rightJoystickInput = Deadband.adjustValueToZero(rightJoystickInput, Constants.JOYSTICK_DEADBAND);
-        // System.out.println("rightJoystickInput after deadband: " + rightJoystickInput);
-
-        // SmartDashboard.putNumber("Drive Time", Timer.getFPGATimestamp());
-        // SmartDashboard.putNumber("Drive X", x);
-        // SmartDashboard.putNumber("Drive Y", y);
+        r = Deadband.adjustValueToZero(r, Constants.JOYSTICK_DEADBAND);
 
         x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
         y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+        r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
 
-        SmartDashboard.putBoolean("autosteer", _autoSteer);
-        // var limelightAngle = this.getLimelightTargetOffset();
-        // if (limelightAngle != null) {
-        //     r = _followLimelightPID.calculate(limelightAngle.doubleValue());
-        //     // SmartDashboard.putNumber("", r);
-        // } 
-        if (Math.abs(rightJoystickInput) > 0.0){
-            // _followLimelightPID.reset();
-            r = rightJoystickInput * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
-        // } else if (_autoSteer && Robot.DRIVE_TRAIN_SUBSYSTEM.powerIsCut() == false && (x != 0 || y != 0)) {
-        //    var angularDiff = this.getDegreesToMovementDirection(x, y, a.getDegrees());
-        //    double autoSteerRotationalVelocity = _autoSteerPID.calculate(angularDiff);
-        //    r = autoSteerRotationalVelocity;
-        } else {
-            r = 0.0;
-        }
-
-        SmartDashboard.putNumber("x pos", Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getX());
-        SmartDashboard.putNumber("y pos", Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getY());
-        
         if (Robot.drivetrainState == DrivetrainState.ROBOT_ALIGN) {
             // Set the robot to score
             // TODO: update _targetPose based on the selected scoring location
             // Get rid of the above three lines after testing
             if (Robot.overallState == OverallState.PREPARING_TO_SCORE || 
             (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.DOUBLE_SUBSTATION)) {
-                _targetRotation = 0;
-                r = getAngularVelocityForAlignment();
+                r = getAngularVelocityForAlignment(3.1415);
                 x = getXVelocity();
                 y = getYVelocity();
             }
             else if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.SINGLE_SUBSTATION) {
-                if (DriverStation.getAlliance() == DriverStation.getAlliance().Red) {
-                    _targetRotation = 1.571; // 90 degrees
-                }
-                else {
-                    _targetRotation =  -1.571; // -90 degrees
-                }
-                r = getAngularVelocityForAlignment();
+                double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 90 : -90; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
+                double targetAngle = Math.toRadians(targetAngleDegrees);
+                r = getAngularVelocityForAlignment(targetAngle);
                 x = getXVelocity();
                 y = getYVelocity();
             }
@@ -107,7 +82,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
         else if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
             Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
-            r = getAngularVelocityForAlignment();
+            double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 0 : 180; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
+            double targetAngle = Math.toRadians(targetAngleDegrees);
+            r = getAngularVelocityForAlignment(targetAngle);
             SmartDashboard.putNumber("angular velocity pid", r);
         }
         else if (Robot.overallState == OverallState.LOADING) {
@@ -126,29 +103,50 @@ public class DrivetrainDefaultCommand extends CommandBase {
             Robot.drivetrainState = DrivetrainState.FREEHAND;
         }
 
+        r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
 
-        // apply the x, y, and r values to the drivetrain
-        if (x == 0 && y == 0 && r == 0) {
-            Robot.DRIVE_TRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        // scale drive velocity and rotation
+        double scale = 1;
+        if (this.CutPower) {
+            scale = Robot.overallState == OverallState.ENDGAME ? .25 : .5;
+        }
+
+        double scaleForArmExt = Scale.FromPercentage(1.0 - Robot.ARM_SUBSYSTEM.getExtensionPercentOfMaximumNativeUnits(), Constants.DRIVE_SPEED_SCALE_AT_ARM_MAX_EXTENSION, 1);
+        scale = Math.min(scale, scaleForArmExt);
+
+        x = x * scale;
+        y = y * scale;
+        r = r * scale;
+
+        // give calculated x,y,r to drive command
+        SmartDashboard.putNumber("DriveDefaultCmd x", x);
+        SmartDashboard.putNumber("DriveDefaultCmd y", y);
+        SmartDashboard.putNumber("DriveDefaultCmd r (rotation)", r);
+        SmartDashboard.putNumber("DriveDefaultCmd a (gyro)", a.getDegrees());
+        
+        var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            x, // x translation
+            y, // y translation
+            r, // rotation
+            a // The angle of the robot as measured by a gyroscope.
+        );
+
+        targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
+        targetChassisSpeeds.vyMetersPerSecond = Slew.GetSlewedTarget(_velocityYSlewRate, targetChassisSpeeds.vyMetersPerSecond, _chassisSpeeds.vyMetersPerSecond);
+        targetChassisSpeeds.omegaRadiansPerSecond = Slew.GetSlewedTarget(_angularSlewRate, targetChassisSpeeds.omegaRadiansPerSecond, _chassisSpeeds.omegaRadiansPerSecond);
+        _chassisSpeeds = targetChassisSpeeds;
+
+        if (ChassisSpeedsExtensions.IsZero(targetChassisSpeeds)
+          && Robot.zoneState == ZoneState.ALLIANCE_CHARGE_STATION
+          && Robot.overallState == OverallState.ENDGAME) {
             Robot.DRIVE_TRAIN_SUBSYSTEM.holdPosition();
         } else {
-            SmartDashboard.putNumber("x", x);
-            SmartDashboard.putNumber("y", y);
-            SmartDashboard.putNumber("r (rotation)", r);
-            SmartDashboard.putNumber("a (angle of the robot, degrees)", a.getDegrees());
-            Robot.DRIVE_TRAIN_SUBSYSTEM.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                    x, // x translation
-                    y, // y translation
-                    r, // rotation
-                    a // The angle of the robot as measured by a gyroscope.
-                )
-            );
+            Robot.DRIVE_TRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
         }
     }
 
     public double getYVelocity() {
-        double yOffsetFromTarget = _targetPose.getY() - Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getY();
+        double yOffsetFromTarget = Robot.DRIVE_TRAIN_SUBSYSTEM.getTargetPose().getY() - Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseY();
         double ySpeed = _yPID.calculate(yOffsetFromTarget) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * -1;
         double velocityDirection = ySpeed < 0 ? -1 : 1;
         if (Math.abs(ySpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {
@@ -166,7 +164,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
     }
 
     public double getXVelocity() {
-        double xOffsetFromTarget = _targetPose.getX() - Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getX();
+        double xOffsetFromTarget = Robot.DRIVE_TRAIN_SUBSYSTEM.getTargetPose().getX() - Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseX();
         double xSpeed = _xPID.calculate(xOffsetFromTarget) * Robot.DRIVE_TRAIN_SUBSYSTEM.MAX_VELOCITY_METERS_PER_SECOND * -1;
         double velocityDirection = xSpeed < 0 ? -1 : 1;
         if (Math.abs(xSpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {
@@ -182,16 +180,16 @@ public class DrivetrainDefaultCommand extends CommandBase {
         return xSpeed;
     }
 
-    private double getAngularVelocityForAlignment() {
+    private double getAngularVelocityForAlignment(double targetRotation) {
         // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
         double currentRotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians();
-        double rotationOffset = currentRotation - _targetRotation;
+        double rotationOffset = currentRotation - targetRotation;
         SmartDashboard.putNumber("Rotation Offset", rotationOffset);
         double angularVelocity = _scoringRotationAlignPID
         .calculate(rotationOffset) 
         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
         double velocityDirection = angularVelocity < 0 ? -1 : 1;
-        boolean isWithinTwoHundredthsRadianOfTargetRotation = currentRotation > _targetRotation - 0.02 && currentRotation < _targetRotation + 0.02;
+        boolean isWithinTwoHundredthsRadianOfTargetRotation = currentRotation > targetRotation - 0.02 && currentRotation < targetRotation + 0.02;
         SmartDashboard.putBoolean("isWithinTwoHundredthsRadianOfTargetRotation", isWithinTwoHundredthsRadianOfTargetRotation);
         // If the angular velocity is greater than the max angular velocity, set it to the max angular velocity
         if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
@@ -209,38 +207,6 @@ public class DrivetrainDefaultCommand extends CommandBase {
         Robot.DRIVE_TRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
         SmartDashboard.putString("end method", "end");
     }
-
-    public void followLimelight() {
-        _followLimelight = true;
-    }
-
-    public void stopFollowingLimelight() {
-        _followLimelight = false;
-    }
-
-    public void enableAutoSteer() {
-        _autoSteer = true;
-    }
-
-    public void disableAutoSteer() {
-        _autoSteer = false;
-    }
-
-    // private Double getLimelightTargetOffset() {
-    //     if (_followLimelight == false) {
-    //         return null;
-    //     }
-
-    //     if (Robot.LIMELIGHT_SUBSYSTEM.hasTargetSighted() == false) {
-    //         return null;
-    //     }
-
-    //     if (Robot.LIMELIGHT_SUBSYSTEM.isAligned()) {
-    //         return 0.0;
-    //     }
-
-    //     return Robot.LIMELIGHT_SUBSYSTEM.getTargetOffsetAngle();
-    // }
 
     private double getDegreesToMovementDirection(double x, double y, double robotAngleDegrees) {
         double desiredAngleRadians = Math.atan2(y, x);
