@@ -249,7 +249,7 @@ public class Robot extends TimedRobot {
 
     // If the left trigger is pressed and odometry is active,
     // Set the overall state to either scoring alignment or hps pickup based on the zone state
-    if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER) && ODOMETRY_OVERRIDE == false) {
+    if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER) && ODOMETRY_OVERRIDE == false && Robot.allianceColor != Alliance.Invalid) {
       drivetrainState = DrivetrainState.ROBOT_ALIGN;
     }
     // Set the drive state back to freehand when the left trigger is released
