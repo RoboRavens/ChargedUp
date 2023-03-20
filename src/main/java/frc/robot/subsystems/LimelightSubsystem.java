@@ -12,15 +12,15 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 
 public class LimelightSubsystem extends SubsystemBase {
-  private NetworkTable limelightOne = NetworkTableInstance.getDefault().getTable("firstLimelight");
-  private NetworkTableEntry tx = limelightOne.getEntry("tx");
-  private NetworkTableEntry ty = limelightOne.getEntry("ty");
-  private NetworkTableEntry ta = limelightOne.getEntry("ta");
-  private NetworkTableEntry ts = limelightOne.getEntry("ts");
-  private NetworkTableEntry tv = limelightOne.getEntry("tv");
-  private NetworkTableEntry tl = limelightOne.getEntry("tl");
-  private NetworkTableEntry cl = limelightOne.getEntry("cl");
-
+  private NetworkTable _baseNetworkTable;
+  private String _tableName;
+  private NetworkTableEntry tx;
+  private NetworkTableEntry ty;
+  private NetworkTableEntry ta;
+  private NetworkTableEntry ts;
+  private NetworkTableEntry tv;
+  private NetworkTableEntry tl;
+  private NetworkTableEntry cl;
   private int camMode = 0;
 
   public boolean isAlignedWithScoringNode() {
@@ -32,21 +32,33 @@ public class LimelightSubsystem extends SubsystemBase {
     // TODO: Implement this method
   }
 
+  public LimelightSubsystem(String tableName) {
+    _tableName = tableName;
+    _baseNetworkTable = NetworkTableInstance.getDefault().getTable(tableName);
+    tx = _baseNetworkTable.getEntry("tx");
+    ty = _baseNetworkTable.getEntry("ty");
+    ta = _baseNetworkTable.getEntry("ta");
+    ts = _baseNetworkTable.getEntry("ts");
+    tv = _baseNetworkTable.getEntry("tv");
+    tl = _baseNetworkTable.getEntry("tl");
+    cl = _baseNetworkTable.getEntry("cl");
+  }
+
   public void periodic() {
     Pose2d robotPose = getPureLimelightRobotPose();
     if (robotPose != null) {
-      SmartDashboard.putNumber("LimelightOne PoseX", robotPose.getX());
-      SmartDashboard.putNumber("LimelightOne PoseY", robotPose.getY());
-      SmartDashboard.putNumber("LimelightOne Rotation", robotPose.getRotation().getDegrees());
+      SmartDashboard.putNumber(_tableName + "PoseX", robotPose.getX());
+      SmartDashboard.putNumber( _tableName + "LimelightOne PoseY", robotPose.getY());
+      SmartDashboard.putNumber(_tableName + "LimelightOne Rotation", robotPose.getRotation().getDegrees());
     } else {
-      SmartDashboard.putNumber("LimelightOne PoseX", 0);
-      SmartDashboard.putNumber("LimelightOne PoseY", 0);
-      SmartDashboard.putNumber("LimelightOne Rotation", 0);
+      SmartDashboard.putNumber(_tableName + "LimelightOne PoseX", 0);
+      SmartDashboard.putNumber(_tableName + "LimelightOne PoseY", 0);
+      SmartDashboard.putNumber(_tableName + "LimelightOne Rotation", 0);
     }
   }
 
   public double[] getLimelightBotpose() {
-    double[] robotPoseOne = NetworkTableInstance.getDefault().getTable("limelightOne").getEntry("botpose_wpiblue")
+    double[] robotPoseOne = NetworkTableInstance.getDefault().getTable(_tableName).getEntry("botpose_wpiblue")
         .getDoubleArray(new double[6]);
 
     return robotPoseOne;
