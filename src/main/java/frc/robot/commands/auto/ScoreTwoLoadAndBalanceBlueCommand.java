@@ -81,7 +81,7 @@ public class ScoreTwoLoadAndBalanceBlueCommand {
 
 
         Command scoreTwoLoadAndBalanceCommand = 
-        new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT)
+        new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT)
         .andThen(new AutoClawOpenCommand())
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
         .andThen(scorePreloadHighToLoadCone1PathCommand)
