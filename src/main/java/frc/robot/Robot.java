@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
   
   public static final DrivetrainSubsystem DRIVE_TRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   //public static final DrivetrainSubsystemBase DRIVETRAIN_SUBSYSTEM_BASE = new DrivetrainSubsystemMock(); 
-  public static final DrivetrainDefaultCommand drivetrainDefaultCommand = new DrivetrainDefaultCommand();
+  public static final DrivetrainDefaultCommand DRIVE_TRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
   public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
@@ -126,7 +126,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     ARM_SUBSYSTEM.setDefaultCommand(armDefaultCommand);
-    DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
+    DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(DRIVE_TRAIN_DEFAULT_COMMAND);
     configureButtonBindings();
     configureTriggers();
   }
@@ -249,7 +249,7 @@ public class Robot extends TimedRobot {
 
     // If the left trigger is pressed and odometry is active,
     // Set the overall state to either scoring alignment or hps pickup based on the zone state
-    if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER) && ODOMETRY_OVERRIDE == false) {
+    if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER) && ODOMETRY_OVERRIDE == false && Robot.allianceColor != Alliance.Invalid) {
       drivetrainState = DrivetrainState.ROBOT_ALIGN;
     }
     // Set the drive state back to freehand when the left trigger is released
@@ -359,8 +359,8 @@ public class Robot extends TimedRobot {
 
     // Cut power.
     new Trigger(() -> GAMEPAD.getAxisIsPressed(AxisCode.RIGHTTRIGGER))
-      .whileTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.cutPower()))
-      .onFalse(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.stopCutPower()));
+      .whileTrue(new InstantCommand(() -> DRIVE_TRAIN_DEFAULT_COMMAND.CutPower = true))
+      .onFalse(new InstantCommand(() -> DRIVE_TRAIN_DEFAULT_COMMAND.CutPower = false));
 
     // Endgame mode.
     OP_PAD_SWITCHES.getButton(ButtonCode.ENDGAME_OVERRIDE)

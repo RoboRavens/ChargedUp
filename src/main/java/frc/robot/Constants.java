@@ -58,6 +58,14 @@ public final class Constants {
   private static final double SWERVE_5BALL_INCHES_OFFSET = 0; // positive number gets robot closer to human player station
   public static final double SWERVE_ODOMETRY_MULTIPLIER =
     (SWERVE_WHEEL_DIAMETER - (SWERVE_WHEEL_DIAMETER_INCREMENT_5BALL * SWERVE_5BALL_INCHES_OFFSET)) / SWERVE_WHEEL_DIAMETER;
+  
+  // DRIVETRAIN SLEW
+  public static final double SLEW_FRAMES_TO_MAX_X_VELOCITY = 10; // forward-back
+  public static final double SLEW_FRAMES_TO_MAX_Y_VELOCITY = 10; // left-right
+  public static final double SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY = 10; // turning
+
+  // DRIVETRAIN ARM SCALING
+  public static final double DRIVE_SPEED_SCALE_AT_ARM_MAX_EXTENSION = .2;
 
     
   // Constraint for the motion profilied robot angle controller
