@@ -33,9 +33,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
-    private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 50;
-    private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 50;
-    private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 50;
+    private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
+    private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
+    private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY;
 
     public boolean CutPower = false;
 
@@ -116,7 +116,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
             scale = Robot.overallState == OverallState.ENDGAME ? .25 : .5;
         }
 
-        double scaleForArmExt = Scale.FromPercentage(Robot.ARM_SUBSYSTEM.getExtensionPercentOfMaximumNativeUnits(), .2, 1);
+        double scaleForArmExt = Scale.FromPercentage(1.0 - Robot.ARM_SUBSYSTEM.getExtensionPercentOfMaximumNativeUnits(), Constants.DRIVE_SPEED_SCALE_AT_ARM_MAX_EXTENSION, 1);
         scale = Math.min(scale, scaleForArmExt);
 
         x = x * scale;
