@@ -21,10 +21,10 @@ import frc.util.StateManagement.ZoneState;
 import edu.wpi.first.math.MathUtil;
 
 public class DrivetrainDefaultCommand extends CommandBase {
-    private boolean _followLimelight = false;
-    private boolean _autoSteer = true;
+    // private boolean _followLimelight = false;
+    // private boolean _autoSteer = true;
     private PIDController _scoringRotationAlignPID = new PIDController(0.3, 0, 0);
-    private PIDController _autoSteerPID = new PIDController(.035, 0, 0);
+    // private PIDController _autoSteerPID = new PIDController(.035, 0, 0);
     private PIDController _yPID = new PIDController(1, 0, 0);
     private PIDController _xPID = new PIDController(1, 0, 0);
     private double _targetRotation = 0;
@@ -32,13 +32,13 @@ public class DrivetrainDefaultCommand extends CommandBase {
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
     public DrivetrainDefaultCommand() {
-        SmartDashboard.putString("DriveTrainDefaultCommandState", "constructed");
+        // SmartDashboard.putString("DriveTrainDefaultCommandState", "constructed");
         addRequirements(Robot.DRIVE_TRAIN_SUBSYSTEM);
     }
 
     @Override
     public void execute() {
-        SmartDashboard.putString("DriveTrainDefaultCommandState", "execute");
+        // SmartDashboard.putString("DriveTrainDefaultCommandState", "execute");
         // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
         double x = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKY) * -1; // Robot.JOYSTICK.getRawAxis(1); // Positive x is away from your alliance wall.
         double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * -1; // Robot.JOYSTICK.getRawAxis(0); // Positive y is to your left when standing behind the alliance wall.
@@ -61,7 +61,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
         x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
         y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
 
-        SmartDashboard.putBoolean("autosteer", _autoSteer);
+        // SmartDashboard.putBoolean("autosteer", _autoSteer);
         // var limelightAngle = this.getLimelightTargetOffset();
         // if (limelightAngle != null) {
         //     r = _followLimelightPID.calculate(limelightAngle.doubleValue());
@@ -93,10 +93,10 @@ public class DrivetrainDefaultCommand extends CommandBase {
                 y = getYVelocity();
             }
             else if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.SINGLE_SUBSTATION) {
-                if (DriverStation.getAlliance() == DriverStation.getAlliance().Red) {
+                if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
                     _targetRotation = 1.571; // 90 degrees
                 }
-                else {
+                else if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
                     _targetRotation =  -1.571; // -90 degrees
                 }
                 r = getAngularVelocityForAlignment();
@@ -210,6 +210,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
         SmartDashboard.putString("end method", "end");
     }
 
+    /*
     public void followLimelight() {
         _followLimelight = true;
     }
@@ -225,6 +226,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
     public void disableAutoSteer() {
         _autoSteer = false;
     }
+    */
 
     // private Double getLimelightTargetOffset() {
     //     if (_followLimelight == false) {

@@ -131,12 +131,12 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   private final DrivetrainDiagnosticsShuffleboard _diagnostics;
 
   private ShuffleboardTab PID = Shuffleboard.getTab("PID");
-   private GenericEntry inputAngle = PID.add("Input Angle", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", -35, "max", 35)).getEntry();
-   private GenericEntry pidCalc = PID.add("pid calculations based on input angle", 0).getEntry();
-   private GenericEntry kpEntry = PID.add("kP", 0).getEntry();
-   private GenericEntry kiEntry = PID.add("kI", 0).getEntry();
-   private GenericEntry kdEntry = PID.add("kD", 0).getEntry();
-   private GenericEntry setPoint = PID.add("setpoint", 0).getEntry();
+  private GenericEntry inputAngle = PID.add("Input Angle", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", -35, "max", 35)).getEntry();
+  private GenericEntry pidCalc = PID.add("pid calculations based on input angle", 0).getEntry();
+  private GenericEntry kpEntry = PID.add("kP", 0).getEntry();
+  private GenericEntry kiEntry = PID.add("kI", 0).getEntry();
+  private GenericEntry kdEntry = PID.add("kD", 0).getEntry();
+  private GenericEntry setPoint = PID.add("setpoint", 0).getEntry();
 
   // private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   private SwerveModuleState[] _moduleStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0,0,0));
@@ -151,6 +151,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   private double ki = 0.36;
   private double kd = 1.5;
   private PIDController pid_test = new PIDController(kp, ki, kd);
+
+  private boolean startingCoordinatesInitialized = false;
 
   public DrivetrainSubsystem() {
     MkModuleConfiguration moduleConfig = new MkModuleConfiguration();
@@ -466,7 +468,13 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
 
     double robotX = robotPose.getX();
     double robotY = robotPose.getY();
-    
+
+    // If the odometry override is active, set the coords to -1, -1.
+    if (Robot.ODOMETRY_OVERRIDE) {
+      robotX = -1;
+      robotY = -1;
+    }
+
     Point2D robotPoint = new Point2D.Double(robotX, robotY);
 
     Robot.fieldSubzone = Robot.fieldZones.getPointFieldZone(robotPoint);
