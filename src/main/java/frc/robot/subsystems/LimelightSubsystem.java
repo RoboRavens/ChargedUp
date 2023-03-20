@@ -43,23 +43,23 @@ public class LimelightSubsystem extends SubsystemBase {
     Pose2d limelightOnePose = getPureLimelightRobotPose();
     Pose2d limelightTwoPose = getPureSecondLimelightRobotPose();
     if (limelightOnePose != null) {
-      SmartDashboard.putNumber("PoseX", limelightOnePose.getX());
-      SmartDashboard.putNumber("PoseY", limelightOnePose.getY());
-      SmartDashboard.putNumber("Rotation", limelightOnePose.getRotation().getDegrees());
+      SmartDashboard.putNumber("LimelightOne PoseX", limelightOnePose.getX());
+      SmartDashboard.putNumber("LimelightOne PoseY", limelightOnePose.getY());
+      SmartDashboard.putNumber("LimelightOne Rotation", limelightOnePose.getRotation().getDegrees());
     } else {
-      SmartDashboard.putNumber("PoseX", 0);
-      SmartDashboard.putNumber("PoseY", 0);
-      SmartDashboard.putNumber("Rotation", 0);
+      SmartDashboard.putNumber("LimelightOne PoseX", 0);
+      SmartDashboard.putNumber("LimelightOne PoseY", 0);
+      SmartDashboard.putNumber("LimelightOne Rotation", 0);
     }
 
     if (limelightTwoPose != null) {
-      SmartDashboard.putNumber("PoseX", limelightTwoPose.getX());
-      SmartDashboard.putNumber("PoseY", limelightTwoPose.getY());
-      SmartDashboard.putNumber("Rotation", limelightTwoPose.getRotation().getDegrees());
+      SmartDashboard.putNumber("LimelightTwo PoseX", limelightTwoPose.getX());
+      SmartDashboard.putNumber("LimelightTwo PoseY", limelightTwoPose.getY());
+      SmartDashboard.putNumber("LimelightTwo Rotation", limelightTwoPose.getRotation().getDegrees());
     } else {
-      SmartDashboard.putNumber("PoseX", 0);
-      SmartDashboard.putNumber("PoseY", 0);
-      SmartDashboard.putNumber("Rotation", 0);
+      SmartDashboard.putNumber("LimelightTwo PoseX", 0);
+      SmartDashboard.putNumber("LimelightTwo PoseY", 0);
+      SmartDashboard.putNumber("LimelightTwo Rotation", 0);
     }
   }
 

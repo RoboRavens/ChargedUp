@@ -49,9 +49,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         boolean secondLimelightIsWithinYDistance = Math.abs(robotPose.getY() - secondLimelightPose.getY()) < 2;
         boolean targetAreaIsSufficient = ta >= 0.2;
         boolean targetAreaIsSufficient2 = ta2 >= 0.2;
-        boolean fiducialIdIsCorrect = LimelightHelpers.getFiducialID("secondlimelight") <= 8;
         boolean fiducialIdIsCorrect2 = LimelightHelpers.getFiducialID("firstLimelight") <= 8;
-
+        boolean fiducialIdIsCorrect = LimelightHelpers.getFiducialID("secondlimelight") <= 8;
+        
         // Scale the confidence of the vision estimate by how much ApilTag we see.
         double inverseArea = 1 - ta;
         double inverseCubed = Math.pow(inverseArea, 3);
