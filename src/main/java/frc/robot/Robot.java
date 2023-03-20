@@ -83,8 +83,8 @@ public class Robot extends TimedRobot {
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static final LEDsSubsystem LED_SUBSYSTEM = new LEDsSubsystem();
-  public static boolean driverControlOverride = false;
-  public static boolean limelightOverride = false;
+  public static boolean DRIVER_CONTROL_OVERRIDE = false;
+  public static boolean ODOMETRY_OVERRIDE = false;
 
   public LEDsRainbowCommand ledsRainbowCommand = new LEDsRainbowCommand(LED_SUBSYSTEM);
   public LEDsBlinkColorsCommand ledsBlinkColorsCommand = new LEDsBlinkColorsCommand(LED_SUBSYSTEM);
@@ -241,9 +241,9 @@ public class Robot extends TimedRobot {
       Robot.loadState = LoadState.LOADED;
     }
 
-    // If the left trigger is pressed,
+    // If the left trigger is pressed and odometry is active,
     // Set the overall state to either scoring alignment or hps pickup based on the zone state
-    if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) {
+    if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER) && ODOMETRY_OVERRIDE == false) {
       drivetrainState = DrivetrainState.ROBOT_ALIGN;
     }
     // Set the drive state back to freehand when the left trigger is released
@@ -283,11 +283,12 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
-    // Inch commands.
+    // Inch commands and auto-balancing.
     GAMEPAD.getPOVTrigger(GamepadPOV.Right).toggleOnTrue(new DriveTwoInchesCommand('R'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Up).toggleOnTrue(new DriveTwoInchesCommand('F'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Down).toggleOnTrue(new DriveTwoInchesCommand('B'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Left).toggleOnTrue(new DriveTwoInchesCommand('L'));
+    GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
 
     // Claw override commands.
     GAMEPAD.getButton(ButtonCode.START).onTrue(new ClawOpenCommand());
@@ -297,13 +298,11 @@ public class Robot extends TimedRobot {
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onFalse(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
 
+    // Arm control.
     OP_PAD_SWITCHES.getButton(ButtonCode.EJECT_PIECE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_HIGH_SETPOINT));
     OP_PAD_BUTTONS.getButton(ButtonCode.SET_ARM_TO_SCORE_TARGET_STATE).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.moveArmToTarget()));
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-
-
     GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
-    GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
 
     // Ground intake.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).onTrue(new InstantCommand(() -> {
@@ -360,11 +359,11 @@ public class Robot extends TimedRobot {
 
     // Overrides.
     // Drive assist.
-    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onTrue(new InstantCommand(() -> driverControlOverride = true));
-    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onFalse(new InstantCommand(() -> driverControlOverride = false));
+    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onTrue(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = true));
+    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onFalse(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = false));
 
     // Vision assist.
-    OP_PAD_SWITCHES.getButton(ButtonCode.LIMELIGHT_LIGHT_OFF_OVERRIDE).onTrue(new InstantCommand(() -> limelightOverride = true)).onFalse(new InstantCommand(() -> limelightOverride = false));
+    OP_PAD_SWITCHES.getButton(ButtonCode.LIMELIGHT_LIGHT_OFF_OVERRIDE).onTrue(new InstantCommand(() -> ODOMETRY_OVERRIDE = true)).onFalse(new InstantCommand(() -> ODOMETRY_OVERRIDE = false));
 
     // Arm safety limits.
     OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(true)));
@@ -527,7 +526,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public boolean getLimelightOverride() {
-    return limelightOverride;
+  public boolean getODOMETRY_OVERRIDE() {
+    return ODOMETRY_OVERRIDE;
   }
 }
