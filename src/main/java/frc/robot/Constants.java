@@ -87,7 +87,7 @@ public final class Constants {
   public static final double MAX_TELEOP_HORIZONTAL_EXTENSION_INCHES = 48;
   public static final double ARM_BASE_LENGTH_INCHES = 33.524;
   public static final double ARM_EXTENDED_LENGTH_INCHES = 66.25;
-  public static final double ARM_MAX_EXTENSION_ENCODER_UNITS = 110000; // This number is a wild guess and liable to be very wrong.
+  public static final double ARM_MAX_EXTENSION_ENCODER_UNITS = 125000; // This number is a wild guess and liable to be very wrong.
   public static final double SAFETY_MARGIN_INCHES = 1;
   public static final double ARM_EXTENSION_PER_UNIT = Constants.ARM_EXTENDED_LENGTH_INCHES / Constants.ARM_MAX_EXTENSION_ENCODER_UNITS;
 
@@ -118,12 +118,12 @@ public final class Constants {
   public static final int ARM_FULL_RETRACT_ROTATION_ANGLE = 0;
   public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 119;
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 75;
-  public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 60;
+  public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 54;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
-  public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 55;
+  public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 57;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 65;
-  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 55;
-  public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 65;
+  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 50;
+  public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 60;
 
   public static final int ARM_FULL_RETRACT_EXTENSION_SETPOINT = 0;
   public static final int ARM_FULL_RETRACT_ROTATION_SETPOINT = (int) Math.round(ARM_FULL_RETRACT_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
@@ -132,17 +132,17 @@ public final class Constants {
   public static final int ARM_ROTATION_MAXIMUM_ENCODER_UNITS = ARM_GROUND_PICKUP_ROTATION_SETPOINT;
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_EXTENSION_SETPOINT = 0;
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_DOUBLE_SUBSTATION_PICKUP_EXTENSION_SETPOINT = 0;
+  public static final int ARM_DOUBLE_SUBSTATION_PICKUP_EXTENSION_SETPOINT = 57342;
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_LOW_EXTENSION_SETPOINT = 0;
   public static final int ARM_SCORE_LOW_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_LOW_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 36500;
+  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 54270;
   public static final int ARM_SCORE_CONE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 36500;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 100000;
+  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 120000;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 100000;
+  public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 108000;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
 
   public static final ArmSetpoint ARM_EXTENSION_TEST_SETPOINT = new ArmSetpoint("Arm Extend", ARM_MAX_EXTENSION_ENCODER_UNITS, ARM_FULL_RETRACT_ROTATION_SETPOINT);
