@@ -174,4 +174,9 @@ public final class Constants {
   public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
   public static final double CLAW_OPEN_TIMEOUT_SECONDS = .75;
   public static final double RUMBLE_TIME = 0.2;
+
+  // Limelight/vision-based odometry
+  public static final double STATE_STANDARD_DEVIATION = .1;
+  public static final double STARTING_VISION_STANDARD_DEVIATION = .9;
+  public static final double MINIMUM_VISION_STANDARD_DEVIATION = .05;
 }
