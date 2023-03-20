@@ -24,6 +24,7 @@ import frc.robot.Robot;
 public class PoseEstimatorSubsystem extends SubsystemBase {
     public final Field2d field = new Field2d();
     double timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl() / 1000) - (Robot.LIMELIGHT_SUBSYSTEM.getCl() / 1000);
+    double timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl2() / 1000) - (Robot.LIMELIGHT_SUBSYSTEM.getCl2() / 1000);
     private Matrix<N3, N1> stateStdDevs = VecBuilder.fill(Constants.STATE_STANDARD_DEVIATION, Constants.STATE_STANDARD_DEVIATION, Constants.STATE_STANDARD_DEVIATION);
     private Matrix<N3, N1> visionStdDevs = VecBuilder.fill(Constants.STARTING_VISION_STANDARD_DEVIATION, Constants.STARTING_VISION_STANDARD_DEVIATION, Constants.STARTING_VISION_STANDARD_DEVIATION);
     
@@ -31,7 +32,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     public void periodic() {
         updateVisionMeasurementTimestamp();
         double ta = Robot.LIMELIGHT_SUBSYSTEM.getTa();
-        Pose2d limelightPose = Robot.LIMELIGHT_SUBSYSTEM.getGyroBasedRobotPose();
+        double ta2 = Robot.LIMELIGHT_SUBSYSTEM.getTa2();
+        Pose2d firstLimelightPose = Robot.LIMELIGHT_SUBSYSTEM.getGyroBasedRobotPose();
+        Pose2d secondLimelightPose =  Robot.LIMELIGHT_SUBSYSTEM.getGyroBasedRobotPoseFromSecondLimelight();
         Pose2d robotPose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
         Robot.LIMELIGHT_SUBSYSTEM.getPureLimelightRobotPose();
         Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
@@ -39,10 +42,15 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
 
         boolean hasTarget = Robot.LIMELIGHT_SUBSYSTEM.getTv() == 1;
-        boolean isWithinXDistance = Math.abs(robotPose.getX() - limelightPose.getX()) < 2;
-        boolean isWithinYDistance = Math.abs(robotPose.getY() - limelightPose.getY()) < 2;
+        boolean hasTarget2 = Robot.LIMELIGHT_SUBSYSTEM.getTv2() == 1;
+        boolean firstLimelightIsWithinXDistance = Math.abs(robotPose.getX() - firstLimelightPose.getX()) < 2;
+        boolean firstLimelightIsWithinYDistance = Math.abs(robotPose.getY() - firstLimelightPose.getY()) < 2;
+        boolean secondLimelightIsWithinXDistance = Math.abs(robotPose.getX() - firstLimelightPose.getX()) < 2;
+        boolean secondLimelightIsWithinYDistance = Math.abs(robotPose.getY() - firstLimelightPose.getY()) < 2;
         boolean targetAreaIsSufficient = ta >= 0.2;
-        boolean fiducialIdIsCorrect = LimelightHelpers.getFiducialID("limelight") <= 8;
+        boolean targetAreaIsSufficient2 = ta2 >= 0.2;
+        boolean fiducialIdIsCorrect = LimelightHelpers.getFiducialID("secondlimelight") <= 8;
+        boolean fiducialIdIsCorrect2 = LimelightHelpers.getFiducialID("firstLimelight") <= 8;
 
         // Scale the confidence of the vision estimate by how much ApilTag we see.
         double inverseArea = 1 - ta;
@@ -51,8 +59,13 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         visionStdDevs = VecBuilder.fill(clampedCube, clampedCube, clampedCube);
 
-        if (hasTarget && isWithinXDistance && isWithinYDistance && targetAreaIsSufficient && fiducialIdIsCorrect) {
-            m_poseEstimator.addVisionMeasurement(limelightPose, timeStamp, visionStdDevs);
+        if (hasTarget && firstLimelightIsWithinXDistance && firstLimelightIsWithinYDistance && targetAreaIsSufficient && fiducialIdIsCorrect) {
+            m_poseEstimator.addVisionMeasurement(firstLimelightPose, timeStamp, visionStdDevs);
+        }
+
+
+        if (hasTarget2 && secondLimelightIsWithinXDistance && secondLimelightIsWithinYDistance && targetAreaIsSufficient2 && fiducialIdIsCorrect2) {
+            m_poseEstimator.addVisionMeasurement(secondLimelightPose, timeStamp2, visionStdDevs);
         }
 
         SmartDashboard.putData(field);
@@ -62,6 +75,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     public void updateVisionMeasurementTimestamp() {
         timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl() / 1000) - (Robot.LIMELIGHT_SUBSYSTEM.getCl() / 1000);
+    }
+
+    public void updateVisionMeasurmentTimestampSecondLimelight() {
+        timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl2() / 1000) - (Robot.LIMELIGHT_SUBSYSTEM.getCl2() / 1000);
     }
     
     public void resetOdometryPoseToLimelight() {

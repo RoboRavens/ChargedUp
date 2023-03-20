@@ -12,14 +12,22 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 
 public class LimelightSubsystem extends SubsystemBase {
-  private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-  private NetworkTableEntry tx = table.getEntry("tx");
-  private NetworkTableEntry ty = table.getEntry("ty");
-  private NetworkTableEntry ta = table.getEntry("ta");
-  private NetworkTableEntry ts = table.getEntry("ts");
-  private NetworkTableEntry tv = table.getEntry("tv");
-  private NetworkTableEntry tl = table.getEntry("tl");
-  private NetworkTableEntry cl = table.getEntry("cl");
+  private NetworkTable limelightOne = NetworkTableInstance.getDefault().getTable("firstLimelight");
+  private NetworkTable limelightTwo = NetworkTableInstance.getDefault().getTable("secondLimelight");
+  private NetworkTableEntry tx = limelightOne.getEntry("tx");
+  private NetworkTableEntry ty = limelightOne.getEntry("ty");
+  private NetworkTableEntry ta = limelightOne.getEntry("ta");
+  private NetworkTableEntry ts = limelightOne.getEntry("ts");
+  private NetworkTableEntry tv = limelightOne.getEntry("tv");
+  private NetworkTableEntry tl = limelightOne.getEntry("tl");
+  private NetworkTableEntry cl = limelightOne.getEntry("cl");
+  private NetworkTableEntry tx2 = limelightTwo.getEntry("tx");
+  private NetworkTableEntry ty2 = limelightTwo.getEntry("ty");
+  private NetworkTableEntry ta2 = limelightTwo.getEntry("ta");
+  private NetworkTableEntry ts2 = limelightTwo.getEntry("ts");
+  private NetworkTableEntry tv2 = limelightTwo.getEntry("tv");
+  private NetworkTableEntry tl2 = limelightTwo.getEntry("tl");
+  private NetworkTableEntry cl2 = limelightTwo.getEntry("cl");
   private int camMode = 0;
 
   public boolean isAlignedWithScoringNode() {
@@ -44,13 +52,22 @@ public class LimelightSubsystem extends SubsystemBase {
     }
   }
 
+  public double[] getSecondLimelightBotpose() {
+    double[] botposeRight = NetworkTableInstance.getDefault().getTable("limelightRight").getEntry("botpose_wpiblue")
+        .getDoubleArray(new double[6]);
+
+    return botposeRight;
+  }
+
   public double[] getLimelightBotpose() {
-    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue")
+        .getDoubleArray(new double[6]);
 
     return botpose;
   }
 
-  // This gets the robot pose PURELY from the Limelight, instead of using the gyroscope for rotation.
+  // This gets the robot pose PURELY from the Limelight, instead of using the
+  // gyroscope for rotation.
   public Pose2d getPureLimelightRobotPose() {
     double[] botpose = getLimelightBotpose();
 
@@ -77,7 +94,31 @@ public class LimelightSubsystem extends SubsystemBase {
 
     return null;
   }
-  
+
+  public Pose2d getPureSecondLimelightRobotPose() {
+    double[] botposeRight = getSecondLimelightBotpose();
+
+    if (botposeRight.length >= 6) {
+      Translation2d translation = new Translation2d(botposeRight[0], botposeRight[1]);
+      Rotation2d rotation = new Rotation2d(Math.toRadians(botposeRight[5]));
+      Pose2d position = new Pose2d(translation, rotation);
+      return position;
+    }
+
+    return null;
+  }
+
+  public Pose2d getGyroBasedRobotPoseFromSecondLimelight() {
+    double[] botpose = getSecondLimelightBotpose();
+    if (botpose.length >= 6) {
+      Translation2d translation = new Translation2d(botpose[0], botpose[1]);
+      Rotation2d rotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
+      Pose2d position = new Pose2d(translation, rotation);
+      return position;
+    }
+
+    return null;
+  }
 
   public double getCl() {
     return cl.getDouble(0.0);
@@ -102,4 +143,29 @@ public class LimelightSubsystem extends SubsystemBase {
   public double getTv() {
     return tv.getDouble(0);
   }
+
+  public double getCl2() {
+    return cl2.getDouble(0.0);
+  }
+
+  public double getTl2() {
+    return tl2.getDouble(0.0);
+  }
+
+  public double getTx2() {
+    return tx2.getDouble(0.0);
+  }
+
+  public double getTa2() {
+    return ta2.getDouble(0.0);
+  }
+
+  public double getTy2() {
+    return ty2.getDouble(0.0);
+  }
+
+  public double getTv2() {
+    return tv2.getDouble(0);
+  }
+
 }

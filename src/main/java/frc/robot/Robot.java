@@ -402,7 +402,7 @@ public class Robot extends TimedRobot {
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
       .whileTrue(new ArmRotateManuallyCommand(false));
-
+ 
     OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
