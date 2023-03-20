@@ -14,6 +14,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
+import frc.util.Scale;
 import frc.util.Slew;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.LoadState;
@@ -114,6 +115,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
         if (this.CutPower) {
             scale = Robot.overallState == OverallState.ENDGAME ? .25 : .5;
         }
+
+        double scaleForArmExt = Scale.FromPercentage(Robot.ARM_SUBSYSTEM.getExtensionPercentOfMaximumNativeUnits(), .2, 1);
+        scale = Math.min(scale, scaleForArmExt);
 
         x = x * scale;
         y = y * scale;
