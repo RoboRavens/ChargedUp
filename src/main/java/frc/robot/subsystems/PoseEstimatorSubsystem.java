@@ -1,12 +1,16 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.Interpolatable;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -23,6 +27,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     double timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM.getTl() / 1000)
             - (Robot.LIMELIGHT_SUBSYSTEM.getCl() / 1000);
 
+    private Matrix<N3, N1> visionStdDevs;
+    private Matrix<N3, N1> stateStdDevs;
+
     @Override
     public void periodic() {
         Robot.LIMELIGHT_SUBSYSTEM.getRobotPose();
@@ -37,22 +44,33 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         SmartDashboard.putData(field);
         field.setRobotPose(getCurrentPose());
         updateOdometry();
+        
+        if(Robot.LIMELIGHT_SUBSYSTEM.getTa() <= 0.2) {
+            stateStdDevs = VecBuilder.fill(0.,0, Units.degreesToRadians(0));
+            visionStdDevs = VecBuilder.fill(0.,0, Units.degreesToRadians(0));
+        }
 
+        if(Robot.LIMELIGHT_SUBSYSTEM.getTa() >= 0.3) {
+            stateStdDevs = VecBuilder.fill(0, 0, Units.degreesToRadians(0));
+            visionStdDevs = VecBuilder.fill(0,0 ,Units.degreesToRadians(0));
+        }
+        
     }
+    
 
     public void resetPosition() {
         resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
         Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(), Robot.LIMELIGHT_SUBSYSTEM.getRobotPose());
     }
    
-
+    
     private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
             Robot.DRIVE_TRAIN_SUBSYSTEM.m_kinematics,
             Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
             Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(),
             Robot.DRIVE_TRAIN_SUBSYSTEM.getPose(),
-            VecBuilder.fill(0.1, 0.1, 0.1),
-            VecBuilder.fill(0.9, 0.9, 0.9));
+            stateStdDevs,
+            visionStdDevs);
 
     public void resetPosition(Rotation2d rotation2d, SwerveModulePosition[] modulePositions, Pose2d poseMeters) {
         // Reset state estimate and error covariance
