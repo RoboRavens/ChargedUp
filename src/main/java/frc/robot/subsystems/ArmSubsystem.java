@@ -68,15 +68,13 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotor1.follow(rotationMotorsLeader);
         rotationMotor1.setInverted(InvertType.FollowMaster);
 
-        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
-                Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         rotationMotorsLeader.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
         rotationMotorsLeader.config_kF(Constants.kSlotIdx, Constants.rotationGains.kF, Constants.kTimeoutMs);
         rotationMotorsLeader.config_kP(Constants.kSlotIdx, Constants.rotationGains.kP, Constants.kTimeoutMs);
         rotationMotorsLeader.config_kI(Constants.kSlotIdx, Constants.rotationGains.kI, Constants.kTimeoutMs);
         rotationMotorsLeader.config_kD(Constants.kSlotIdx, Constants.rotationGains.kD, Constants.kTimeoutMs);
-        extensionMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
-        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        extensionMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         extensionMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
         extensionMotor.config_kF(Constants.kSlotIdx, Constants.extensionGains.kF, Constants.kTimeoutMs);
         extensionMotor.config_kP(Constants.kSlotIdx, Constants.extensionGains.kP, Constants.kTimeoutMs);
@@ -203,8 +201,18 @@ public class ArmSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("ArmExtensionPosition", setpoint);
     }
 
-    public void stopArm() {
+    public void stopRotation() {
         brakeEnable();
+        rotationMotorsLeader.stopMotor();
+    }
+
+    public void stopExtension() {
+        extensionMotor.stopMotor();
+    }
+
+    public void armFullStop() {
+        stopRotation();
+        stopExtension();
 
         // This code will apply a constant voltage to the arm in order to fight backlash,
         // but we probably don't want this running until the brake is hooked up and working.
@@ -238,9 +246,11 @@ public class ArmSubsystem extends SubsystemBase {
         double rotationDifference = Math.abs(rotationMotorsLeader.getSelectedSensorPosition() - armRotationFinalTargetNativeUnits);
         double extensionDifference = Math.abs(extensionMotor.getSelectedSensorPosition() - armExtensionFinalTargetNativeUnits);
 
-        // Need to test actual motion times at speeds we like and then come up with a reasonable timeout formula.
-        return 4;
-        // double rotationTime = rotationDifference / ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND;
+        double rotationTime = rotationDifference / Constants.ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND;
+        double extensionTime = extensionDifference / Constants.ARM_EXTENSION_TIMEOUT_ENCODER_TICKS_PER_SECOND;
+        
+        return Math.max(rotationTime, extensionTime) + Constants.ARM_TIMEOUT_BASE_VALUE;
+        
     }
 
     @Override
@@ -386,9 +396,18 @@ public class ArmSubsystem extends SubsystemBase {
         this.armExtensionFinalTargetNativeUnits = encoderNativeUnits;
     }
 
+    public double getArmExtensionFinalTargetNativeUnits() {
+        return this.armExtensionFinalTargetNativeUnits;
+    }
+
     private void setRotationTarget(int encoderNativeUnits) {
         this.armRotationFinalTargetNativeUnits = encoderNativeUnits;
     }
+
+    public double getArmRotationFinalTargetNativeUnits() {
+        return this.armRotationFinalTargetNativeUnits;
+    }
+
     public double getArmRotationInstantaneousTargetNativeUnits() {
         return armRotationInstantaneousTargetNativeUnits;
     }
@@ -431,23 +450,15 @@ public class ArmSubsystem extends SubsystemBase {
               targetArmSetpoint = Constants.ARM_FULL_RETRACT_SETPOINT;
               break;
           }
-          System.out.println(targetArmSetpoint.getName());
+          
           new ArmGoToSetpointDangerousCommand(targetArmSetpoint).schedule();
     }
 
-    public void rotateArmForwardPower() {
-        // TODO: implement this method
+    public void setRotationVoltage(double voltage) {
+        rotationMotorsLeader.setVoltage(voltage);
     }
 
-    public void rotateArmBackwardPower() {
-        // TODO: implement this method
-    }
-
-    public void extendArmPower() {
-        // TODO: implement this method
-    }
-
-    public void retractArmPower() {
-        // TODO: implement this method
+    public void setExtensionVoltage(double voltage) {
+        extensionMotor.setVoltage(voltage);
     }
 }

@@ -139,7 +139,7 @@ public class Gamepad {
 		case IGNORE_EXTENSION_LIMITS:
 			buttonNumber = 6;
 			break;
-		case LIMELIGHT_LIGHT_OFF_OVERRIDE:
+		case ODOMETRY_OVERRIDE:
 			buttonNumber = 7;
 			break;
 		case DRIVER_CONTROL_OVERRIDE:

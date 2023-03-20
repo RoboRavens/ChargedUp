@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
   public static final DrivetrainSubsystem DRIVE_TRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   //public static final DrivetrainSubsystemBase DRIVETRAIN_SUBSYSTEM_BASE = new DrivetrainSubsystemMock(); 
   public static final DrivetrainDefaultCommand drivetrainDefaultCommand = new DrivetrainDefaultCommand();
+  public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final Gamepad OP_PAD_BUTTONS = new Gamepad(3);
@@ -83,13 +84,17 @@ public class Robot extends TimedRobot {
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static final LEDsSubsystem LED_SUBSYSTEM = new LEDsSubsystem();
-  public static boolean DRIVER_CONTROL_OVERRIDE = false;
+  // public static boolean DRIVER_CONTROL_OVERRIDE = false;
   public static boolean ODOMETRY_OVERRIDE = false;
+  public static boolean ARM_ROTATION_MANUAL_OVERRIDE = false;
+  public static boolean ARM_EXTENSION_MANUAL_OVERRIDE = false;
 
   public LEDsRainbowCommand ledsRainbowCommand = new LEDsRainbowCommand(LED_SUBSYSTEM);
   public LEDsBlinkColorsCommand ledsBlinkColorsCommand = new LEDsBlinkColorsCommand(LED_SUBSYSTEM);
   public LEDsSolidColorCommand ledsSignalConeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.ORANGE);
   public LEDsSolidColorCommand ledsSignalCubeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.PURPLE);
+  public LEDsSolidColorCommand ledsSignalOdometryFailureCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.RED);
+  public LEDsSolidColorCommand ledsSignalAlignedCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.GREEN);
 
   // Sets the default robot mechanism states (may need to be changed)
   public static OverallState overallState = OverallState.EMPTY_TRANSIT;
@@ -120,6 +125,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    ARM_SUBSYSTEM.setDefaultCommand(armDefaultCommand);
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
     configureButtonBindings();
     configureTriggers();
@@ -280,6 +286,17 @@ public class Robot extends TimedRobot {
     if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.overallState == OverallState.EMPTY_TRANSIT) {
       Robot.overallState = OverallState.DOUBLE_SUBSTATION_PICKUP;
     }
+
+    // If we're relying on odometry and the zone state is none,
+    // there is a problem with odometry so alert the drive team.
+    if (Robot.zoneState == ZoneState.NONE && ODOMETRY_OVERRIDE == false) {
+      ledsSignalOdometryFailureCommand.schedule();
+    }
+
+    // If odometry is on and we're at our target location, signal green.
+    if (Robot.DRIVE_TRAIN_SUBSYSTEM.drivetrainIsAtTargetPose() && ODOMETRY_OVERRIDE == false) {
+      ledsSignalAlignedCommand.schedule();
+    }
   }
 
   private void configureButtonBindings() {
@@ -359,11 +376,15 @@ public class Robot extends TimedRobot {
 
     // Overrides.
     // Drive assist.
-    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onTrue(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = true));
-    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onFalse(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = false));
+    // OP_PAD_SWITCHES.getButton(ButtonCode.ODOMETRY_OVERRIDE).onTrue(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = true));
+    // OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onFalse(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = false));
 
     // Vision assist.
-    OP_PAD_SWITCHES.getButton(ButtonCode.LIMELIGHT_LIGHT_OFF_OVERRIDE).onTrue(new InstantCommand(() -> ODOMETRY_OVERRIDE = true)).onFalse(new InstantCommand(() -> ODOMETRY_OVERRIDE = false));
+    OP_PAD_SWITCHES.getButton(ButtonCode.ODOMETRY_OVERRIDE).onTrue(new InstantCommand(() -> ODOMETRY_OVERRIDE = true)).onFalse(new InstantCommand(() -> ODOMETRY_OVERRIDE = false));
+
+    // Arm.
+    OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).onTrue(new InstantCommand(() -> ARM_ROTATION_MANUAL_OVERRIDE = true)).onFalse(new InstantCommand(() -> ARM_ROTATION_MANUAL_OVERRIDE = false));
+    OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).onTrue(new InstantCommand(() -> ARM_EXTENSION_MANUAL_OVERRIDE = true)).onFalse(new InstantCommand(() -> ARM_EXTENSION_MANUAL_OVERRIDE = false));
 
     // Arm safety limits.
     OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(true)));
@@ -372,25 +393,25 @@ public class Robot extends TimedRobot {
     OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
 
     // Arm manual controls.
-    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
-      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-      .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.rotateArmBackwardPower()));
-
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-      .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.rotateArmForwardPower()));
+      .whileTrue(new ArmRotateManuallyCommand(true));
+      
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      .whileTrue(new ArmRotateManuallyCommand(false));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-      .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.extendArmPower()));
+      .whileTrue(new ArmExtendManuallyCommand(true));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-      .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.retractArmPower()));
+      .whileTrue(new ArmExtendManuallyCommand(false));
 
     // Old stuff to delete when we're done with the competition code.
     

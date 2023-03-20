@@ -29,6 +29,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -121,6 +122,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   );
   
   private final AHRS m_navx = new AHRS(SPI.Port.kMXP, (byte) 200);
+
+  private Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
 
   public final SwerveModule m_frontLeftModule;
   public final SwerveModule m_frontRightModule;
@@ -444,6 +447,49 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     driveTrainField.setRobotPose(_odometryFromHardware.getPoseMeters());
   }
 
+  public boolean drivetrainIsAtTargetCoordinates() {
+    boolean isAtTarget = false;
+
+    double xDifference = Math.abs(getTargetPoseX() - getPoseX());
+    double yDifference = Math.abs(getTargetPoseY() - getPoseY());
+
+    if (xDifference <= Constants.COORDINATE_MATCHES_MARGIN_METERS && yDifference <= Constants.COORDINATE_MATCHES_MARGIN_METERS) {
+      isAtTarget = true;
+    }
+
+    return isAtTarget;
+  }
+
+  public boolean drivetrainIsAtTargetPose() {
+    boolean isAtCoordinates = drivetrainIsAtTargetCoordinates();
+
+    Rotation2d rotationDifference = getPoseRotation().minus(getTargetPoseRotation());
+    double rotationDifferenceDegrees = Math.abs(rotationDifference.getDegrees());
+    boolean isAtRotation = rotationDifferenceDegrees <= Constants.ROTATION_MATCHES_MARGIN_DEGREES;
+
+    return isAtCoordinates && isAtRotation;
+  }
+
+  public Pose2d getTargetPose() {
+    return _targetPose;
+  }
+
+  public double getTargetPoseX() {
+    return _targetPose.getX();
+  }
+
+  public double getTargetPoseY() {
+    return _targetPose.getY();
+  }
+
+  public Rotation2d getTargetPoseRotation() {
+    return _targetPose.getRotation();
+  }
+
+  public void setTargetPose(Pose2d targetPose) {
+    this._targetPose = targetPose;
+  }
+
   /**
    * Adjusts the velocit of the states to account for reduction in wheel diameter due to wear.
    * @param states the original hardware states
@@ -463,11 +509,21 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     return _odometryFromHardware.getPoseMeters();
   }
 
-  private void setRobotZoneFromOdometry() {
-    Pose2d robotPose = getPose();
+  public double getPoseX() {
+    return getPose().getX();
+  }
 
-    double robotX = robotPose.getX();
-    double robotY = robotPose.getY();
+  public double getPoseY() {
+    return getPose().getY();
+  }
+  
+  public Rotation2d getPoseRotation() {
+    return getPose().getRotation();
+  }
+
+  private void setRobotZoneFromOdometry() {
+    double robotX = getPoseX();
+    double robotY = getPoseY();
 
     // If the odometry override is active, set the coords to -1, -1.
     if (Robot.ODOMETRY_OVERRIDE) {
