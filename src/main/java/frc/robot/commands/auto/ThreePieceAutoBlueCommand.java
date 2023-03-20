@@ -17,7 +17,7 @@ import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.util.AutoMode;
 
-public class ThreePieceAutoCommand {
+public class ThreePieceAutoBlueCommand {
     public static AutoMode getAutoMode() {
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("3 Cone", new PathConstraints(1.6, 0.6));
 

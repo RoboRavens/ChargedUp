@@ -25,12 +25,8 @@ import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.claw.RumbleCommand;
 import frc.robot.commands.drivetrain.DriveTwoInchesCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
-import frc.robot.commands.auto.FourPieceAutoCommand;
-import frc.robot.commands.auto.PreloadAndBalanceCommand;
-import frc.robot.commands.auto.PreloadExitAllianceAndBalanceAutoCommand;
-import frc.robot.commands.auto.ScoreTwoLoadAndBalanceCommand;
-import frc.robot.commands.auto.TwoPieceAndBalanceAutoCommand;
-import frc.robot.commands.auto.TwoPieceAutoCommand;
+import frc.robot.commands.auto.PreloadAndBalanceBlueCommand;
+import frc.robot.commands.auto.ScoreTwoLoadAndBalanceBlueCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.groups.EjectPieceCommand;
 import frc.robot.commands.groups.ScorePieceCommand;
@@ -197,7 +193,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    m_autonomousCommand = ScoreTwoLoadAndBalanceCommand.getAutoMode().getAutoCommand();
+    m_autonomousCommand = ScoreTwoLoadAndBalanceBlueCommand.getAutoMode().getAutoCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

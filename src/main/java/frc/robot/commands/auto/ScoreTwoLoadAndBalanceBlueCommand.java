@@ -17,9 +17,9 @@ import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.util.AutoMode;
 
-public class ScoreTwoLoadAndBalanceCommand {
+public class ScoreTwoLoadAndBalanceBlueCommand {
     public static AutoMode getAutoMode() {
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("2.5 Cone + Balance", new PathConstraints(1.6, 0.6));
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("2.5 Cone + Balance Blue", new PathConstraints(1.6, 0.6));
 
         // Path 1
         PathPlannerTrajectory scorePreloadHighToLoadCone1Trajectory = pathGroup.get(0);

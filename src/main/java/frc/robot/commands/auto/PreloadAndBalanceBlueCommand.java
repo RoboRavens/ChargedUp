@@ -15,7 +15,7 @@ import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.drivetrain.ChargeStationBalancingCommand;
 import frc.util.AutoMode;
 
-public class PreloadAndBalanceCommand {
+public class PreloadAndBalanceBlueCommand {
     public static AutoMode getAutoMode() {
         PathPlannerTrajectory scoringToBridgeTrajectory = PathPlanner.loadPath("Preload and Balance", new PathConstraints(1, 0.4));
 
