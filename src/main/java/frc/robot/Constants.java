@@ -83,6 +83,10 @@ public final class Constants {
   public static final double SAFETY_MARGIN_INCHES = 1;
   public static final double ARM_EXTENSION_PER_UNIT = Constants.ARM_EXTENDED_LENGTH_INCHES / Constants.ARM_MAX_EXTENSION_ENCODER_UNITS;
 
+  // The magnitude of power applied to the arm while under manual control.
+  public static final double ARM_MANUAL_ROTATION_VOLTAGE = 1.5;
+  public static final double ARM_MANUAL_EXTENSION_VOLTAGE = 1.5;
+
   // This is magnitude of the voltage output that will be applied to the arm rotation,
   // while it is being held by the brake, to fight backlash upon brake release.
   public static final double ARM_BRAKE_ANTI_BACKLASH_VOLTAGE = .5;
@@ -154,12 +158,12 @@ public final class Constants {
   public static final double ARM_EXTENSION_VELOCITY = 4000;
   public static final double ARM_EXTENSION_ACCELERATION = 4000;
 
-  public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
-  public static final double ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 50;
-  public static final double ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 2000;
-  public static final double ARM_EXTENSION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 1000;
-  public static final double ARM_ROTATION_TIMEOUT_BASE_VALUE = .25;
-  public static final double ARM_EXTENSION_TIMEOUT_BASE_VALUE = .25;
+  public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 2000;
+  public static final double ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 2000;
+  public static final double ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 200;
+  public static final double ARM_EXTENSION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 10000;
+  public static final double ARM_TIMEOUT_BASE_VALUE = 1;
+  // public static final double ARM_EXTENSION_TIMEOUT_BASE_VALUE = .25;
   
   public static final double EXTENSION_UPRIGHT_EMPTY_AFF = .1;
   public static final double EXTENSION_UPRIGHT_LOADED_AFF = .11;
