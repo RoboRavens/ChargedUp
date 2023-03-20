@@ -1,10 +1,8 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,8 +26,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
     private PIDController _scoringRotationAlignPID = new PIDController(0.3, 0, 0);
     private PIDController _yPID = new PIDController(1, 0, 0);
     private PIDController _xPID = new PIDController(1, 0, 0);
-    Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
-    
+
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
@@ -89,7 +86,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
         else if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
             Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
-            r = getAngularVelocityForAlignment(Rotation2d.fromDegrees(180).getRadians());
+            double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Blue ? 180 : 0;
+            double targetAngle = Math.toRadians(targetAngleDegrees);
+            r = getAngularVelocityForAlignment(targetAngle);
             SmartDashboard.putNumber("angular velocity pid", r);
         }
         else if (Robot.overallState == OverallState.LOADING) {
