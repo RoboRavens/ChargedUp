@@ -106,7 +106,7 @@ public final class Constants {
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 60;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
   public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 55;
-  public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 70;
+  public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 65;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 55;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 65;
 
@@ -121,9 +121,9 @@ public final class Constants {
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_LOW_EXTENSION_SETPOINT = 0;
   public static final int ARM_SCORE_LOW_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_LOW_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 20000;
+  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 36500;
   public static final int ARM_SCORE_CONE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 25000;
+  public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 36500;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 100000;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
