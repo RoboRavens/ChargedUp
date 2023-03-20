@@ -28,7 +28,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
     private PIDController _yPID = new PIDController(1, 0, 0);
     private PIDController _xPID = new PIDController(1, 0, 0);
     private double _targetRotation = 0;
-    Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
+    // Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
     public DrivetrainDefaultCommand() {
@@ -148,7 +148,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
     }
 
     public double getYVelocity() {
-        double yOffsetFromTarget = _targetPose.getY() - Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getY();
+        double yOffsetFromTarget = Robot.DRIVE_TRAIN_SUBSYSTEM.getTargetPose().getY() - Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseY();
         double ySpeed = _yPID.calculate(yOffsetFromTarget) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * -1;
         double velocityDirection = ySpeed < 0 ? -1 : 1;
         if (Math.abs(ySpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {
@@ -166,7 +166,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
     }
 
     public double getXVelocity() {
-        double xOffsetFromTarget = _targetPose.getX() - Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getX();
+        double xOffsetFromTarget = Robot.DRIVE_TRAIN_SUBSYSTEM.getTargetPose().getX() - Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseX();
         double xSpeed = _xPID.calculate(xOffsetFromTarget) * Robot.DRIVE_TRAIN_SUBSYSTEM.MAX_VELOCITY_METERS_PER_SECOND * -1;
         double velocityDirection = xSpeed < 0 ? -1 : 1;
         if (Math.abs(xSpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {

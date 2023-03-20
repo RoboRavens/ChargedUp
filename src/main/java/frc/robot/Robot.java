@@ -90,6 +90,8 @@ public class Robot extends TimedRobot {
   public LEDsBlinkColorsCommand ledsBlinkColorsCommand = new LEDsBlinkColorsCommand(LED_SUBSYSTEM);
   public LEDsSolidColorCommand ledsSignalConeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.ORANGE);
   public LEDsSolidColorCommand ledsSignalCubeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.PURPLE);
+  public LEDsSolidColorCommand ledsSignalOdometryFailureCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.RED);
+  public LEDsSolidColorCommand ledsSignalAlignedCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.GREEN);
 
   // Sets the default robot mechanism states (may need to be changed)
   public static OverallState overallState = OverallState.EMPTY_TRANSIT;
@@ -279,6 +281,17 @@ public class Robot extends TimedRobot {
     // Same thing but for preparing to collect a game piece when entering the loading zone.
     if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.overallState == OverallState.EMPTY_TRANSIT) {
       Robot.overallState = OverallState.DOUBLE_SUBSTATION_PICKUP;
+    }
+
+    // If we're relying on odometry and the zone state is none,
+    // there is a problem with odometry so alert the drive team.
+    if (Robot.zoneState == ZoneState.NONE && ODOMETRY_OVERRIDE == false) {
+      ledsSignalOdometryFailureCommand.schedule();
+    }
+
+    // If odometry is on and we're at our target location, signal green.
+    if (Robot.DRIVE_TRAIN_SUBSYSTEM.drivetrainIsAtTargetPose() && ODOMETRY_OVERRIDE == false) {
+      ledsSignalAlignedCommand.schedule();
     }
   }
 

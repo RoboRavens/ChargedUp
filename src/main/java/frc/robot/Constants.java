@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import frc.util.arm.ArmSetpoint;
 
 /**
@@ -41,6 +42,8 @@ public final class Constants {
  
 
   // DRIVETRAIN PATHFINDING
+  public static final double COORDINATE_MATCHES_MARGIN_METERS = Units.inchesToMeters(2);
+  public static final double ROTATION_MATCHES_MARGIN_DEGREES = 3.0;
   public static final double TRAJECTORY_CONFIG_MAX_VELOCITY_METERS_PER_SECOND = 1.5;
   public static final double TRAJECTORY_CONFIG_MAX_ACCELERATION_METERS_PER_SECOND = .6;
   public static final double TRAJECTORY_CONFIG_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI;

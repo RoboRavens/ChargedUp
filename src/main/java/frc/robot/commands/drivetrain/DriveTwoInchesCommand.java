@@ -35,9 +35,9 @@ public class DriveTwoInchesCommand extends CommandBase {
     @Override
     public void initialize() {
         _timer.restart();
-        double currentXPosition = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getX();
-        double currentYPostition = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getY();
-        Rotation2d currentRotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getPose().getRotation();
+        double currentXPosition = Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseX();
+        double currentYPostition = Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseY();
+        Rotation2d currentRotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseRotation();
         switch (_direction) {
             case 'F':
                 _targetPose = new Pose2d(currentXPosition + _twoInchesInMeters, currentYPostition, currentRotation);
