@@ -48,12 +48,12 @@ public class LimelightSubsystem extends SubsystemBase {
     Pose2d robotPose = getPureLimelightRobotPose();
     if (robotPose != null) {
       SmartDashboard.putNumber(_tableName + "PoseX", robotPose.getX());
-      SmartDashboard.putNumber( _tableName + "LimelightOne PoseY", robotPose.getY());
-      SmartDashboard.putNumber(_tableName + "LimelightOne Rotation", robotPose.getRotation().getDegrees());
+      SmartDashboard.putNumber( _tableName + "PoseY", robotPose.getY());
+      SmartDashboard.putNumber(_tableName + "Rotation", robotPose.getRotation().getDegrees());
     } else {
-      SmartDashboard.putNumber(_tableName + "LimelightOne PoseX", 0);
-      SmartDashboard.putNumber(_tableName + "LimelightOne PoseY", 0);
-      SmartDashboard.putNumber(_tableName + "LimelightOne Rotation", 0);
+      SmartDashboard.putNumber(_tableName + "PoseX", 0);
+      SmartDashboard.putNumber(_tableName + "PoseY", 0);
+      SmartDashboard.putNumber(_tableName + "Rotation", 0);
     }
   }
 
