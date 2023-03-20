@@ -72,13 +72,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
                 y = getYVelocity();
             }
             else if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.SINGLE_SUBSTATION) {
-                double singleSubstationScoringAngle;
-                if (DriverStation.getAlliance() == Alliance.Red) {
-                    singleSubstationScoringAngle = 1.571; // 90 degrees
-                } else {
-                    singleSubstationScoringAngle =  -1.571; // -90 degrees
-                }
-                r = getAngularVelocityForAlignment(singleSubstationScoringAngle);
+                double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 90 : -90; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
+                double targetAngle = Math.toRadians(targetAngleDegrees);
+                r = getAngularVelocityForAlignment(targetAngle);
                 x = getXVelocity();
                 y = getYVelocity();
             }
@@ -86,7 +82,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
         else if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
             Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
-            double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Blue ? 180 : 0;
+            double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 0 : 180; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
             double targetAngle = Math.toRadians(targetAngleDegrees);
             r = getAngularVelocityForAlignment(targetAngle);
             SmartDashboard.putNumber("angular velocity pid", r);
