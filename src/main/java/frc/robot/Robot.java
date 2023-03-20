@@ -32,6 +32,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.util.Colors;
 import frc.util.StateManagement;
 import frc.util.StateManagement.ArmExtensionState;
@@ -45,12 +46,8 @@ import frc.util.StateManagement.LoadTargetState;
 import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.PieceState;
 import frc.util.StateManagement.ScoringTargetState;
-import frc.util.StateManagement.ZoneState;
 import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LEDsSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.LimelightTrajectorySubsystem;
-import frc.robot.subsystems.TrajectoryTestingSubsystem;
 import frc.robot.subsystems.TabletScoring.ScoringShape;
 import frc.robot.subsystems.TabletScoring.TabletScoringResult;
 import frc.robot.subsystems.TabletScoring.TabletScoringSubsystem;
@@ -68,31 +65,36 @@ public class Robot extends TimedRobot {
   
   public static final DrivetrainSubsystem DRIVE_TRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   //public static final DrivetrainSubsystemBase DRIVETRAIN_SUBSYSTEM_BASE = new DrivetrainSubsystemMock(); 
-  public static final TrajectoryTestingSubsystem TRAJECTORY_TESTING_SUBSYSTEM = new TrajectoryTestingSubsystem();
   public static final DrivetrainDefaultCommand DRIVE_TRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
+  public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final Gamepad OP_PAD_BUTTONS = new Gamepad(3);
   public static final Gamepad OP_PAD_SWITCHES = new Gamepad(2);
-  public static final LimelightTrajectorySubsystem LIMELIGHT_TRAJECTORY_SUBSYSTEM = new LimelightTrajectorySubsystem();
   public static final DrivetrainChargeStationBalancingCommand chargeStationBalancingCommand = new DrivetrainChargeStationBalancingCommand();
   // public static GamePieceState gamePieceState = GamePieceState.CLEAR;
   // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
   // public static PieceRetrievalState pieceRetrievalState = PieceRetrievalState.CLEAR;
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
+  public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
   public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static final LEDsSubsystem LED_SUBSYSTEM = new LEDsSubsystem();
-  public static boolean driverControlOverride = false;
-  public static boolean limelightOverride = false;
+  // public static boolean DRIVER_CONTROL_OVERRIDE = false;
+  public static boolean ODOMETRY_OVERRIDE = false;
+  public static boolean ARM_ROTATION_MANUAL_OVERRIDE = false;
+  public static boolean ARM_EXTENSION_MANUAL_OVERRIDE = false;
 
   public LEDsRainbowCommand ledsRainbowCommand = new LEDsRainbowCommand(LED_SUBSYSTEM);
   public LEDsBlinkColorsCommand ledsBlinkColorsCommand = new LEDsBlinkColorsCommand(LED_SUBSYSTEM);
   public LEDsSolidColorCommand ledsSignalConeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.ORANGE);
   public LEDsSolidColorCommand ledsSignalCubeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.PURPLE);
+  public LEDsSolidColorCommand ledsSignalOdometryFailureCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.RED);
+  public LEDsSolidColorCommand ledsSignalAlignedCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.GREEN);
 
   // Sets the default robot mechanism states (may need to be changed)
   public static OverallState overallState = OverallState.EMPTY_TRANSIT;
@@ -123,6 +125,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    ARM_SUBSYSTEM.setDefaultCommand(armDefaultCommand);
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(DRIVE_TRAIN_DEFAULT_COMMAND);
     configureButtonBindings();
     configureTriggers();
@@ -244,9 +247,9 @@ public class Robot extends TimedRobot {
       Robot.loadState = LoadState.LOADED;
     }
 
-    // If the left trigger is pressed,
+    // If the left trigger is pressed and odometry is active,
     // Set the overall state to either scoring alignment or hps pickup based on the zone state
-    if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER)) {
+    if (GAMEPAD.getAxisIsPressed(AxisCode.LEFTTRIGGER) && ODOMETRY_OVERRIDE == false) {
       drivetrainState = DrivetrainState.ROBOT_ALIGN;
     }
     // Set the drive state back to freehand when the left trigger is released
@@ -283,62 +286,58 @@ public class Robot extends TimedRobot {
     if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.overallState == OverallState.EMPTY_TRANSIT) {
       Robot.overallState = OverallState.DOUBLE_SUBSTATION_PICKUP;
     }
+
+    // If we're relying on odometry and the zone state is none,
+    // there is a problem with odometry so alert the drive team.
+    if (Robot.zoneState == ZoneState.NONE && ODOMETRY_OVERRIDE == false) {
+      ledsSignalOdometryFailureCommand.schedule();
+    }
+
+    // If odometry is on and we're at our target location, signal green.
+    if (Robot.DRIVE_TRAIN_SUBSYSTEM.drivetrainIsAtTargetPose() && ODOMETRY_OVERRIDE == false) {
+      ledsSignalAlignedCommand.schedule();
+    }
   }
 
   private void configureButtonBindings() {
+    // Inch commands and auto-balancing.
     GAMEPAD.getPOVTrigger(GamepadPOV.Right).toggleOnTrue(new DriveTwoInchesCommand('R'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Up).toggleOnTrue(new DriveTwoInchesCommand('F'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Down).toggleOnTrue(new DriveTwoInchesCommand('B'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Left).toggleOnTrue(new DriveTwoInchesCommand('L'));
+    GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
 
+    // Claw override commands.
     GAMEPAD.getButton(ButtonCode.START).onTrue(new ClawOpenCommand());
     GAMEPAD.getButton(ButtonCode.BACK).onTrue(new ClawCloseCommand());
-    
-    // GAMEPAD.getButton(ButtonCode.A).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-    // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
-    // GAMEPAD.getButton(ButtonCode.X).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
-    // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
-    // GAMEPAD.getButton(ButtonCode.LEFTSTICK).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
-    // OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
 
+    // Ground pickup.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onFalse(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-    OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
-    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
-    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//
 
-    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_LOW).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT));
-    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_MID).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
-    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_HIGH).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
-
+    // Arm control.
     OP_PAD_SWITCHES.getButton(ButtonCode.EJECT_PIECE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_HIGH_SETPOINT));
     OP_PAD_BUTTONS.getButton(ButtonCode.SET_ARM_TO_SCORE_TARGET_STATE).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.moveArmToTarget()));
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-    
     GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
-    GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
 
-    // When the floor intake button is pressed, update the states
+    // Ground intake.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).onTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;
       loadTargetState = LoadTargetState.GROUND;
     }));
-    
-    GAMEPAD.getButton(ButtonCode.LEFTBUMPER)
-    .and(GAMEPAD.getButton(ButtonCode.RIGHTBUMPER))
-    .and(GAMEPAD.getButton(ButtonCode.Y))
-    .onTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.zeroGyroscope()));
-
-    new Trigger(() -> GAMEPAD.getAxisIsPressed(AxisCode.RIGHTTRIGGER))
-      .whileTrue(new InstantCommand(() -> DRIVE_TRAIN_DEFAULT_COMMAND.CutPower = true))
-      .onFalse(new InstantCommand(() -> DRIVE_TRAIN_DEFAULT_COMMAND.CutPower = false));
 
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER)
-    .and(() -> overallState != OverallState.ENDGAME)
-    .toggleOnTrue(new InstantCommand(() -> {
-      overallState = OverallState.GROUND_PICKUP;
-      loadTargetState = LoadTargetState.GROUND;
-    }));
+      .and(() -> overallState != OverallState.ENDGAME)
+      .toggleOnTrue(new InstantCommand(() -> {
+        overallState = OverallState.GROUND_PICKUP;
+        loadTargetState = LoadTargetState.GROUND;
+      }));
+
+    GAMEPAD.getButton(ButtonCode.LEFTBUMPER)
+      .and(GAMEPAD.getButton(ButtonCode.RIGHTBUMPER))
+      .and(GAMEPAD.getButton(ButtonCode.Y))
+      .onTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.zeroGyroscope()));
 
     // When the floor intake button is released, the state needs to be updated:
     //  If it was released without a successful ground pickup, state goes back to empty transit
@@ -354,50 +353,81 @@ public class Robot extends TimedRobot {
       loadTargetState = LoadTargetState.DOUBLE_SUBSTATION;
     }));
 
-    // TODO: bind this to a button
-    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE)
-    .toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); 
-
+    // Piece ejection.
     OP_PAD_BUTTONS.getButton(ButtonCode.EJECT_PIECE)
-    .toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
-    
+      .toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
+
+    // Cut power.
+    new Trigger(() -> GAMEPAD.getAxisIsPressed(AxisCode.RIGHTTRIGGER))
+      .whileTrue(new InstantCommand(() -> DRIVE_TRAIN_DEFAULT_COMMAND.CutPower = true))
+      .onFalse(new InstantCommand(() -> DRIVE_TRAIN_DEFAULT_COMMAND.CutPower = false));
+
+    // Endgame mode.
     OP_PAD_SWITCHES.getButton(ButtonCode.ENDGAME_OVERRIDE)
-    .toggleOnTrue(new InstantCommand(() -> overallState = OverallState.ENDGAME))
-    .toggleOnFalse(new InstantCommand(() -> {
-      if (loadState == LoadState.LOADED) {
-        overallState = OverallState.LOADED_TRANSIT;
-      }
-      else {
-        overallState = OverallState.EMPTY_TRANSIT;
-      }
-    }));
+      .onTrue(new InstantCommand(() -> overallState = OverallState.ENDGAME))
+      .onFalse(new InstantCommand(() -> {
+        if (loadState == LoadState.LOADED) {
+          overallState = OverallState.LOADED_TRANSIT;
+        }
+        else {
+          overallState = OverallState.EMPTY_TRANSIT;
+        }
+      }));
 
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(true)));
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(false)));
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(true)));
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
-    
-    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-    .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.rotateArmBackwardPower()));
+    // Overrides.
+    // Drive assist.
+    // OP_PAD_SWITCHES.getButton(ButtonCode.ODOMETRY_OVERRIDE).onTrue(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = true));
+    // OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onFalse(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = false));
 
+    // Vision assist.
+    OP_PAD_SWITCHES.getButton(ButtonCode.ODOMETRY_OVERRIDE).onTrue(new InstantCommand(() -> ODOMETRY_OVERRIDE = true)).onFalse(new InstantCommand(() -> ODOMETRY_OVERRIDE = false));
+
+    // Arm.
+    OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).onTrue(new InstantCommand(() -> ARM_ROTATION_MANUAL_OVERRIDE = true)).onFalse(new InstantCommand(() -> ARM_ROTATION_MANUAL_OVERRIDE = false));
+    OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).onTrue(new InstantCommand(() -> ARM_EXTENSION_MANUAL_OVERRIDE = true)).onFalse(new InstantCommand(() -> ARM_EXTENSION_MANUAL_OVERRIDE = false));
+
+    // Arm safety limits.
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(true)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(false)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(true)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
+
+    // Arm manual controls.
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-    .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.rotateArmForwardPower()));
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      .whileTrue(new ArmRotateManuallyCommand(true));
+      
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      .whileTrue(new ArmRotateManuallyCommand(false));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-    .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.extendArmPower()));
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+      .whileTrue(new ArmExtendManuallyCommand(true));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-    .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.retractArmPower()));
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+      .whileTrue(new ArmExtendManuallyCommand(false));
+
+    // Old stuff to delete when we're done with the competition code.
     
-    OP_PAD_SWITCHES.getButton(ButtonCode.LIMELIGHT_LIGHT_OFF_OVERRIDE).onTrue(new InstantCommand(() -> limelightOverride = true)).onFalse(new InstantCommand(() -> limelightOverride = false));
+    // GAMEPAD.getButton(ButtonCode.A).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
+    // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
+    // GAMEPAD.getButton(ButtonCode.X).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
+    // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
+    // GAMEPAD.getButton(ButtonCode.LEFTSTICK).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
+    // OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
+
+    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
+    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//
+
+    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_LOW).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT));
+    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_MID).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
+    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_HIGH).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
   }
 
   // Checking for a cone specifically, as opposed to any game piece, is relevant
@@ -448,9 +478,9 @@ public class Robot extends TimedRobot {
     // new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);
     
 
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CONE).onTrue(ledsSignalConeCommand.andThen(new InstantCommand(() -> pieceState = PieceState.CONE)));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CUBE).onTrue(ledsSignalCubeCommand.andThen(new InstantCommand(() -> pieceState = PieceState.CUBE)));
-  
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
+    
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
@@ -517,7 +547,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public boolean getLimelightOverride() {
-    return limelightOverride;
+  public boolean getODOMETRY_OVERRIDE() {
+    return ODOMETRY_OVERRIDE;
   }
 }

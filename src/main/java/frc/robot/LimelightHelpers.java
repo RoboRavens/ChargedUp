@@ -235,7 +235,7 @@ class Results {
     }
 }
 
- class LimelightResults {
+  class LimelightResults {
     @JsonProperty("Results")
     Results targetingResults;
 

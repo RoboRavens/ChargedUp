@@ -29,6 +29,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -95,7 +96,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
           Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
 
-  private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+  public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
           new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0), // Front left
           new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0), // Front right
           new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0), // Back left
@@ -104,10 +105,12 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   
   private final AHRS m_navx = new AHRS(SPI.Port.kMXP, (byte) 200);
 
-  private final SwerveModule m_frontLeftModule;
-  private final SwerveModule m_frontRightModule;
-  private final SwerveModule m_backLeftModule;
-  private final SwerveModule m_backRightModule;
+  private Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
+
+  public final SwerveModule m_frontLeftModule;
+  public final SwerveModule m_frontRightModule;
+  public final SwerveModule m_backLeftModule;
+  public final SwerveModule m_backRightModule;
   private final SwerveDriveOdometry _odometryFromKinematics;
   private final SwerveDriveOdometry  _odometryFromHardware;
   private final DrivetrainDiagnosticsShuffleboard _diagnostics;
@@ -118,11 +121,6 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   // private final DriveCharacteristics _driveCharacteristics;
 
   private Pose2d _markedPosition = null;
-
-  private double kp = -0.3;
-  private double ki = 0.36;
-  private double kd = 1.5;
-  private PIDController pid_test = new PIDController(kp, ki, kd);
 
   public DrivetrainSubsystem() {
     MkModuleConfiguration moduleConfig = new MkModuleConfiguration();
@@ -216,12 +214,21 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     // _driveCharacteristics.reset();
   }
 
+  public SwerveModulePosition[] getSwerveModulePositions() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[4];
+    positions[0] = m_frontLeftModule.getPosition();
+    positions[1] = m_frontRightModule.getPosition();
+    positions[2] = m_backLeftModule.getPosition();
+    positions[3] = m_backRightModule.getPosition();
+    return positions;
+ }
+
   @Override
   public Rotation2d getOdometryRotation() {
     return _odometryFromHardware.getPoseMeters().getRotation();
   }
 
-  private Rotation2d getGyroscopeRotation() {
+  public Rotation2d getGyroscopeRotation() {
     if (m_navx.isMagnetometerCalibrated()) {
       // We will only get valid fused headings if the magnetometer is calibrated
       return Rotation2d.fromDegrees(m_navx.getFusedHeading());
@@ -304,6 +311,49 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     setRobotZoneFromOdometry();
   }
 
+  public boolean drivetrainIsAtTargetCoordinates() {
+    boolean isAtTarget = false;
+
+    double xDifference = Math.abs(getTargetPoseX() - getPoseX());
+    double yDifference = Math.abs(getTargetPoseY() - getPoseY());
+
+    if (xDifference <= Constants.COORDINATE_MATCHES_MARGIN_METERS && yDifference <= Constants.COORDINATE_MATCHES_MARGIN_METERS) {
+      isAtTarget = true;
+    }
+
+    return isAtTarget;
+  }
+
+  public boolean drivetrainIsAtTargetPose() {
+    boolean isAtCoordinates = drivetrainIsAtTargetCoordinates();
+
+    Rotation2d rotationDifference = getPoseRotation().minus(getTargetPoseRotation());
+    double rotationDifferenceDegrees = Math.abs(rotationDifference.getDegrees());
+    boolean isAtRotation = rotationDifferenceDegrees <= Constants.ROTATION_MATCHES_MARGIN_DEGREES;
+
+    return isAtCoordinates && isAtRotation;
+  }
+
+  public Pose2d getTargetPose() {
+    return _targetPose;
+  }
+
+  public double getTargetPoseX() {
+    return _targetPose.getX();
+  }
+
+  public double getTargetPoseY() {
+    return _targetPose.getY();
+  }
+
+  public Rotation2d getTargetPoseRotation() {
+    return _targetPose.getRotation();
+  }
+
+  public void setTargetPose(Pose2d targetPose) {
+    this._targetPose = targetPose;
+  }
+
   /**
    * Adjusts the velocit of the states to account for reduction in wheel diameter due to wear.
    * @param states the original hardware states
@@ -323,12 +373,28 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     return _odometryFromHardware.getPoseMeters();
   }
 
-  private void setRobotZoneFromOdometry() {
-    Pose2d robotPose = getPose();
+  public double getPoseX() {
+    return getPose().getX();
+  }
 
-    double robotX = robotPose.getX();
-    double robotY = robotPose.getY();
-    
+  public double getPoseY() {
+    return getPose().getY();
+  }
+  
+  public Rotation2d getPoseRotation() {
+    return getPose().getRotation();
+  }
+
+  private void setRobotZoneFromOdometry() {
+    double robotX = getPoseX();
+    double robotY = getPoseY();
+
+    // If the odometry override is active, set the coords to -1, -1.
+    if (Robot.ODOMETRY_OVERRIDE) {
+      robotX = -1;
+      robotY = -1;
+    }
+
     Point2D robotPoint = new Point2D.Double(robotX, robotY);
 
     Robot.fieldSubzone = Robot.fieldZones.getPointFieldZone(robotPoint);
