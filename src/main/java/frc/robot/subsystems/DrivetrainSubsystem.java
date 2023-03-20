@@ -37,7 +37,6 @@ import frc.robot.Robot;
 import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
 import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
-import frc.util.Slew;
 import frc.util.SwerveModuleConverter;
 import edu.wpi.first.wpilibj.SPI;
 import java.awt.geom.Point2D;
@@ -95,12 +94,6 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   // Here we calculate the theoretical maximum angular velocity. You can also replace this with a measured amount.
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
           Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
-
-  private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
-  private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 50;
-  private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 50;
-  private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 50;
-  private final ChassisSpeeds _chassisSPeedsZero = new ChassisSpeeds(0,0,0);
 
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
           new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0), // Front left
@@ -264,12 +257,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
   @Override
   public void drive(ChassisSpeeds targetChassisSpeeds) {
-    targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
-    targetChassisSpeeds.vyMetersPerSecond = Slew.GetSlewedTarget(_velocityYSlewRate, targetChassisSpeeds.vyMetersPerSecond, _chassisSpeeds.vyMetersPerSecond);
-    targetChassisSpeeds.omegaRadiansPerSecond = Slew.GetSlewedTarget(_angularSlewRate, targetChassisSpeeds.omegaRadiansPerSecond, _chassisSpeeds.omegaRadiansPerSecond);
-
     _moduleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
-    _chassisSpeeds = targetChassisSpeeds;
   }
 
   @Override
@@ -365,7 +353,6 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
   // used only by SwerveControllerCommand to follow trajectories
   private void setModuleStates(SwerveModuleState[] moduleStates) {
-    _chassisSpeeds = _chassisSPeedsZero; // provides a consistent slew rate ramp coming out of a trajectory
     _moduleStates = moduleStates;
   }
 

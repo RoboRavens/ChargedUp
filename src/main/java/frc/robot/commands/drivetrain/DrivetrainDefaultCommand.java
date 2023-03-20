@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -15,12 +14,14 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
+import frc.util.Slew;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.LoadTargetState;
 import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ZoneState;
 import frc.util.drive.AngularPositionHolder;
+import frc.util.drive.ChassisSpeedsExtensions;
 
 public class DrivetrainDefaultCommand extends CommandBase {
     private PIDController _scoringRotationAlignPID = new PIDController(0.3, 0, 0);
@@ -29,6 +30,11 @@ public class DrivetrainDefaultCommand extends CommandBase {
     Pose2d _targetPose = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23), Rotation2d.fromDegrees(-180));
     
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
+
+    private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
+    private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 50;
+    private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 50;
+    private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 50;
 
     public boolean CutPower = false;
 
@@ -39,6 +45,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
     @Override
     public void initialize() {
         AngularPositionHolder.GetInstance().reset();
+        _chassisSpeeds = new ChassisSpeeds(0, 0, 0);
     }
 
     @Override
@@ -117,22 +124,25 @@ public class DrivetrainDefaultCommand extends CommandBase {
         SmartDashboard.putNumber("DriveDefaultCmd y", y);
         SmartDashboard.putNumber("DriveDefaultCmd r (rotation)", r);
         SmartDashboard.putNumber("DriveDefaultCmd a (gyro)", a.getDegrees());
+        
+        var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            x, // x translation
+            y, // y translation
+            r, // rotation
+            a // The angle of the robot as measured by a gyroscope.
+        );
 
-        if (x == 0 && y == 0 && r == 0) {
-            if (Robot.zoneState == ZoneState.ALLIANCE_CHARGE_STATION && Robot.overallState == OverallState.ENDGAME) {
-                Robot.DRIVE_TRAIN_SUBSYSTEM.holdPosition();
-            } else {
-                Robot.DRIVE_TRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0,0,0));
-            }
+        targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
+        targetChassisSpeeds.vyMetersPerSecond = Slew.GetSlewedTarget(_velocityYSlewRate, targetChassisSpeeds.vyMetersPerSecond, _chassisSpeeds.vyMetersPerSecond);
+        targetChassisSpeeds.omegaRadiansPerSecond = Slew.GetSlewedTarget(_angularSlewRate, targetChassisSpeeds.omegaRadiansPerSecond, _chassisSpeeds.omegaRadiansPerSecond);
+        _chassisSpeeds = targetChassisSpeeds;
+
+        if (ChassisSpeedsExtensions.IsZero(targetChassisSpeeds)
+          && Robot.zoneState == ZoneState.ALLIANCE_CHARGE_STATION
+          && Robot.overallState == OverallState.ENDGAME) {
+            Robot.DRIVE_TRAIN_SUBSYSTEM.holdPosition();
         } else {
-            Robot.DRIVE_TRAIN_SUBSYSTEM.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                    x, // x translation
-                    y, // y translation
-                    r, // rotation
-                    a // The angle of the robot as measured by a gyroscope.
-                )
-            );
+            Robot.DRIVE_TRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
         }
     }
 
