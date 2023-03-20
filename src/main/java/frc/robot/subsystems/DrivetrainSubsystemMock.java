@@ -25,6 +25,17 @@ public class DrivetrainSubsystemMock extends DrivetrainSubsystemBase {
     public void zeroGyroscope() {}
 
     @Override
+    public void cutPower() {}
+
+    @Override
+    public void stopCutPower() {}
+
+    @Override
+    public boolean powerIsCut() {
+        return false;
+    }
+
+    @Override
     public TrajectoryConfig GetTrajectoryConfig() {
         return new TrajectoryConfig(0,0);
     }

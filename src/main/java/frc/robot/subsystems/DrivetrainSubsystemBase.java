@@ -12,6 +12,9 @@ public abstract class DrivetrainSubsystemBase extends SubsystemBase {
     public abstract Rotation2d getOdometryRotation();
     public abstract void holdPosition();
     public abstract void zeroGyroscope();
+    public abstract void cutPower();
+    public abstract void stopCutPower();
+    public abstract boolean powerIsCut();
     public abstract TrajectoryConfig GetTrajectoryConfig();
     public abstract Command CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory trajectory);
     public abstract Command CreateFollowTrajectoryCommand(Trajectory trajectory);

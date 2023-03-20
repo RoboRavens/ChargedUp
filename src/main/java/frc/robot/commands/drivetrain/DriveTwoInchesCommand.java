@@ -91,7 +91,7 @@ public class DriveTwoInchesCommand extends CommandBase {
                 if (isNegative) ySpeed *= -1;
             }
         }
-        if (Robot.DRIVE_TRAIN_DEFAULT_COMMAND.CutPower) {
+        if (Robot.DRIVE_TRAIN_SUBSYSTEM.powerIsCut()) {
             if (Robot.overallState == OverallState.ENDGAME) {
                 xSpeed *= 4;
                 ySpeed *= 4;
