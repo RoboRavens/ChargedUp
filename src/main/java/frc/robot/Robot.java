@@ -283,59 +283,45 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
+    // Inch commands.
     GAMEPAD.getPOVTrigger(GamepadPOV.Right).toggleOnTrue(new DriveTwoInchesCommand('R'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Up).toggleOnTrue(new DriveTwoInchesCommand('F'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Down).toggleOnTrue(new DriveTwoInchesCommand('B'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Left).toggleOnTrue(new DriveTwoInchesCommand('L'));
 
+    // Claw override commands.
     GAMEPAD.getButton(ButtonCode.START).onTrue(new ClawOpenCommand());
     GAMEPAD.getButton(ButtonCode.BACK).onTrue(new ClawCloseCommand());
-    
-    // GAMEPAD.getButton(ButtonCode.A).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-    // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
-    // GAMEPAD.getButton(ButtonCode.X).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
-    // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
-    // GAMEPAD.getButton(ButtonCode.LEFTSTICK).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
-    // OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
 
+    // Ground pickup.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onFalse(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-    OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
-    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
-    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//
-
-    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_LOW).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT));
-    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_MID).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
-    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_HIGH).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
 
     OP_PAD_SWITCHES.getButton(ButtonCode.EJECT_PIECE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_HIGH_SETPOINT));
     OP_PAD_BUTTONS.getButton(ButtonCode.SET_ARM_TO_SCORE_TARGET_STATE).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.moveArmToTarget()));
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-    
+
+
     GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
     GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
 
-    // When the floor intake button is pressed, update the states
+    // Ground intake.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).onTrue(new InstantCommand(() -> {
       overallState = OverallState.GROUND_PICKUP;
       loadTargetState = LoadTargetState.GROUND;
     }));
-    
-    GAMEPAD.getButton(ButtonCode.LEFTBUMPER)
-    .and(GAMEPAD.getButton(ButtonCode.RIGHTBUMPER))
-    .and(GAMEPAD.getButton(ButtonCode.Y))
-    .onTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.zeroGyroscope()));
-
-    new Trigger(() -> GAMEPAD.getAxisIsPressed(AxisCode.RIGHTTRIGGER))
-      .whileTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.cutPower()))
-      .onFalse(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.stopCutPower()));
 
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER)
-    .and(() -> overallState != OverallState.ENDGAME)
-    .toggleOnTrue(new InstantCommand(() -> {
-      overallState = OverallState.GROUND_PICKUP;
-      loadTargetState = LoadTargetState.GROUND;
-    }));
+      .and(() -> overallState != OverallState.ENDGAME)
+      .toggleOnTrue(new InstantCommand(() -> {
+        overallState = OverallState.GROUND_PICKUP;
+        loadTargetState = LoadTargetState.GROUND;
+      }));
+
+    GAMEPAD.getButton(ButtonCode.LEFTBUMPER)
+      .and(GAMEPAD.getButton(ButtonCode.RIGHTBUMPER))
+      .and(GAMEPAD.getButton(ButtonCode.Y))
+      .onTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.zeroGyroscope()));
 
     // When the floor intake button is released, the state needs to be updated:
     //  If it was released without a successful ground pickup, state goes back to empty transit
@@ -351,50 +337,77 @@ public class Robot extends TimedRobot {
       loadTargetState = LoadTargetState.DOUBLE_SUBSTATION;
     }));
 
-    // TODO: bind this to a button
-    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE)
-    .toggleOnTrue(new InstantCommand(() -> driverControlOverride = true)); 
-
+    // Piece ejection.
     OP_PAD_BUTTONS.getButton(ButtonCode.EJECT_PIECE)
-    .toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
-    
-    OP_PAD_SWITCHES.getButton(ButtonCode.ENDGAME_OVERRIDE)
-    .toggleOnTrue(new InstantCommand(() -> overallState = OverallState.ENDGAME))
-    .toggleOnFalse(new InstantCommand(() -> {
-      if (loadState == LoadState.LOADED) {
-        overallState = OverallState.LOADED_TRANSIT;
-      }
-      else {
-        overallState = OverallState.EMPTY_TRANSIT;
-      }
-    }));
+      .toggleOnTrue(new InstantCommand(() -> overallState = OverallState.EJECTING));
 
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(true)));
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(false)));
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(true)));
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).toggleOnFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
-    
+    // Cut power.
+    new Trigger(() -> GAMEPAD.getAxisIsPressed(AxisCode.RIGHTTRIGGER))
+      .whileTrue(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.cutPower()))
+      .onFalse(new InstantCommand(() -> DRIVE_TRAIN_SUBSYSTEM.stopCutPower()));
+
+    // Endgame mode.
+    OP_PAD_SWITCHES.getButton(ButtonCode.ENDGAME_OVERRIDE)
+      .onTrue(new InstantCommand(() -> overallState = OverallState.ENDGAME))
+      .onFalse(new InstantCommand(() -> {
+        if (loadState == LoadState.LOADED) {
+          overallState = OverallState.LOADED_TRANSIT;
+        }
+        else {
+          overallState = OverallState.EMPTY_TRANSIT;
+        }
+      }));
+
+    // Overrides.
+    // Drive assist.
+    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onTrue(new InstantCommand(() -> driverControlOverride = true));
+    OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onFalse(new InstantCommand(() -> driverControlOverride = false));
+
+    // Vision assist.
+    OP_PAD_SWITCHES.getButton(ButtonCode.LIMELIGHT_LIGHT_OFF_OVERRIDE).onTrue(new InstantCommand(() -> limelightOverride = true)).onFalse(new InstantCommand(() -> limelightOverride = false));
+
+    // Arm safety limits.
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(true)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(false)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(true)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
+
+    // Arm manual controls.
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-    .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.rotateArmBackwardPower()));
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.rotateArmBackwardPower()));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-    .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.rotateArmForwardPower()));
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.rotateArmForwardPower()));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-    .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.extendArmPower()));
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+      .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.extendArmPower()));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
-    .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-    .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.retractArmPower()));
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+      .onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.retractArmPower()));
+
+    // Old stuff to delete when we're done with the competition code.
     
-    OP_PAD_SWITCHES.getButton(ButtonCode.LIMELIGHT_LIGHT_OFF_OVERRIDE).onTrue(new InstantCommand(() -> limelightOverride = true)).onFalse(new InstantCommand(() -> limelightOverride = false));
+    // GAMEPAD.getButton(ButtonCode.A).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
+    // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
+    // GAMEPAD.getButton(ButtonCode.X).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
+    // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
+    // GAMEPAD.getButton(ButtonCode.LEFTSTICK).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
+    // OP_PAD_SWITCHES.getButton(ButtonCode.RETRACT_ARM).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT));
+
+    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_MAX_ROTATION).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT));//
+    //OP_PAD_SWITCHES.getButton(ButtonCode.ROTATE_ARM_TO_ZERO).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_LOW_SETPOINT));//
+
+    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_LOW).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT));
+    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_MID).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_MID_SETPOINT));
+    // OP_PAD_SWITCHES.getButton(ButtonCode.SCORE_HIGH).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT));
   }
 
   // Checking for a cone specifically, as opposed to any game piece, is relevant
