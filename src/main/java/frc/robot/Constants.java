@@ -140,7 +140,7 @@ public final class Constants {
   public static final int ARM_SCORE_CONE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 36500;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 120000;
+  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 123000;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 108000;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
@@ -183,7 +183,7 @@ public final class Constants {
   public static final double ROTATION_SIDEWAYS_LOADED_AFF = .055;
 
   // CLAW
-  public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
+  public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .75;
   public static final double CLAW_OPEN_TIMEOUT_SECONDS = .75;
   public static final double AUTO_CLAW_CLOSE_TIMEOUT_SECONDS = .25;
   public static final double AUTO_CLAW_OPEN_TIMEOUT_SECONDS = .75;

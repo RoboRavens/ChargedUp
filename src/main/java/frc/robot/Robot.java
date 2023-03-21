@@ -20,7 +20,6 @@ import frc.controls.Gamepad;
 import frc.controls.GamepadPOV;
 import frc.robot.commands.LEDs.*;
 import frc.robot.commands.arm.*;
-import frc.robot.commands.auto.ScoreTwoLoadAndBalanceBlueCommand;
 import frc.robot.commands.claw.ClawCloseCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.claw.RumbleCommand;
@@ -50,7 +49,6 @@ import frc.util.StateManagement.ScoringTargetState;
 import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LEDsSubsystem;
 import frc.robot.subsystems.TabletScoring.ScoringShape;
-import frc.robot.subsystems.TabletScoring.TabletScoringResult;
 import frc.robot.subsystems.TabletScoring.TabletScoringSubsystem;
 import frc.util.field.*;
 
@@ -67,7 +65,6 @@ public class Robot extends TimedRobot {
   public static final DrivetrainSubsystem DRIVE_TRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   //public static final DrivetrainSubsystemBase DRIVETRAIN_SUBSYSTEM_BASE = new DrivetrainSubsystemMock(); 
   public static final DrivetrainDefaultCommand DRIVE_TRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
-  public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final Gamepad OP_PAD_BUTTONS = new Gamepad(3);
@@ -77,10 +74,12 @@ public class Robot extends TimedRobot {
   // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
   // public static PieceRetrievalState pieceRetrievalState = PieceRetrievalState.CLEAR;
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
+  public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
   public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  public static final AutoChooser AUTO_CHOOSER = new AutoChooser();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
@@ -130,6 +129,7 @@ public class Robot extends TimedRobot {
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(DRIVE_TRAIN_DEFAULT_COMMAND);
     configureButtonBindings();
     configureTriggers();
+    AUTO_CHOOSER.ShowTab();
   }
 
   /**
@@ -144,10 +144,10 @@ public class Robot extends TimedRobot {
     setDriverStationData();
 
     
-    TabletScoringResult tabletResult = TABLET_SCORING_SUBSYSTEM.GetScoringTarget();
-    SmartDashboard.putString("TABLET PIECE", tabletResult.GetShape().name());
-    SmartDashboard.putNumber("TABLET ROW", tabletResult.GetPosition().GetRow());
-    SmartDashboard.putNumber("TABLET COLUMN", tabletResult.GetPosition().GetColumn());
+    SmartDashboard.putString("TABLET PIECE", TABLET_SCORING_SUBSYSTEM.GetScoringShape().name());
+    SmartDashboard.putString("TABLET SUBSTATION", TABLET_SCORING_SUBSYSTEM.GetSubstation().name());
+    SmartDashboard.putNumber("TABLET ROW", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetRow());
+    SmartDashboard.putNumber("TABLET COLUMN", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetColumn());
     
     // SmartDashboard.putNumber("Power", ARM_SUBSYSTEM.testPower);
 
@@ -195,7 +195,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    m_autonomousCommand = ScoreTwoLoadAndBalanceBlueCommand.getAutoMode().getAutoCommand();
+    m_autonomousCommand = AUTO_CHOOSER.GetAuto();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -210,6 +210,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     setDriverStationData();
+    Robot.TABLET_SCORING_SUBSYSTEM.ShowTab();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -479,12 +480,12 @@ public class Robot extends TimedRobot {
     // new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);
     
 
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
     
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
 
 
 
@@ -545,6 +546,7 @@ public class Robot extends TimedRobot {
   private void setDriverStationData() {
     if (allianceColor == Alliance.Invalid) {
       allianceColor = DriverStation.getAlliance();
+      AUTO_CHOOSER.BuildAutoChooser(allianceColor);
     }
   }
 
