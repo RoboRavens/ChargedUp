@@ -33,8 +33,8 @@ public final class Constants {
 	public static final int kSlotIdx = 0;
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
-  public static final Gains rotationGains = new Gains(0.6, 0.0002, 0.00000, 0.0, 0, 1.0);
-  public static final Gains extensionGains = new Gains(1.1, 0.00018, 0.00000, 0.0, 0, 1.0);
+  public static final Gains rotationGains = new Gains(1.35, 0.0007, 0.00000, 0.0, 0, 1.0);
+  public static final Gains extensionGains = new Gains(1.1, 0.0003, 0.00000, 0.0, 0, 1.0);
   
   // Position to degrees 4096 counts per revolution
   public static final int COUNTS_PER_REVOLUTION = 4096;
@@ -120,9 +120,9 @@ public final class Constants {
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 75;
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 54;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
-  public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 57;
+  public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 54;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 65;
-  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 50;
+  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 49;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 60;
 
   public static final int ARM_FULL_RETRACT_EXTENSION_SETPOINT = 0;
@@ -136,11 +136,11 @@ public final class Constants {
   public static final int ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_DOUBLE_SUBSTATION_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_LOW_EXTENSION_SETPOINT = 0;
   public static final int ARM_SCORE_LOW_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_LOW_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 54270;
+  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 54000;
   public static final int ARM_SCORE_CONE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 36500;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 123000;
+  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 117000;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 108000;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
@@ -161,13 +161,13 @@ public final class Constants {
   public static final ArmSetpoint ARM_REVERSE_TEST_SETPOINT = new ArmSetpoint("Reverse Test", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT * -1);
 
 
-  public static final double ARM_ROTATION_VELOCITY = 600;
-  public static final double ARM_ROTATION_ACCELERATION = 400;
+  public static final double ARM_ROTATION_VELOCITY = 198;
+  public static final double ARM_ROTATION_ACCELERATION = 4000;
   public static final double ARM_EXTENSION_VELOCITY = 4000;
-  public static final double ARM_EXTENSION_ACCELERATION = 4000;
+  public static final double ARM_EXTENSION_ACCELERATION = 10000;
 
-  public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 2000;
-  public static final double ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 2000;
+  public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 500;
+  public static final double ARM_EXTENSION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 500;
   public static final double ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 200;
   public static final double ARM_EXTENSION_TIMEOUT_ENCODER_TICKS_PER_SECOND = 10000;
   public static final double ARM_TIMEOUT_BASE_VALUE = 1;

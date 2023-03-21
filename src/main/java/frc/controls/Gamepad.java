@@ -123,6 +123,7 @@ public class Gamepad {
 			break;
 		case ROTATE_ARM_BACKWARD:
 			buttonNumber = 10;
+			break;
 		// Switch buttons
 		case ARM_EXTENSION_MANUAL_OVERRIDE:
 			buttonNumber = 2;
