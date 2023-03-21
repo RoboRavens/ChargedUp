@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     //sets the relative encoders of the arm rotational motors position based off the position of the absolute encoder
     ARM_SUBSYSTEM.armRotationAbsolutePosition();
-    
+    GAMEPAD.getButton(ButtonCode.X).onTrue(new InstantCommand(() -> POSE_ESTIMATOR_SUBSYSTEM.resetOdometryPoseToLimelight()));
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
