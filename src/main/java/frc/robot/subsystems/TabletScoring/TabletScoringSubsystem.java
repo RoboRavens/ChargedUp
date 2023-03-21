@@ -255,7 +255,7 @@ public class TabletScoringSubsystem extends SubsystemBase {
     _gameTimeEntry = _tab
       .add("Game Time", 0.0)
       .withWidget(BuiltInWidgets.kDial)
-      .withProperties(Map.of("min", 0, "max", 135)) // specify widget properties here
+      .withProperties(Map.of("min", 0, "max", 135))
       .withPosition(9, 0)
       .withSize(2, 2)
       .getEntry();
