@@ -62,6 +62,16 @@ public class TabletScoringSubsystem extends SubsystemBase {
       _autoTabGo.setBoolean(false);
     }
   }
+  
+  public boolean isCubeColumn() {
+    if (this.GetScoringPosition().ColumnEquals(1) ||
+      this.GetScoringPosition().ColumnEquals(4) ||
+      this.GetScoringPosition().ColumnEquals(7)) {
+      return true;
+    } 
+    
+    return false;
+  }
 
   public ScoringPosition GetScoringPosition() {
     return _selectedScoringPosition;

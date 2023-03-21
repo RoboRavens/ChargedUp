@@ -63,6 +63,7 @@ public class ArmSubsystem extends SubsystemBase {
         extensionMotor.configFactoryDefault();
 
         rotationMotorsLeader.setInverted(true);
+        rotationMotorsLeader.configNeutralDeadband(.001);
 
         rotationMotor2.follow(rotationMotorsLeader);
         rotationMotor2.setInverted(InvertType.FollowMaster);
@@ -270,6 +271,9 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Ext Encder", extensionMotor.getSelectedSensorPosition());
 
         SmartDashboard.putNumber("LeaderEncoderPosition", rotationMotorsLeader.getSelectedSensorPosition());
+
+        SmartDashboard.putNumber("RotationEncoderActualPosition", armRotationFinalTargetNativeUnits / Constants.ARM_DEGREES_TO_ENCODER_UNITS);
+        SmartDashboard.putNumber("ExtensionEncoderActualPosition", armExtensionFinalTargetNativeUnits / Constants.ARM_DEGREES_TO_ENCODER_UNITS);
         
         SmartDashboard.putNumber("Absolute position", rotationMotorsLeader.getSensorCollection().getPulseWidthPosition());
         //SmartDashboard.putNumber("motor1position", rotationMotor1.getSelectedSensorPosition());
@@ -433,11 +437,13 @@ public class ArmSubsystem extends SubsystemBase {
         extensionMotor.set(extensionTestPower);
     }
 
+
     public void moveArmToTarget() {
         ArmSetpoint targetArmSetpoint;
         switch (Robot.scoringTargetState) {
             case HIGH:
-              if (Robot.pieceState == PieceState.CONE) {
+                if (Robot.TABLET_SCORING_SUBSYSTEM.isCubeColumn() == false) {
+              // if (Robot.pieceState == PieceState.CONE) {
                 targetArmSetpoint = Constants.ARM_SCORE_CONE_HIGH_SETPOINT;
               }
               else {
@@ -445,7 +451,7 @@ public class ArmSubsystem extends SubsystemBase {
               }
               break;
             case MID:
-              if (Robot.pieceState == PieceState.CONE) {
+                if (Robot.TABLET_SCORING_SUBSYSTEM.isCubeColumn() == false) {// if (Robot.pieceState == PieceState.CONE) {
                 targetArmSetpoint = Constants.ARM_SCORE_CONE_MID_SETPOINT;
               }
               else {

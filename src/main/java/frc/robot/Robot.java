@@ -142,6 +142,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putBoolean("Ext Override", ARM_EXTENSION_MANUAL_OVERRIDE);
     setDriverStationData();
 
     
@@ -391,29 +392,29 @@ public class Robot extends TimedRobot {
 
     // Arm safety limits.
     OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(true)));
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(false)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS).onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableExtensionLimit(false)));
     OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(true)));
-    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
+    OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS).onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.enableRotationLimit(false)));
 
     // Arm manual controls.
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
       .whileTrue(new ArmRotateManuallyCommand(true));
       
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
-      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
       .whileTrue(new ArmRotateManuallyCommand(false));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
-      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+      // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
       .whileTrue(new ArmExtendManuallyCommand(true));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
-      .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+      // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
       .whileTrue(new ArmExtendManuallyCommand(false));
 
     // Old stuff to delete when we're done with the competition code.
@@ -488,6 +489,7 @@ public class Robot extends TimedRobot {
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
 
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
 
 
   }
