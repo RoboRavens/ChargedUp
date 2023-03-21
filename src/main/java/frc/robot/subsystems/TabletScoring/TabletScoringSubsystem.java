@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 
 public class TabletScoringSubsystem extends SubsystemBase {
   private ShuffleboardTab _tab;
@@ -29,6 +30,8 @@ public class TabletScoringSubsystem extends SubsystemBase {
   private GenericEntry _substationDblLeft;
   private GenericEntry _substationDblRight;
   private GenericEntry _substationSingle;
+
+  private GenericEntry _autoTabGo;
 
   public TabletScoringSubsystem() {
     //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -53,6 +56,11 @@ public class TabletScoringSubsystem extends SubsystemBase {
     this.CheckConeCubeButtons();
     this.CheckSubstationButtons();
     _gameTimeEntry.setDouble(Timer.getMatchTime());
+
+    if(_autoTabGo.getBoolean(false)) {
+      Robot.AUTO_CHOOSER.ShowTab();
+      _autoTabGo.setBoolean(false);
+    }
   }
 
   public ScoringPosition GetScoringPosition() {
@@ -151,21 +159,21 @@ public class TabletScoringSubsystem extends SubsystemBase {
     _substationDblLeft = _tab
       .add("DBL LEFT", false)
       .withWidget(BuiltInWidgets.kToggleButton)
-      .withPosition(6, 3)
+      .withPosition(7, 3)
       .withSize(1, 1)
       .getEntry();
 
     _substationDblRight = _tab
       .add("DBL RIGHT", false)
       .withWidget(BuiltInWidgets.kToggleButton)
-      .withPosition(7, 3)
+      .withPosition(8, 3)
       .withSize(1, 1)
       .getEntry();
 
     _substationSingle = _tab
       .add("SINGLE SUB", false)
       .withWidget(BuiltInWidgets.kToggleButton)
-      .withPosition(8, 4)
+      .withPosition(6, 4)
       .withSize(1, 1)
       .getEntry();
   }
@@ -258,6 +266,13 @@ public class TabletScoringSubsystem extends SubsystemBase {
       .withProperties(Map.of("min", 0, "max", 135))
       .withPosition(9, 0)
       .withSize(2, 2)
+      .getEntry();
+
+    _autoTabGo = _tab
+      .add("auto tab", false)
+      .withWidget(BuiltInWidgets.kToggleButton)
+      .withPosition(10, 2)
+      .withSize(1, 1)
       .getEntry();
 
     this.AddRow("L", 2);

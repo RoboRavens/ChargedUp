@@ -29,6 +29,7 @@ import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.groups.EjectPieceCommand;
 import frc.robot.commands.groups.ScorePieceCommand;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.AutoChooserSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -78,8 +79,8 @@ public class Robot extends TimedRobot {
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
+  public static final AutoChooserSubsystem AUTO_CHOOSER = new AutoChooserSubsystem();
   public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
-  public static final AutoChooser AUTO_CHOOSER = new AutoChooser();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
