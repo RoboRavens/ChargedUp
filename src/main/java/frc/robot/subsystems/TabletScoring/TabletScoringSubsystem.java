@@ -21,13 +21,18 @@ public class TabletScoringSubsystem extends SubsystemBase {
   private ScoringPosition _selectedScoringPosition = new ScoringPosition();
   private ScoringShape _selectedScoringShape = ScoringShape.NONE;
 
+  private String _tabName = "Tablet Scoring";
+
   public TabletScoringSubsystem() {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    String text = LocalDateTime.now().format(formatter);
-    String tabName = "Tablet Scoring " + text;
-    _tab = Shuffleboard.getTab(tabName);
+    //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    //String text = LocalDateTime.now().format(formatter);
+    //String tabName = "Tablet Scoring " + text;
+    _tab = Shuffleboard.getTab(_tabName);
     this.InitializeWidgets();
-    Shuffleboard.selectTab(tabName);
+  }
+
+  public void ShowTab() {
+    Shuffleboard.selectTab(_tabName);
   }
 
   @Override
