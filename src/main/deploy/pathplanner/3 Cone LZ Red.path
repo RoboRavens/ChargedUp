@@ -123,5 +123,18 @@
   "maxVelocity": 1.6,
   "maxAcceleration": 0.6,
   "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 1.93,
+      "names": [
+        "Extend To Score High 1"
+      ]
+    },
+    {
+      "position": 3.927272727272509,
+      "names": [
+        "Extend Arm To Mid 1"
+      ]
+    }
+  ]
 }

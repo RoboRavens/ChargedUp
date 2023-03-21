@@ -156,22 +156,10 @@
       ]
     },
     {
-      "position": 0.5,
-      "names": [
-        "Extend To Ground 1"
-      ]
-    },
-    {
       "position": 1.93,
       "names": [
         "Extend To Score Mid"
       ]
     },
-    {
-      "position": 2.727272727272389,
-      "names": [
-        "Extend To Ground 2"
-      ]
-    }
   ]
 }
