@@ -49,7 +49,6 @@ import frc.util.StateManagement.ScoringTargetState;
 import frc.robot.subsystems.DrivetrainSubsystemMock;
 import frc.robot.subsystems.LEDsSubsystem;
 import frc.robot.subsystems.TabletScoring.ScoringShape;
-import frc.robot.subsystems.TabletScoring.TabletScoringResult;
 import frc.robot.subsystems.TabletScoring.TabletScoringSubsystem;
 import frc.util.field.*;
 
@@ -145,10 +144,10 @@ public class Robot extends TimedRobot {
     setDriverStationData();
 
     
-    TabletScoringResult tabletResult = TABLET_SCORING_SUBSYSTEM.GetScoringTarget();
-    SmartDashboard.putString("TABLET PIECE", tabletResult.GetShape().name());
-    SmartDashboard.putNumber("TABLET ROW", tabletResult.GetPosition().GetRow());
-    SmartDashboard.putNumber("TABLET COLUMN", tabletResult.GetPosition().GetColumn());
+    SmartDashboard.putString("TABLET PIECE", TABLET_SCORING_SUBSYSTEM.GetScoringShape().name());
+    SmartDashboard.putString("TABLET SUBSTATION", TABLET_SCORING_SUBSYSTEM.GetSubstation().name());
+    SmartDashboard.putNumber("TABLET ROW", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetRow());
+    SmartDashboard.putNumber("TABLET COLUMN", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetColumn());
     
     // SmartDashboard.putNumber("Power", ARM_SUBSYSTEM.testPower);
 
@@ -481,12 +480,12 @@ public class Robot extends TimedRobot {
     // new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);
     
 
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
     
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringTarget().GetPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
+    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
 
 
 
