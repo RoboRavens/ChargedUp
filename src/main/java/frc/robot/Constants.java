@@ -145,6 +145,8 @@ public final class Constants {
   public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 108000;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
 
+  public static final int ARM_SCORE_CONE_HIGH_OPPOSITE_ROTATION_SETPOINT = (int) Math.round((ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * -1) * ARM_DEGREES_TO_ENCODER_UNITS);
+
   public static final ArmSetpoint ARM_EXTENSION_TEST_SETPOINT = new ArmSetpoint("Arm Extend", ARM_MAX_EXTENSION_ENCODER_UNITS, ARM_FULL_RETRACT_ROTATION_SETPOINT);
 
   
@@ -157,6 +159,8 @@ public final class Constants {
   public static final ArmSetpoint ARM_SCORE_CUBE_MID_SETPOINT = new ArmSetpoint("Score Cube Mid", ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT, ARM_SCORE_CUBE_MID_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_SCORE_CONE_HIGH_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_SCORE_CUBE_HIGH_SETPOINT = new ArmSetpoint("Score Cube High", ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT);
+
+  public static final ArmSetpoint ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_OPPOSITE_ROTATION_SETPOINT);
 
   public static final ArmSetpoint ARM_REVERSE_TEST_SETPOINT = new ArmSetpoint("Reverse Test", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT * -1);
 
@@ -181,6 +185,8 @@ public final class Constants {
   // CLAW
   public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .75;
   public static final double CLAW_OPEN_TIMEOUT_SECONDS = .75;
+  public static final double AUTO_CLAW_CLOSE_TIMEOUT_SECONDS = .25;
+  public static final double AUTO_CLAW_OPEN_TIMEOUT_SECONDS = .75;
   public static final double RUMBLE_TIME = 0.2;
 
   // Limelight/vision-based odometry
