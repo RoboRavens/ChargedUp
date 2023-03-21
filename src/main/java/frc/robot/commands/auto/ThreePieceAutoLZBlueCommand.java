@@ -25,7 +25,6 @@ public class ThreePieceAutoLZBlueCommand {
         PathPlannerTrajectory scorePreloadHighToLoadCone1Trajectory = pathGroup.get(0);
         
         HashMap<String, Command> scorePreloadHighToLoadCone1EventMap = new HashMap<>();
-        scorePreloadHighToLoadCone1EventMap.put("Extend To Ground 1", new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
 
         FollowPathWithEvents scorePreloadHighToLoadCone1WithEvents = new FollowPathWithEvents(
             Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(scorePreloadHighToLoadCone1Trajectory), 
@@ -55,7 +54,6 @@ public class ThreePieceAutoLZBlueCommand {
         PathPlannerTrajectory scoreHighToLoadCone2Trajectory = pathGroup.get(2);
         
         HashMap<String, Command> scoreHighToLoadCone2EventMap = new HashMap<>();
-        scoreHighToLoadCone2EventMap.put("Extend To Ground 2", new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
 
         FollowPathWithEvents scoreHighToLoadCone2WithEvents = new FollowPathWithEvents(
             Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(scoreHighToLoadCone2Trajectory), 
