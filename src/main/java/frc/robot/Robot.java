@@ -66,7 +66,6 @@ public class Robot extends TimedRobot {
   public static final DrivetrainSubsystem DRIVE_TRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   //public static final DrivetrainSubsystemBase DRIVETRAIN_SUBSYSTEM_BASE = new DrivetrainSubsystemMock(); 
   public static final DrivetrainDefaultCommand DRIVE_TRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
-  public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final Gamepad OP_PAD_BUTTONS = new Gamepad(3);
@@ -76,6 +75,7 @@ public class Robot extends TimedRobot {
   // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
   // public static PieceRetrievalState pieceRetrievalState = PieceRetrievalState.CLEAR;
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
+  public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();

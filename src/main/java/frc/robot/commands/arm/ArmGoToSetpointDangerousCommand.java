@@ -34,6 +34,8 @@ public class ArmGoToSetpointDangerousCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    arm.setFinalRotationSetpoint(finalSetpoint.getRotationSetpoint());
+    arm.setFinalExtensionSetpoint(finalSetpoint.getExtensionSetpoint());
     arm.brakeDisable();
     //System.out.println("default position command run");
     //subSetpoints = new ArrayList<ArmSetpoint>();
@@ -186,7 +188,7 @@ public class ArmGoToSetpointDangerousCommand extends CommandBase {
     // the target after this command terminates will be whatever sub-setpoint it was on,
     // which was not necessarily the final target.
     boolean timeout = timer.get() >= timeoutSeconds;
-    return setpointIsFinished(finalSetpoint) || timeout;
+    return setpointIsFinished(finalSetpoint);// || timeout;
 
 
   // SmartDashboard.putBoolean("Overall IF", setpointIsFinished(finalSetpoint));
