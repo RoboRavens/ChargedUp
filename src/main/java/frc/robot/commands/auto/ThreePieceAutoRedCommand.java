@@ -17,9 +17,9 @@ import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
 import frc.util.AutoMode;
 
-public class ThreePieceAutoBlueCommand {
+public class ThreePieceAutoRedCommand {
     public static AutoMode getAutoMode() {
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("3 Cone Blue", new PathConstraints(1.6, 0.6));
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("3 Cone Red", new PathConstraints(1.6, 0.6));
 
         // Path 1
         PathPlannerTrajectory scorePreloadHighToLoadCone1Trajectory = pathGroup.get(0);
@@ -101,6 +101,6 @@ public class ThreePieceAutoBlueCommand {
         .andThen(new AutoClawOpenCommand())
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
 
-        return new AutoMode("Score Two Pieces, Load, and Balance Auto (blue)", scoreTwoLoadAndBalanceCommand);
+        return new AutoMode("Score Two Pieces, Load, and Balance Auto (red)", scoreTwoLoadAndBalanceCommand);
     }
 }
