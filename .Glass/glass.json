@@ -60,6 +60,9 @@
       },
       "open": true
     },
+    "shuffleboard@2": {
+      "open": true
+    },
     "visible": true
   },
   "NetworkTables Log": {
@@ -68,5 +71,8 @@
   "NetworkTables Settings": {
     "mode": "Client (NT4)",
     "serverTeam": "1188"
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
