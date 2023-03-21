@@ -13,10 +13,9 @@ import frc.robot.Robot;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
 import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
-import frc.util.AutoMode;
 
 public class PreloadAndBalanceBlueCommand {
-    public static AutoMode getAutoMode() {
+    public static Command getSendableAutoCommand() {
         PathPlannerTrajectory scoringToBridgeTrajectory = PathPlanner.loadPath("Preload and Balance", new PathConstraints(1, 0.4));
 
         HashMap<String, Command> eventMap = new HashMap<>();
@@ -33,6 +32,6 @@ public class PreloadAndBalanceBlueCommand {
         .andThen(scoringToBridgePath)
         .andThen(new DrivetrainChargeStationBalancingCommand());
 
-        return new AutoMode("Preload and Balance", preloadAndBalanceCommand);
+        return preloadAndBalanceCommand;
     }
 }

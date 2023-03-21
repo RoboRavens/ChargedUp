@@ -9,17 +9,18 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
 import frc.robot.commands.claw.AutoClawCloseCommand;
 import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
-import frc.util.AutoMode;
+import frc.util.CommandSupplier;
 
-public class ScoreTwoLoadAndBalanceBlueCommand {
-    public static AutoMode getAutoMode() {
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("2.5 Cone + Balance Blue", new PathConstraints(1.6, 0.6));
+public class ScoreTwoLoadAndBalanceLZBlueCommand {
+    public static Command getAutoMode() {
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("2.5 Cone + Balance LZ Blue", new PathConstraints(1.6, 0.6));
 
         // Path 1
         PathPlannerTrajectory scorePreloadHighToLoadCone1Trajectory = pathGroup.get(0);
@@ -99,6 +100,6 @@ public class ScoreTwoLoadAndBalanceBlueCommand {
         .andThen(loadCone2ToBridgePathCommand)
         .andThen(new DrivetrainChargeStationBalancingCommand());
 
-        return new AutoMode("Score Two Pieces, Load, and Balance Auto", scoreTwoLoadAndBalanceCommand);
+        return scoreTwoLoadAndBalanceCommand;
     }
 }

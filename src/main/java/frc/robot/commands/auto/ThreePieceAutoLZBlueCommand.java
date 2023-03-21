@@ -9,17 +9,17 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
 import frc.robot.commands.claw.AutoClawCloseCommand;
 import frc.robot.commands.claw.AutoClawOpenCommand;
-import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
-import frc.util.AutoMode;
+import frc.util.CommandSupplier;
 
-public class ThreePieceAutoRedCommand {
-    public static AutoMode getAutoMode() {
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("3 Cone Red", new PathConstraints(1.6, 0.6));
+public class ThreePieceAutoLZBlueCommand {
+    public static Command getAutoMode() {
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("3 Cone LZ Blue", new PathConstraints(1.6, 0.6));
 
         // Path 1
         PathPlannerTrajectory scorePreloadHighToLoadCone1Trajectory = pathGroup.get(0);
@@ -101,6 +101,6 @@ public class ThreePieceAutoRedCommand {
         .andThen(new AutoClawOpenCommand())
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
 
-        return new AutoMode("Score Two Pieces, Load, and Balance Auto (red)", scoreTwoLoadAndBalanceCommand);
+        return scoreTwoLoadAndBalanceCommand;
     }
 }
