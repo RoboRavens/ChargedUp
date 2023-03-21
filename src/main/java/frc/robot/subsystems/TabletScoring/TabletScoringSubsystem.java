@@ -98,7 +98,7 @@ public class TabletScoringSubsystem extends SubsystemBase {
       case 1:
       case 4:
       case 7:
-        return "";
+        return "[]";
       default:
         return "";
     }
