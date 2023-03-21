@@ -20,6 +20,7 @@ import frc.controls.Gamepad;
 import frc.controls.GamepadPOV;
 import frc.robot.commands.LEDs.*;
 import frc.robot.commands.arm.*;
+import frc.robot.commands.auto.ScoreTwoLoadAndBalanceBlueCommand;
 import frc.robot.commands.claw.ClawCloseCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.claw.RumbleCommand;
@@ -194,7 +195,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = ScoreTwoLoadAndBalanceBlueCommand.getAutoMode().getAutoCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
