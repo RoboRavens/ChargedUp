@@ -61,50 +61,9 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotor2.configFactoryDefault(100);
         extensionMotor.configFactoryDefault();
 
-        rotationMotorsLeader.setInverted(true);
-
-        rotationMotor2.follow(rotationMotorsLeader);
-        rotationMotor2.setInverted(InvertType.FollowMaster);
-        rotationMotor1.follow(rotationMotorsLeader);
-        rotationMotor1.setInverted(InvertType.FollowMaster);
-
-        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
-                Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        rotationMotorsLeader.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-        rotationMotorsLeader.config_kF(Constants.kSlotIdx, Constants.rotationGains.kF, Constants.kTimeoutMs);
-        rotationMotorsLeader.config_kP(Constants.kSlotIdx, Constants.rotationGains.kP, Constants.kTimeoutMs);
-        rotationMotorsLeader.config_kI(Constants.kSlotIdx, Constants.rotationGains.kI, Constants.kTimeoutMs);
-        rotationMotorsLeader.config_kD(Constants.kSlotIdx, Constants.rotationGains.kD, Constants.kTimeoutMs);
-        extensionMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
-        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        extensionMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-        extensionMotor.config_kF(Constants.kSlotIdx, Constants.extensionGains.kF, Constants.kTimeoutMs);
-        extensionMotor.config_kP(Constants.kSlotIdx, Constants.extensionGains.kP, Constants.kTimeoutMs);
-        extensionMotor.config_kI(Constants.kSlotIdx, Constants.extensionGains.kI, Constants.kTimeoutMs);
-        extensionMotor.config_kD(Constants.kSlotIdx, Constants.extensionGains.kD, Constants.kTimeoutMs);
-        extensionMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        rotationMotorsLeader.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        rotationMotor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-        extensionMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-
-        // Set limits. The rotation only has soft limits but the extension has a physical retraction limit switch.
-        rotationMotorsLeader.configForwardSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS, 0);
-        rotationMotorsLeader.configReverseSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS * -1, 0);
-        rotationMotorsLeader.configForwardSoftLimitEnable(true, 0);
-        rotationMotorsLeader.configReverseSoftLimitEnable(true, 0);
-
-        extensionMotor.configForwardSoftLimitThreshold(Constants.ARM_MAX_EXTENSION_ENCODER_UNITS, 0);
-        extensionMotor.configReverseSoftLimitThreshold(5000, 0);
-        extensionMotor.configForwardSoftLimitEnable(true, 0);
-        extensionMotor.configReverseSoftLimitEnable(true, 0);
-        extensionMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-    }
 
     //set the arms relative positon encoder based off of absolute encoder
     //when absEncoder = 229 then relEncoder = 0
-    public void armRotationAbsolutePosition() {
-
         /* 
         The absolute position of the encoder somehow changed, so I am commenting this out until further notice.
 
@@ -123,6 +82,48 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
         */
+
+        //needs to be deleted after setting absolute encoder position to 0 and before merged
+        //rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute,
+        //Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        //rotationMotorsLeader.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+
+        rotationMotorsLeader.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
+                Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+
+        rotationMotorsLeader.setInverted(true);
+
+        rotationMotor2.follow(rotationMotorsLeader);
+        rotationMotor2.setInverted(InvertType.FollowMaster);
+        rotationMotor1.follow(rotationMotorsLeader);
+        rotationMotor1.setInverted(InvertType.FollowMaster);
+
+        rotationMotorsLeader.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
+        rotationMotorsLeader.config_kF(Constants.kSlotIdx, Constants.rotationGains.kF, Constants.kTimeoutMs);
+        rotationMotorsLeader.config_kP(Constants.kSlotIdx, Constants.rotationGains.kP, Constants.kTimeoutMs);
+        rotationMotorsLeader.config_kI(Constants.kSlotIdx, Constants.rotationGains.kI, Constants.kTimeoutMs);
+        rotationMotorsLeader.config_kD(Constants.kSlotIdx, Constants.rotationGains.kD, Constants.kTimeoutMs);
+        extensionMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
+        Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        extensionMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
+        extensionMotor.config_kF(Constants.kSlotIdx, Constants.extensionGains.kF, Constants.kTimeoutMs);
+        extensionMotor.config_kP(Constants.kSlotIdx, Constants.extensionGains.kP, Constants.kTimeoutMs);
+        extensionMotor.config_kI(Constants.kSlotIdx, Constants.extensionGains.kI, Constants.kTimeoutMs);
+        extensionMotor.config_kD(Constants.kSlotIdx, Constants.extensionGains.kD, Constants.kTimeoutMs);
+        extensionMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+        extensionMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+
+        // Set limits. The rotation only has soft limits but the extension has a physical retraction limit switch.
+        rotationMotorsLeader.configForwardSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS, 0);
+        rotationMotorsLeader.configReverseSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS * -1, 0);
+        rotationMotorsLeader.configForwardSoftLimitEnable(true, 0);
+        rotationMotorsLeader.configReverseSoftLimitEnable(true, 0);
+
+        extensionMotor.configForwardSoftLimitThreshold(Constants.ARM_MAX_EXTENSION_ENCODER_UNITS, 0);
+        extensionMotor.configReverseSoftLimitThreshold(5000, 0);
+        extensionMotor.configForwardSoftLimitEnable(true, 0);
+        extensionMotor.configReverseSoftLimitEnable(true, 0);
+        extensionMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
     }
   
     public void enableRotationLimit(boolean ignoreRotationLimit) {

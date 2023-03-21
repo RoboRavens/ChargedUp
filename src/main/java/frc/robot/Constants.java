@@ -19,7 +19,7 @@ import frc.util.arm.ArmSetpoint;
 public final class Constants {
 
   //Rotation Motor Absolute Encoder Position
-  public static final double ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO = 222;
+  public static final double ARM_ROTATION_ABSOLUTE_ENCODER_POSITION_AT_ZERO = 0;
 
   //LEDs
   public static final int TOTAL_LEDS_STRIP_LENGTH = 117;

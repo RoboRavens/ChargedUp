@@ -93,6 +93,8 @@ public class Robot extends TimedRobot {
   public LEDsBlinkColorsCommand ledsBlinkColorsCommand = new LEDsBlinkColorsCommand(LED_SUBSYSTEM);
   public LEDsSolidColorCommand ledsSignalConeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.ORANGE);
   public LEDsSolidColorCommand ledsSignalCubeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.PURPLE);
+  //public LEDsBlinkThenStopCommand ledsBlinkThenStopCommand = new LEDsBlinkThenStopCommand(LED_SUBSYSTEM, Colors.ORANGE)
+  public LEDsSectionsCommand ledsSectionsCommand = new LEDsSectionsCommand(LED_SUBSYSTEM);
 
   // Sets the default robot mechanism states (may need to be changed)
   public static OverallState overallState = OverallState.EMPTY_TRANSIT;
@@ -117,9 +119,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    //sets the relative encoders of the arm rotational motors position based off the position of the absolute encoder
-    ARM_SUBSYSTEM.armRotationAbsolutePosition();
-    
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -137,6 +136,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    LED_SUBSYSTEM.ledsBlinkThenStop(255,0,0, 0, 0, 0);
+    //LED_SUBSYSTEM.ledsBlinkColorsFast(255, 0, 0, 0, 255, 0);
+    //LED_SUBSYSTEM.ledsSolidColor(0, 255, 0);
+    //LED_SUBSYSTEM.ledsBlinkColors(255, 0, 0, 0, 255, 0);
+    //LED_SUBSYSTEM.rainbowLeds();
+    //LED_SUBSYTEM.armAngleLeds();
+
     setDriverStationData();
 
     

@@ -6,11 +6,19 @@ package frc.robot.commands.LEDs;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LEDsSubsystem;
+import frc.util.Color;
 
-public class LEDsRainbowCommand extends CommandBase {
+public class LEDsBlinkThenStopCommand extends CommandBase {
   LEDsSubsystem leds;
-  /** Creates a new RainbowLEDs. */
-  public LEDsRainbowCommand(LEDsSubsystem subsystem) {
+  int red = 0;
+  int green = 0;
+  int blue = 0;
+
+  /** Creates a new DefualtLEDs. */
+  public LEDsBlinkThenStopCommand(LEDsSubsystem subsystem, Color color) {
+    this.red = color.getRed();
+    this.green = color.getGreen();
+    this.blue = color.getBlue();
     leds = subsystem;
     addRequirements(leds);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -19,13 +27,12 @@ public class LEDsRainbowCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    leds.rainbowLeds();
+    leds.ledsBlinkThenStop(red, green, blue, 0, 0, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
