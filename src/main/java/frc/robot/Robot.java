@@ -66,7 +66,6 @@ public class Robot extends TimedRobot {
   public static final DrivetrainSubsystem DRIVE_TRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   //public static final DrivetrainSubsystemBase DRIVETRAIN_SUBSYSTEM_BASE = new DrivetrainSubsystemMock(); 
   public static final DrivetrainDefaultCommand DRIVE_TRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
-  public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final Joystick JOYSTICK = new Joystick(0);
   public static final Gamepad GAMEPAD = new Gamepad(JOYSTICK);
   public static final Gamepad OP_PAD_BUTTONS = new Gamepad(3);
@@ -76,10 +75,12 @@ public class Robot extends TimedRobot {
   // public static RowSelectionState rowSelectionState = RowSelectionState.CLEAR;
   // public static PieceRetrievalState pieceRetrievalState = PieceRetrievalState.CLEAR;
   public static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem();
+  public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
   public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  public static final AutoChooser AUTO_CHOOSER = new AutoChooser();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
@@ -129,6 +130,7 @@ public class Robot extends TimedRobot {
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(DRIVE_TRAIN_DEFAULT_COMMAND);
     configureButtonBindings();
     configureTriggers();
+    AUTO_CHOOSER.ShowTab();
   }
 
   /**
@@ -194,7 +196,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = AUTO_CHOOSER.GetAuto();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -209,6 +211,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     setDriverStationData();
+    Robot.TABLET_SCORING_SUBSYSTEM.ShowTab();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -544,6 +547,7 @@ public class Robot extends TimedRobot {
   private void setDriverStationData() {
     if (allianceColor == Alliance.Invalid) {
       allianceColor = DriverStation.getAlliance();
+      AUTO_CHOOSER.BuildAutoChooser(allianceColor);
     }
   }
 
