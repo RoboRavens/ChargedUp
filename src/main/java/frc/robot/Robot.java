@@ -101,7 +101,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     DRIVE_TRAIN_SUBSYSTEM.setDefaultCommand(drivetrainDefaultCommand);
-
+    GAMEPAD.getButton(ButtonCode.X).onTrue(new InstantCommand(() -> POSE_ESTIMATOR_SUBSYSTEM.resetOdometryPoseToLimelight()));
 
   }
 

@@ -93,6 +93,10 @@ public class LimelightSubsystem extends SubsystemBase {
     return null;
   }
 
+  public double hasVisionTarget() {
+    return tv.getDouble(0);
+  }
+
 
   public double getCl() {
     return cl.getDouble(0.0);
@@ -114,9 +118,7 @@ public class LimelightSubsystem extends SubsystemBase {
     return ty.getDouble(0.0);
   }
 
-  public double getTv() {
-    return tv.getDouble(0);
-  }
+ 
 
  
 

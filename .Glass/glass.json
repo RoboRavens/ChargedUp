@@ -10,6 +10,11 @@
         "open": true
       }
     },
+    "transitory": {
+      "Shuffleboard": {
+        "open": true
+      }
+    },
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
