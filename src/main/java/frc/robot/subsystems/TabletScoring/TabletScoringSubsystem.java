@@ -1,9 +1,9 @@
 package frc.robot.subsystems.TabletScoring;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -16,12 +16,19 @@ public class TabletScoringSubsystem extends SubsystemBase {
   private GenericEntry _coneMode;
   private GenericEntry _cubeMode;
   private GenericEntry _selectedScoringShapeEntry;
+  private GenericEntry _gameTimeEntry;
   private GenericEntry[][] _entries = new GenericEntry[3][9];
 
   private ScoringPosition _selectedScoringPosition = new ScoringPosition();
   private ScoringShape _selectedScoringShape = ScoringShape.NONE;
 
   private String _tabName = "Tablet Scoring";
+
+  private Substation _selectedSubstation = Substation.NONE;
+  private GenericEntry _selectedSubstationEntry;
+  private GenericEntry _substationDblLeft;
+  private GenericEntry _substationDblRight;
+  private GenericEntry _substationSingle;
 
   public TabletScoringSubsystem() {
     //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -44,10 +51,20 @@ public class TabletScoringSubsystem extends SubsystemBase {
     }
 
     this.CheckConeCubeButtons();
+    this.CheckSubstationButtons();
+    _gameTimeEntry.setDouble(Timer.getMatchTime());
   }
 
-  public TabletScoringResult GetScoringTarget() {
-    return new TabletScoringResult(_selectedScoringPosition, _selectedScoringShape);
+  public ScoringPosition GetScoringPosition() {
+    return _selectedScoringPosition;
+  }
+
+  public ScoringShape GetScoringShape() {
+    return _selectedScoringShape;
+  }
+
+  public Substation GetSubstation() {
+    return _selectedSubstation;
   }
 
   private void CheckConeCubeButtons() {
@@ -130,41 +147,122 @@ public class TabletScoringSubsystem extends SubsystemBase {
     }
   }
 
+  private void SetupSubstations() {
+    _substationDblLeft = _tab
+      .add("DBL LEFT", false)
+      .withWidget(BuiltInWidgets.kToggleButton)
+      .withPosition(6, 3)
+      .withSize(1, 1)
+      .getEntry();
+
+    _substationDblRight = _tab
+      .add("DBL RIGHT", false)
+      .withWidget(BuiltInWidgets.kToggleButton)
+      .withPosition(7, 3)
+      .withSize(1, 1)
+      .getEntry();
+
+    _substationSingle = _tab
+      .add("SINGLE SUB", false)
+      .withWidget(BuiltInWidgets.kToggleButton)
+      .withPosition(8, 4)
+      .withSize(1, 1)
+      .getEntry();
+  }
+
+  private void CheckSubstationButtons() {
+    boolean left = _substationDblLeft.getBoolean(false);
+    boolean right = _substationDblRight.getBoolean(false);
+    boolean single = _substationSingle.getBoolean(false);
+    var ss = _selectedSubstation;
+    if (left && ss != Substation.DOUBLE_LEFT) {
+      this.SetSelectedSubstation(Substation.DOUBLE_LEFT);
+    } else if (right && ss != Substation.DOUBLE_RIGHT) {
+      this.SetSelectedSubstation(Substation.DOUBLE_RIGHT);
+    } else if (single && ss != Substation.SINGLE) {
+      this.SetSelectedSubstation(Substation.SINGLE);
+    } else if (left == false && right == false && single == false && ss != Substation.NONE) {
+      this.SetSelectedSubstation(Substation.NONE);
+    }
+  }
+
+  private void SetSelectedSubstation(Substation s){
+    _selectedSubstation = s;
+    _selectedSubstationEntry.setString(s.name());
+    switch(s) {
+      case NONE:
+        _substationDblLeft.setBoolean(false);
+        _substationDblRight.setBoolean(false);
+        _substationSingle.setBoolean(false);
+        break;
+      case DOUBLE_LEFT:
+        _substationDblLeft.setBoolean(true);
+        _substationDblRight.setBoolean(false);
+        _substationSingle.setBoolean(false);
+        break;
+      case DOUBLE_RIGHT:
+        _substationDblLeft.setBoolean(false);
+        _substationDblRight.setBoolean(true);
+        _substationSingle.setBoolean(false);
+        break;
+      case SINGLE:
+        _substationDblLeft.setBoolean(false);
+        _substationDblRight.setBoolean(false);
+        _substationSingle.setBoolean(true);
+        break;
+    }
+  }
+
   private void InitializeWidgets() {
     _selectedRowEntry = _tab
       .add("selected row", "none")
       .withWidget(BuiltInWidgets.kTextView)
-      .withPosition(3, 3)
+      .withPosition(0, 3)
       .getEntry();
 
     _selectedColumnEntry = _tab
       .add("selected column", "none")
       .withWidget(BuiltInWidgets.kTextView)
-      .withPosition(3, 4)
+      .withPosition(0, 4)
       .getEntry();
 
     _coneMode = _tab
       .add("CONE", false)
       .withWidget(BuiltInWidgets.kToggleButton)
-      .withPosition(4, 3)
+      .withPosition(2, 3)
       .withSize(2, 2)
       .getEntry();
 
     _cubeMode = _tab
       .add("CUBE", false)
       .withWidget(BuiltInWidgets.kToggleButton)
-      .withPosition(6, 3)
+      .withPosition(4, 3)
       .withSize(2, 2)
       .getEntry();
 
     _selectedScoringShapeEntry = _tab
       .add("selected shape", "NONE")
       .withWidget(BuiltInWidgets.kTextView)
-      .withPosition(8, 3)
+      .withPosition(1, 3)
+      .getEntry();
+
+    _selectedSubstationEntry = _tab
+      .add("selected substation", "NONE")
+      .withWidget(BuiltInWidgets.kTextView)
+      .withPosition(1, 4)
+      .getEntry();
+
+    _gameTimeEntry = _tab
+      .add("Game Time", 0.0)
+      .withWidget(BuiltInWidgets.kDial)
+      .withProperties(Map.of("min", 0, "max", 135))
+      .withPosition(9, 0)
+      .withSize(2, 2)
       .getEntry();
 
     this.AddRow("L", 2);
     this.AddRow("M", 1);
     this.AddRow("H", 0);
+    this.SetupSubstations();
   }
 }
