@@ -28,7 +28,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         Constants.STARTING_VISION_STANDARD_DEVIATION, Constants.STARTING_VISION_STANDARD_DEVIATION);
 
     public PoseEstimatorSubsystem() {
-        SmartDashboard.putData(_field);
+        SmartDashboard.putData("PoseEstimator Field", _field);
     }
 
     @Override

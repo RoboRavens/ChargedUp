@@ -40,6 +40,9 @@ import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.awt.geom.Point2D;
 
 import static frc.robot.RobotMap.*;
@@ -121,6 +124,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   // private final DriveCharacteristics _driveCharacteristics;
 
   private Pose2d _markedPosition = null;
+  private Field2d _field2d = new Field2d();
 
   public DrivetrainSubsystem() {
     MkModuleConfiguration moduleConfig = new MkModuleConfiguration();
@@ -193,6 +197,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       }, new Pose2d(0, 0, new Rotation2d()));
     // _diagnostics = new DrivetrainDiagnosticsShuffleboard();
     // _driveCharacteristics = new DriveCharacteristics();
+
+    SmartDashboard.putData("HardwareOdometry Field", _field2d);
   }
 
   /**
@@ -203,6 +209,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   public void zeroGyroscope() {
     m_navx.zeroYaw();
     // _odometryFromKinematics.resetPosition(new Pose2d(0, 0, new Rotation2d()), this.getGyroscopeRotation());
+    var hardwarePose = _odometryFromHardware.getPoseMeters();
     _odometryFromHardware.resetPosition(
       this.getGyroscopeRotation(), 
       new SwerveModulePosition[] {
@@ -210,7 +217,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
         m_frontRightModule.getPosition(),
         m_backLeftModule.getPosition(),
         m_backRightModule.getPosition()
-      }, new Pose2d(0, 0, new Rotation2d()));
+      }, new Pose2d(hardwarePose.getTranslation(), new Rotation2d()));
     // _driveCharacteristics.reset();
 
     Robot.POSE_ESTIMATOR_SUBSYSTEM.zeroGyroscope();
@@ -311,6 +318,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     // _driveCharacteristics.update(_odometryFromHardware.getPoseMeters(), 360 - m_navx.getAngle());
 
     setRobotZoneFromOdometry();
+    _field2d.setRobotPose(_odometryFromHardware.getPoseMeters());
   }
 
   public boolean drivetrainIsAtTargetCoordinates() {
