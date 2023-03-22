@@ -40,7 +40,6 @@ public class ScoreTwoLoadAndBalanceLZRedCommand {
         PathPlannerTrajectory loadCone1ToScoreMidTrajectory = pathGroup.get(1);
 
         HashMap<String, Command> loadCone1ToScoreMidEventMap = new HashMap<>();
-        loadCone1ToScoreMidEventMap.put("Extend To Score Mid", new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_SETPOINT));
 
         FollowPathWithEvents loadCone1ToScoreMidWithEvents = new FollowPathWithEvents(
             Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(loadCone1ToScoreMidTrajectory), 
