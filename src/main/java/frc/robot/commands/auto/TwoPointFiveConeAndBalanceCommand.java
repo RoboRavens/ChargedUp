@@ -9,6 +9,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
@@ -16,9 +17,10 @@ import frc.robot.commands.claw.AutoClawCloseCommand;
 import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
 
-public class ScoreTwoLoadAndBalanceLZRedCommand {
-    public static Command getAutoMode() {
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("2.5 Cone + Balance LZ Red", new PathConstraints(1.6, 0.6));
+public class TwoPointFiveConeAndBalanceCommand extends CommandBase {
+    public static Command getAutoMode(AutoEnums.AutoAlliance autoAlliance, AutoEnums.AutoSide autoSide) {
+        String pathFile = "2.5 Cone + Balance " + autoSide.toString() + " " + autoAlliance.toString();
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(pathFile, new PathConstraints(1.6, 0.6));
 
         // Path 1
         PathPlannerTrajectory scorePreloadHighToLoadCone1Trajectory = pathGroup.get(0);
@@ -77,7 +79,7 @@ public class ScoreTwoLoadAndBalanceLZRedCommand {
 
 
         Command scoreTwoLoadAndBalanceCommand = 
-        new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT)
+        new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT)
         .andThen(new AutoClawOpenCommand())
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
         .andThen(scorePreloadHighToLoadCone1PathCommand)

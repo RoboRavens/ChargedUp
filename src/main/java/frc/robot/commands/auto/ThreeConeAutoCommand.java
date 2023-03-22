@@ -9,15 +9,17 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
 import frc.robot.commands.claw.AutoClawCloseCommand;
 import frc.robot.commands.claw.AutoClawOpenCommand;
 
-public class ThreePieceAutoLZRedCommand {
-    public static Command getAutoMode() {
-        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("3 Cone LZ Red", new PathConstraints(1.6, 0.6));
+public class ThreeConeAutoCommand extends CommandBase {
+    public static Command getAutoMode(AutoEnums.AutoAlliance autoAlliance, AutoEnums.AutoSide autoSide) {
+        String pathFile = "3 Cone " + autoSide.toString() + " " + autoAlliance.toString();
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(pathFile, new PathConstraints(1.6, 0.6));
 
         // Path 1
         PathPlannerTrajectory scorePreloadHighToLoadCone1Trajectory = pathGroup.get(0);

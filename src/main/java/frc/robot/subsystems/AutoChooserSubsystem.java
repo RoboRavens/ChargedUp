@@ -54,13 +54,34 @@ public class AutoChooserSubsystem extends SubsystemBase {
   public void BuildAutoChooser(Alliance alliance) {
     switch(alliance){
       case Blue:
-      this.addDefaultOption(new AutoMode("B1: Preload + mobility + balance"));
-      this.addOption(new AutoMode("B2: LZ-side 2 cone + balance"));
-      this.addOption(new AutoMode("B3: LZ-side 2.5 cone balance", () -> (CommandBase) ScoreTwoLoadAndBalanceLZBlueCommand.getAutoMode()));
-      this.addOption(new AutoMode("B4: LZ-side 3 cone", () -> (CommandBase) ThreePieceAutoLZBlueCommand.getAutoMode()));
-      this.addOption(new AutoMode("B5: Cable-side 2 cone balance"));
-      this.addOption(new AutoMode("B6: Cable-side 2.5 balance"));
-      this.addOption(new AutoMode("B7: Cable-side 3 cone"));
+      this.addDefaultOption(
+        new AutoMode("B1: Preload + mobility + balance",
+        () -> (CommandBase) PreloadMobilityAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
+      );
+      this.addOption(
+        new AutoMode("B2: LZ-side 2 cone + balance",
+        () -> (CommandBase) TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("B3: LZ-side 2.5 cone balance", 
+        () -> (CommandBase) TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("B4: LZ-side 3 cone", 
+        () -> (CommandBase) ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("B5: Cable-side 2 cone balance",
+        () -> (CommandBase) TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
+      );
+      this.addOption(
+        new AutoMode("B6: Cable-side 2.5 balance",
+        () -> (CommandBase) TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
+      );
+      this.addOption(
+        new AutoMode("B7: Cable-side 3 cone",
+        () -> (CommandBase) ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
+      );
 
       _tab
         .add("blue", true)
@@ -75,13 +96,34 @@ public class AutoChooserSubsystem extends SubsystemBase {
         .withSize(4, 1);
       break;
       case Red:
-      this.addDefaultOption(new AutoMode("R1: Preload + mobility + balance"));
-      this.addOption(new AutoMode("R2: LZ-side 2 cone + balance"));
-      this.addOption(new AutoMode("R3: LZ-side 2.5 cone balance", () -> (CommandBase) ScoreTwoLoadAndBalanceLZRedCommand.getAutoMode()));
-      this.addOption(new AutoMode("R4: LZ-side 3 cone", () -> (CommandBase) ThreePieceAutoLZRedCommand.getAutoMode()));
-      this.addOption(new AutoMode("R5: Cable-side 2 cone balance"));
-      this.addOption(new AutoMode("R6: Cable-side 2.5 balance"));
-      this.addOption(new AutoMode("R7: Cable-side 3 cone"));
+      this.addDefaultOption(
+        new AutoMode("R1: Preload + mobility + balance",
+        () -> (CommandBase) PreloadMobilityAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
+      );
+      this.addOption(
+        new AutoMode("R2: LZ-side 2 cone + balance",
+        () -> (CommandBase) TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("R3: LZ-side 2.5 cone balance", 
+        () -> (CommandBase) TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("R4: LZ-side 3 cone", 
+        () -> (CommandBase) ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("R5: Cable-side 2 cone balance",
+        () -> (CommandBase) TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
+      );
+      this.addOption(
+        new AutoMode("R6: Cable-side 2.5 balance",
+        () -> (CommandBase) TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
+      );
+      this.addOption(
+        new AutoMode("R7: Cable-side 3 cone",
+        () -> (CommandBase) ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
+      );
 
       _tab
         .add("red", true)
