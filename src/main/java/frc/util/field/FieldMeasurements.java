@@ -1,5 +1,7 @@
 package frc.util.field;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 public class FieldMeasurements {
     // Field measurements in inches.
     // There is a .03 inch discrepancy in the field measurements, likely due to a rounding error on FIRST's part.
@@ -196,6 +198,30 @@ public class FieldMeasurements {
     public static final double APRILTAG_7_HEIGHT_METERS = APRILTAG_7_HEIGHT_INCHES * INCHES_TO_METERS_CONVERSION;
     public static final double APRILTAG_8_WIDTH_METERS = APRILTAG_8_WIDTH_INCHES * INCHES_TO_METERS_CONVERSION;
     public static final double APRILTAG_8_HEIGHT_METERS = APRILTAG_8_HEIGHT_INCHES * INCHES_TO_METERS_CONVERSION;
+
+    public static final Translation2d[] RED_NODE_COORD = {
+        new Translation2d(), // 1
+        new Translation2d(), // 2
+        new Translation2d(), // 3
+        new Translation2d(), // 4
+        new Translation2d(), // 5
+        new Translation2d(), // 6
+        new Translation2d(14.650122, 3.977038), // 7
+        new Translation2d(), // 8
+        new Translation2d(14.830646, 5.061831), // 9
+    };
+
+    public static final Translation2d[] BLUE_NODE_COORD = {
+        new Translation2d(), // 1
+        new Translation2d(), // 2
+        new Translation2d(), // 3
+        new Translation2d(), // 4
+        new Translation2d(), // 5
+        new Translation2d(), // 6
+        new Translation2d(), // 7
+        new Translation2d(), // 8
+        new Translation2d(), // 9
+    };
 
     public static double getInvertedWidthInches(double blueAllianceWidth) {
         return HALF_FIELD_WIDTH_TIMES_2_INCHES - blueAllianceWidth;
