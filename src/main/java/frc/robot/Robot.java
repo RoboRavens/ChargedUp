@@ -443,13 +443,15 @@ public class Robot extends TimedRobot {
     //   .onTrue(new ArmRotateToRowPositionCommand(Robot.scoringTargetState)
     //   .andThen(new ArmExtendToRowPositionCommand(Robot.scoringTargetState)).withName("Extend and rotate arm to scoring target"));
     
-    // Retract the arm and rotate it upwards if the robot
+    // Retract the arm and rotate it upwards if the robot either
     // - has just loaded
     // - has just scored
     // - is not in our alliance community or loading zone
-    new Trigger(() -> (Robot.overallState == OverallState.LOADED_TRANSIT && Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY) 
+    // and the robot is not currently in autonomous
+    new Trigger(() -> ((Robot.overallState == OverallState.LOADED_TRANSIT && Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY) 
                         || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
                         || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
+                        && DriverStation.isAutonomous() == false)
       .onTrue(new ArmGoToSetpointCommand(Constants.ARM_FULL_RETRACT_SETPOINT).withName("Retract arm"));
 
     // new Trigger(() -> Robot.hasCone()).whileTrue(RUMBLE_COMMAND);
