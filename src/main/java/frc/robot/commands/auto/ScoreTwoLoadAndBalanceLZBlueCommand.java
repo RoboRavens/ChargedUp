@@ -9,14 +9,12 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
 import frc.robot.commands.claw.AutoClawCloseCommand;
 import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
-import frc.util.CommandSupplier;
 
 public class ScoreTwoLoadAndBalanceLZBlueCommand {
     public static Command getAutoMode() {
