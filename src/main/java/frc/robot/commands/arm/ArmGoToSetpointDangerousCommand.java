@@ -22,7 +22,7 @@ public class ArmGoToSetpointDangerousCommand extends CommandBase {
   private ArmSetpoint finalSetpoint;
   private int setpointIterator = 0;
   private Timer timer = new Timer();
-  private double timeoutSeconds = 2;
+  private double timeoutSeconds = 0;
   private ArmSetpoint currentSubSetpoint;
 
   public ArmGoToSetpointDangerousCommand(ArmSetpoint setpoint) {
@@ -188,7 +188,7 @@ public class ArmGoToSetpointDangerousCommand extends CommandBase {
     // the target after this command terminates will be whatever sub-setpoint it was on,
     // which was not necessarily the final target.
     boolean timeout = timer.get() >= timeoutSeconds;
-    return setpointIsFinished(finalSetpoint) || timeout;// || timeout;
+    return setpointIsFinished(finalSetpoint);// || timeout;
 
 
   // SmartDashboard.putBoolean("Overall IF", setpointIsFinished(finalSetpoint));
