@@ -184,6 +184,10 @@ public class FieldZones {
             }
         }
         
+        if (robotFieldSubzone == null) {
+            robotFieldSubzone = FieldZones.noneSubzone;
+        }
+
         return robotFieldSubzone;
     }
 

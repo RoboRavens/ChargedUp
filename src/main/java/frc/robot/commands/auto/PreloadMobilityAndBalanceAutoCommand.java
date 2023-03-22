@@ -27,16 +27,16 @@ public class PreloadMobilityAndBalanceAutoCommand extends CommandBase {
             path.getMarkers(),
             pathEventMap);
 
-        Command pathCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path)
-        .andThen(pathWithEvents);
+        Command pathCommand = pathWithEvents;
 
 
         Command scoreTwoAndBalanceCommand = 
-        new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT)
+        Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path)
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT))
         .andThen(new AutoClawOpenCommand())
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
         .andThen(pathCommand)
-        .andThen(new DrivetrainChargeStationBalancingCommand());
+        .andThen(new DrivetrainChargeStationBalancingCommand()); 
 
         return scoreTwoAndBalanceCommand;
     }

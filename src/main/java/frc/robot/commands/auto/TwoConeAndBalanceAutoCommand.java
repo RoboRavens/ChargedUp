@@ -32,9 +32,6 @@ public class TwoConeAndBalanceAutoCommand extends CommandBase {
             scorePreloadHighToLoadCone1Trajectory.getMarkers(),
             scorePreloadHighToLoadCone1EventMap);
 
-        Command scorePreloadHighToLoadCone1PathCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scorePreloadHighToLoadCone1Trajectory)
-        .andThen(scorePreloadHighToLoadCone1WithEvents);
-
 
         // Path 2
         PathPlannerTrajectory loadCone1ToScoreHighTrajectory = pathGroup.get(1);
@@ -45,9 +42,6 @@ public class TwoConeAndBalanceAutoCommand extends CommandBase {
             Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(loadCone1ToScoreHighTrajectory), 
             loadCone1ToScoreHighTrajectory.getMarkers(),
             loadCone1ToScoreHighEventMap);
-
-        Command loadCone1ToScoreHighPathCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(loadCone1ToScoreHighTrajectory)
-        .andThen(loadCone1ToScoreHighWithEvents);
 
 
         // Path 3
@@ -60,23 +54,21 @@ public class TwoConeAndBalanceAutoCommand extends CommandBase {
             scoreHighToBridgeTrajectory.getMarkers(),
             scoreHighToBridgeEventMap);
 
-        Command scoreHighToBridgePathCommand = Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scoreHighToBridgeTrajectory)
-        .andThen(scoreHighToBridgeWithEvents);
-
 
         Command scoreTwoAndBalanceCommand = 
-        new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT)
+        Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scorePreloadHighToLoadCone1Trajectory)
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT))
         .andThen(new AutoClawOpenCommand())
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
-        .andThen(scorePreloadHighToLoadCone1PathCommand)
+        .andThen(scorePreloadHighToLoadCone1WithEvents)
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT)) 
         .andThen(new AutoClawCloseCommand())
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
-        .andThen(loadCone1ToScoreHighPathCommand)
+        .andThen(loadCone1ToScoreHighWithEvents)
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT))
         .andThen(new AutoClawOpenCommand())
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
-        .andThen(scoreHighToBridgePathCommand)
+        .andThen(scoreHighToBridgeWithEvents)
         .andThen(new DrivetrainChargeStationBalancingCommand());
 
         return scoreTwoAndBalanceCommand;
