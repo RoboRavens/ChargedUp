@@ -80,12 +80,12 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   // This replaces the Limelight's rotation value with the gyroscope's value.
-  public Pose2d getGyroBasedRobotPose() {
+  public Pose2d getLimelightPoseWithOdometryRotation() {
     double[] botpose = getLimelightBotpose();
 
     if (botpose.length >= 6) {
       Translation2d translation = new Translation2d(botpose[0], botpose[1]);
-      Rotation2d rotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
+      Rotation2d rotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation();
       Pose2d position = new Pose2d(translation, rotation);
       return position;
     }

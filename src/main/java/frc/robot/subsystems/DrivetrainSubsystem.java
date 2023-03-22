@@ -442,9 +442,14 @@ m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
     pidCalc.setDouble(pid_test.calculate(inputAngle.getDouble(0), setPoint.getDouble(0)));
     // pidCalc.setDouble(inputAngle.getDouble(0));
     setRobotZoneFromOdometry();
-    Field2d driveTrainField = new Field2d();
+    // Field2d driveTrainField = new Field2d();
     //SmartDashboard.putData("drivetrain field2d", driveTrainField);
-    driveTrainField.setRobotPose(_odometryFromHardware.getPoseMeters());
+    // driveTrainField.setRobotPose(_odometryFromHardware.getPoseMeters());
+
+    SmartDashboard.putNumber("drivetrain X", _odometryFromHardware.getPoseMeters().getX());
+    SmartDashboard.putNumber("drivetrain Y", _odometryFromHardware.getPoseMeters().getY());
+    SmartDashboard.putNumber("drivetrain Angle", _odometryFromHardware.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("gyro Angle", this.getGyroscopeRotation().getDegrees());
   }
 
   public boolean drivetrainIsAtTargetCoordinates() {

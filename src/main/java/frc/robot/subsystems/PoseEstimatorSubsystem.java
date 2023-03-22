@@ -36,8 +36,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         updateVisionMeasurementTimestamp();
         double ta = Robot.LIMELIGHT_SUBSYSTEM_ONE.getTa();
         double ta2 = Robot.LIMELIGHT_SUBSYSTEM_TWO.getTa();
-        Pose2d firstLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getGyroBasedRobotPose();
-        Pose2d secondLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_TWO.getGyroBasedRobotPose();
+        Pose2d firstLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
+        Pose2d secondLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation();
         Pose2d robotPose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
         Robot.LIMELIGHT_SUBSYSTEM_ONE.getPureLimelightRobotPose();
         Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
@@ -64,12 +64,18 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         if (hasVisionTarget && firstLimelightIsWithinXDistance && firstLimelightIsWithinYDistance
                 && targetAreaIsSufficient && fiducialIdIsCorrect) {
+            SmartDashboard.putBoolean("limelight has target", true);
             m_poseEstimator.addVisionMeasurement(firstLimelightPose, _timeStamp, visionStdDevs);
+        } else {
+            SmartDashboard.putBoolean("limelight has target", false);
         }
 
         if (hasVisionTarget2 && secondLimelightIsWithinXDistance && secondLimelightIsWithinYDistance
                 && targetAreaIsSufficient2 && fiducialIdIsCorrect2) {
+            SmartDashboard.putBoolean("limelight2 has target", true);
             m_poseEstimator.addVisionMeasurement(secondLimelightPose, _timeStamp2, visionStdDevs);
+        } else {
+            SmartDashboard.putBoolean("limelight2 has target", false);
         }
 
         SmartDashboard.putData(field);
@@ -96,9 +102,14 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             visionStdDevs);
 
     public void resetOdometryPoseToLimelight() {
+        //var rotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation();
+        //var translation = .getTranslation();
+        //var newPose = new Pose2d(translation, rotation);
+        var gyroBasedPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
+        System.out.println("resetOdometryPoseToLimelight: " + gyroBasedPose.getX() + " - " + gyroBasedPose.getY() + " - " + gyroBasedPose.getRotation().getDegrees());
         m_poseEstimator.resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
                 Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(),
-                Robot.LIMELIGHT_SUBSYSTEM_ONE.getGyroBasedRobotPose());
+                gyroBasedPose);
     }
 
     public void resetOdometryPoseFromSecondLimelight(Rotation2d rotation2d, SwerveModulePosition[] modulePositions,
@@ -106,7 +117,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         // Reset state estimate and error covariance
         m_poseEstimator.resetPosition(Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
                 Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(),
-                Robot.LIMELIGHT_SUBSYSTEM_TWO.getGyroBasedRobotPose());
+                Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation());
     }
 
     // public void addVisionMeasurment(Pose2d robotPose, double timestampSeconds) {

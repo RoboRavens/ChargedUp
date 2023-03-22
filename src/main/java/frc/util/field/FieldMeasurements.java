@@ -197,6 +197,13 @@ public class FieldMeasurements {
     public static final double APRILTAG_8_WIDTH_METERS = APRILTAG_8_WIDTH_INCHES * INCHES_TO_METERS_CONVERSION;
     public static final double APRILTAG_8_HEIGHT_METERS = APRILTAG_8_HEIGHT_INCHES * INCHES_TO_METERS_CONVERSION;
 
+    public static final double RED_CONE_NODE_7_ROBOT_X_COORD_METERS = 14.650122;
+    public static final double RED_CONE_NODE_7_ROBOT_Y_COORD_METERS = 3.977038;
+
+    public static final double RED_CONE_NODE_9_ROBOT_X_COORD_METERS = 14.830646;
+    public static final double RED_CONE_NODE_9_ROBOT_Y_COORD_METERS = 5.061831;
+
+
     public static double getInvertedWidthInches(double blueAllianceWidth) {
         return HALF_FIELD_WIDTH_TIMES_2_INCHES - blueAllianceWidth;
     }

@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
   // public static PieceRetrievalState pieceRetrievalState =
   // PieceRetrievalState.CLEAR;
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelightone");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight");
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelighttwo");
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
@@ -257,7 +257,7 @@ public class Robot extends TimedRobot {
     GAMEPAD.getPOVTrigger(GamepadPOV.Up).toggleOnTrue(new DriveTwoInchesCommand('F'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Down).toggleOnTrue(new DriveTwoInchesCommand('B'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Left).toggleOnTrue(new DriveTwoInchesCommand('L'));
-    GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
+    // GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
 
     // Claw override commands.
 
