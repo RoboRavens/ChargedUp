@@ -84,7 +84,11 @@ public class DrivetrainDefaultCommand extends CommandBase {
             Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
             double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 0 : 180; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
             double targetAngle = Math.toRadians(targetAngleDegrees);
-            r = getAngularVelocityForAlignment(targetAngle);
+            
+            if (Robot.ODOMETRY_OVERRIDE == false) {
+                r = getAngularVelocityForAlignment(targetAngle); 
+            }
+
             SmartDashboard.putNumber("angular velocity pid", r);
         }
         else if (Robot.overallState == OverallState.LOADING) {

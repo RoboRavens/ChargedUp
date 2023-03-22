@@ -21,6 +21,8 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
+import frc.robot.subsystems.TabletScoring.Substation;
+import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.PieceState;
 import frc.util.arm.ArmPose;
 import frc.util.arm.ArmSetpoint;
@@ -440,33 +442,49 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void moveArmToTarget() {
         ArmSetpoint targetArmSetpoint;
-        switch (Robot.scoringTargetState) {
-            case HIGH:
-                if (Robot.TABLET_SCORING_SUBSYSTEM.isCubeColumn() == false) {
-              // if (Robot.pieceState == PieceState.CONE) {
-                targetArmSetpoint = Constants.ARM_SCORE_CONE_HIGH_SETPOINT;
-              }
-              else {
-                targetArmSetpoint = Constants.ARM_SCORE_CUBE_HIGH_SETPOINT;
-              }
-              break;
-            case MID:
-                if (Robot.TABLET_SCORING_SUBSYSTEM.isCubeColumn() == false) {// if (Robot.pieceState == PieceState.CONE) {
-                targetArmSetpoint = Constants.ARM_SCORE_CONE_MID_SETPOINT;
-              }
-              else {
-                targetArmSetpoint = Constants.ARM_SCORE_CUBE_MID_SETPOINT;
-              }
-              break;
-            case LOW:
-              targetArmSetpoint = Constants.ARM_SCORE_LOW_SETPOINT;
-              break;
-            default:
-              targetArmSetpoint = Constants.ARM_FULL_RETRACT_SETPOINT;
-              break;
-          }
-          
-          new ArmGoToSetpointDangerousCommand(targetArmSetpoint).schedule();
+        if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() != Substation.NONE) {
+            if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() == Substation.DOUBLE_LEFT) {
+                targetArmSetpoint = Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT;
+            }
+            else if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() == Substation.DOUBLE_RIGHT) {
+                targetArmSetpoint = Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT;
+            }
+            else if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() == Substation.SINGLE) {
+                targetArmSetpoint = Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT;
+            }
+            else {
+                targetArmSetpoint = Constants.ARM_FULL_RETRACT_SETPOINT;
+            }
+        }
+        else {
+            switch (Robot.scoringTargetState) {
+                case HIGH:
+                    if (Robot.TABLET_SCORING_SUBSYSTEM.isCubeColumn() == false) {
+                // if (Robot.pieceState == PieceState.CONE) {
+                    targetArmSetpoint = Constants.ARM_SCORE_CONE_HIGH_SETPOINT;
+                }
+                else {
+                    targetArmSetpoint = Constants.ARM_SCORE_CUBE_HIGH_SETPOINT;
+                }
+                break;
+                case MID:
+                    if (Robot.TABLET_SCORING_SUBSYSTEM.isCubeColumn() == false) {// if (Robot.pieceState == PieceState.CONE) {
+                    targetArmSetpoint = Constants.ARM_SCORE_CONE_MID_SETPOINT;
+                }
+                else {
+                    targetArmSetpoint = Constants.ARM_SCORE_CUBE_MID_SETPOINT;
+                }
+                break;
+                case LOW:
+                targetArmSetpoint = Constants.ARM_SCORE_LOW_SETPOINT;
+                break;
+                default:
+                targetArmSetpoint = Constants.ARM_FULL_RETRACT_SETPOINT;
+                break;
+            }
+        }
+
+        new ArmGoToSetpointDangerousCommand(targetArmSetpoint).schedule();
     }
 
     public void setRotationVoltage(double voltage) {
