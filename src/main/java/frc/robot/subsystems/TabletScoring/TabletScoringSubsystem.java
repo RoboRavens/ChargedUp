@@ -2,13 +2,16 @@ package frc.robot.subsystems.TabletScoring;
 
 import java.util.Map;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.util.field.FieldMeasurements;
 
 public class TabletScoringSubsystem extends SubsystemBase {
   private ShuffleboardTab _tab;
@@ -75,6 +78,20 @@ public class TabletScoringSubsystem extends SubsystemBase {
 
   public ScoringPosition GetScoringPosition() {
     return _selectedScoringPosition;
+  }
+
+  public Translation2d GetScoringCoordinates() {
+    if (_selectedScoringPosition.IsNoneSelected()) {
+      return null;
+    }
+
+    if (Robot.allianceColor == Alliance.Invalid) {
+      return null;
+    }
+
+    int column = _selectedScoringPosition.GetColumn();
+    return Robot.allianceColor == Alliance.Blue ?
+      FieldMeasurements.BLUE_NODE_COORD[column] : FieldMeasurements.RED_NODE_COORD[column];
   }
 
   public ScoringShape GetScoringShape() {

@@ -79,7 +79,8 @@ public class Robot extends TimedRobot {
   public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
   public static final ClawSubsystem CLAW_SUBSYSTEM = new ClawSubsystem();
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM = new LimelightSubsystem();
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelighttwo");
   public static final AutoChooserSubsystem AUTO_CHOOSER = new AutoChooserSubsystem();
   public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
@@ -312,6 +313,8 @@ public class Robot extends TimedRobot {
     GAMEPAD.getPOVTrigger(GamepadPOV.Down).toggleOnTrue(new DriveTwoInchesCommand('B'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Left).toggleOnTrue(new DriveTwoInchesCommand('L'));
     GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
+
+    GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.POSE_ESTIMATOR_SUBSYSTEM.resetOdometryPoseToLimelight()));
 
     // Claw override commands.
     GAMEPAD.getButton(ButtonCode.START).onTrue(new ClawOpenCommand());

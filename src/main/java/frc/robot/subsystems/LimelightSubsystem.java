@@ -12,14 +12,15 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 
 public class LimelightSubsystem extends SubsystemBase {
-  private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-  private NetworkTableEntry tx = table.getEntry("tx");
-  private NetworkTableEntry ty = table.getEntry("ty");
-  private NetworkTableEntry ta = table.getEntry("ta");
-  private NetworkTableEntry ts = table.getEntry("ts");
-  private NetworkTableEntry tv = table.getEntry("tv");
-  private NetworkTableEntry tl = table.getEntry("tl");
-  private NetworkTableEntry cl = table.getEntry("cl");
+  private NetworkTable _baseNetworkTable;
+  private String _tableName;
+  private NetworkTableEntry tx;
+  private NetworkTableEntry ty;
+  private NetworkTableEntry ta;
+  private NetworkTableEntry ts;
+  private NetworkTableEntry tv;
+  private NetworkTableEntry tl;
+  private NetworkTableEntry cl;
   private int camMode = 0;
 
   public boolean isAlignedWithScoringNode() {
@@ -31,26 +32,40 @@ public class LimelightSubsystem extends SubsystemBase {
     // TODO: Implement this method
   }
 
+  public LimelightSubsystem(String tableName) {
+    _tableName = tableName;
+    _baseNetworkTable = NetworkTableInstance.getDefault().getTable(tableName);
+    tx = _baseNetworkTable.getEntry("tx");
+    ty = _baseNetworkTable.getEntry("ty");
+    ta = _baseNetworkTable.getEntry("ta");
+    ts = _baseNetworkTable.getEntry("ts");
+    tv = _baseNetworkTable.getEntry("tv");
+    tl = _baseNetworkTable.getEntry("tl");
+    cl = _baseNetworkTable.getEntry("cl");
+  }
+
   public void periodic() {
-    Pose2d pose = getPureLimelightRobotPose();
-    if (pose != null) {
-      SmartDashboard.putNumber("PoseX", pose.getX());
-      SmartDashboard.putNumber("PoseY", pose.getY());
-      SmartDashboard.putNumber("Rotation", pose.getRotation().getDegrees());
+    Pose2d robotPose = getPureLimelightRobotPose();
+    if (robotPose != null) {
+      SmartDashboard.putNumber(_tableName + "PoseX", robotPose.getX());
+      SmartDashboard.putNumber( _tableName + "PoseY", robotPose.getY());
+      SmartDashboard.putNumber(_tableName + "Rotation", robotPose.getRotation().getDegrees());
     } else {
-      SmartDashboard.putNumber("PoseX", 0);
-      SmartDashboard.putNumber("PoseY", 0);
-      SmartDashboard.putNumber("Rotation", 0);
+      SmartDashboard.putNumber(_tableName + "PoseX", 0);
+      SmartDashboard.putNumber(_tableName + "PoseY", 0);
+      SmartDashboard.putNumber(_tableName + "Rotation", 0);
     }
   }
 
   public double[] getLimelightBotpose() {
-    double[] botpose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+    double[] robotPoseOne = NetworkTableInstance.getDefault().getTable(_tableName).getEntry("botpose_wpiblue")
+        .getDoubleArray(new double[6]);
 
-    return botpose;
+    return robotPoseOne;
   }
 
-  // This gets the robot pose PURELY from the Limelight, instead of using the gyroscope for rotation.
+  // This gets the robot pose PURELY from the Limelight, instead of using the
+  // gyroscope for rotation.
   public Pose2d getPureLimelightRobotPose() {
     double[] botpose = getLimelightBotpose();
 
@@ -65,19 +80,23 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   // This replaces the Limelight's rotation value with the gyroscope's value.
-  public Pose2d getGyroBasedRobotPose() {
+  public Pose2d getLimelightPoseWithOdometryRotation() {
     double[] botpose = getLimelightBotpose();
 
     if (botpose.length >= 6) {
       Translation2d translation = new Translation2d(botpose[0], botpose[1]);
-      Rotation2d rotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
+      Rotation2d rotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation();
       Pose2d position = new Pose2d(translation, rotation);
       return position;
     }
 
     return null;
   }
-  
+
+  public double hasVisionTarget() {
+    return tv.getDouble(0);
+  }
+
 
   public double getCl() {
     return cl.getDouble(0.0);
@@ -97,9 +116,5 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public double getTy() {
     return ty.getDouble(0.0);
-  }
-
-  public double getTv() {
-    return tv.getDouble(0);
   }
 }
