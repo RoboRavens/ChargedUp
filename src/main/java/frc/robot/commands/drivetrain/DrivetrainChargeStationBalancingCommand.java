@@ -1,6 +1,7 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
@@ -54,9 +55,14 @@ public class DrivetrainChargeStationBalancingCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll()) < 2.5) {
-            return true;
+        if (DriverStation.isAutonomous()) {
+            return false;
         }
-        return false;
+        else {
+            if (Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll()) < 2.5) {
+                return true;
+            }
+            return false;
+        }
     }
 }

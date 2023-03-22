@@ -7,51 +7,20 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
-import frc.controls.AxisCode;
-import frc.controls.ButtonCode;
-import frc.controls.Gamepad;
-import frc.controls.GamepadPOV;
+import edu.wpi.first.wpilibj.*;
+import frc.controls.*;
 import frc.robot.commands.LEDs.*;
 import frc.robot.commands.arm.*;
-import frc.robot.commands.auto.ScoreTwoLoadAndBalanceLZBlueCommand;
-import frc.robot.commands.claw.ClawCloseCommand;
-import frc.robot.commands.claw.ClawOpenCommand;
-import frc.robot.commands.claw.RumbleCommand;
-import frc.robot.commands.drivetrain.DriveTwoInchesCommand;
-import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
-import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
-import frc.robot.commands.groups.EjectPieceCommand;
-import frc.robot.commands.groups.ScorePieceCommand;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.AutoChooserSubsystem;
-import frc.robot.subsystems.ClawSubsystem;
-import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.PoseEstimatorSubsystem;
-import frc.util.Colors;
-import frc.util.StateManagement;
-import frc.util.StateManagement.ArmExtensionState;
-import frc.util.StateManagement.ArmRotationState;
-import frc.util.StateManagement.ClawState;
-import frc.util.StateManagement.ZoneState;
-import frc.util.StateManagement.DrivetrainState;
-import frc.util.StateManagement.LimelightState;
-import frc.util.StateManagement.LoadState;
-import frc.util.StateManagement.LoadTargetState;
-import frc.util.StateManagement.OverallState;
-import frc.util.StateManagement.PieceState;
-import frc.util.StateManagement.ScoringTargetState;
-import frc.robot.subsystems.DrivetrainSubsystemMock;
-import frc.robot.subsystems.LEDsSubsystem;
-import frc.robot.subsystems.TabletScoring.ScoringShape;
-import frc.robot.subsystems.TabletScoring.TabletScoringSubsystem;
+import frc.robot.commands.claw.*;
+import frc.robot.commands.drivetrain.*;
+import frc.robot.commands.groups.*;
+import frc.robot.subsystems.*;
+import frc.util.*;
+import frc.util.StateManagement.*;
+import frc.robot.subsystems.TabletScoring.*;
 import frc.util.field.*;
 
 /**
@@ -451,7 +420,7 @@ public class Robot extends TimedRobot {
     // new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.CLOSED).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.LOADED));
 
     // If the claw closes but we do NOT have a game piece, pickup failed, so open the claw again.
-    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false && Robot.clawState == ClawState.CLOSED).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY).andThen(new ClawOpenCommand()));
+    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false && Robot.clawState == ClawState.CLOSED && DriverStation.isAutonomous() == false).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY).andThen(new ClawOpenCommand()));
     
     // While the claw is open, check if we detect a game piece, and if we do, close the claw.
     new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN).onTrue(
@@ -474,13 +443,15 @@ public class Robot extends TimedRobot {
     //   .onTrue(new ArmRotateToRowPositionCommand(Robot.scoringTargetState)
     //   .andThen(new ArmExtendToRowPositionCommand(Robot.scoringTargetState)).withName("Extend and rotate arm to scoring target"));
     
-    // Retract the arm and rotate it upwards if the robot
+    // Retract the arm and rotate it upwards if the robot either
     // - has just loaded
     // - has just scored
     // - is not in our alliance community or loading zone
-    new Trigger(() -> (Robot.overallState == OverallState.LOADED_TRANSIT && Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY) 
+    // and the robot is not currently in autonomous
+    new Trigger(() -> ((Robot.overallState == OverallState.LOADED_TRANSIT && Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY) 
                         || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
                         || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
+                        && DriverStation.isAutonomous() == false)
       .onTrue(new ArmGoToSetpointCommand(Constants.ARM_FULL_RETRACT_SETPOINT).withName("Retract arm"));
 
     // new Trigger(() -> Robot.hasCone()).whileTrue(RUMBLE_COMMAND);

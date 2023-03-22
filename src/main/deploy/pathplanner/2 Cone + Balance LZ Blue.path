@@ -2,15 +2,15 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 14.68,
+        "x": 1.825900794658732,
         "y": 4.97
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.16544689250128,
+        "x": 3.1617789042122797,
         "y": 4.97
       },
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -24,41 +24,16 @@
     },
     {
       "anchorPoint": {
-        "x": 10.12,
-        "y": 4.596236033222007
+        "x": 6.350798718789415,
+        "y": 4.56
       },
       "prevControl": {
-        "x": 10.8661054982595,
-        "y": 4.848634176583617
+        "x": 5.426609555517308,
+        "y": 4.796947606562709
       },
       "nextControl": {
-        "x": 10.8661054982595,
-        "y": 4.848634176583617
-      },
-      "holonomicAngle": 180.0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 14.68,
-        "y": 4.97
-      },
-      "prevControl": {
-        "x": 11.460749312368812,
-        "y": 4.800021428801773
-      },
-      "nextControl": {
-        "x": 11.460749312368812,
-        "y": 4.800021428801773
+        "x": 5.426609555517308,
+        "y": 4.796947606562709
       },
       "holonomicAngle": 0.0,
       "isReversal": true,
@@ -74,18 +49,18 @@
     },
     {
       "anchorPoint": {
-        "x": 9.75,
-        "y": 4.02155375739323
+        "x": 1.8483667912894568,
+        "y": 3.91
       },
       "prevControl": {
-        "x": 9.514339156557432,
-        "y": 4.942773418123284
+        "x": 1.754388578812916,
+        "y": 4.984175883926882
       },
       "nextControl": {
-        "x": 9.82384157625458,
-        "y": 3.7329003229435043
+        "x": 1.8659524469892057,
+        "y": 3.7089950355735164
       },
-      "holonomicAngle": -115.0,
+      "holonomicAngle": -180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -99,18 +74,18 @@
     },
     {
       "anchorPoint": {
-        "x": 11.06,
-        "y": 3.457672629630974
+        "x": 2.120882407953928,
+        "y": 3.52
       },
       "prevControl": {
-        "x": 10.026196137631297,
-        "y": 3.457672629630974
+        "x": 2.025735661083216,
+        "y": 3.52
       },
       "nextControl": {
-        "x": 12.093803862368704,
-        "y": 3.457672629630974
+        "x": 2.227518953605242,
+        "y": 3.52
       },
-      "holonomicAngle": 0.0,
+      "holonomicAngle": -180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -124,15 +99,40 @@
     },
     {
       "anchorPoint": {
-        "x": 12.56,
-        "y": 3.471098370768171
+        "x": 2.3697010144736623,
+        "y": 3.52
       },
       "prevControl": {
-        "x": 12.380104591698773,
-        "y": 3.471098370768171
+        "x": 2.1786496108227493,
+        "y": 3.52
+      },
+      "nextControl": {
+        "x": 2.536002708008748,
+        "y": 3.52
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.86261265359207,
+        "y": 3.52
+      },
+      "prevControl": {
+        "x": 3.222793379684181,
+        "y": 3.531848505072367
       },
       "nextControl": null,
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -148,18 +148,5 @@
   "maxVelocity": 1.6,
   "maxAcceleration": 0.6,
   "isReversed": null,
-  "markers": [
-    {
-      "position": 0.01,
-      "names": [
-        "Retract Arm 1"
-      ]
-    },
-    {
-      "position": 1.93,
-      "names": [
-        "Extend To Score Mid"
-      ]
-    }
-  ]
+  "markers": []
 }
