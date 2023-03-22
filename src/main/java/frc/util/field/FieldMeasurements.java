@@ -199,28 +199,32 @@ public class FieldMeasurements {
     public static final double APRILTAG_8_WIDTH_METERS = APRILTAG_8_WIDTH_INCHES * INCHES_TO_METERS_CONVERSION;
     public static final double APRILTAG_8_HEIGHT_METERS = APRILTAG_8_HEIGHT_INCHES * INCHES_TO_METERS_CONVERSION;
 
+    // width = 30.25 inch
+
+
+    // length = 34.5
     public static final Translation2d[] RED_NODE_COORD = {
-        new Translation2d(), // 1
-        new Translation2d(), // 2
-        new Translation2d(), // 3
-        new Translation2d(), // 4
-        new Translation2d(), // 5
-        new Translation2d(), // 6
-        new Translation2d(14.650122, 3.977038), // 7
-        new Translation2d(), // 8
-        new Translation2d(14.830646, 5.061831), // 9
+        new Translation2d(14.58,0.47), // 1
+        new Translation2d(14.58,1.03), // 2
+        new Translation2d(14.58,1.62), // 3
+        new Translation2d(14.58,2.15), // 4
+        new Translation2d(14.58,2.73), // 5
+        new Translation2d(14.58,3.28), // 6
+        new Translation2d(14.58, 3.85), // 7
+        new Translation2d(14.58,4.41), // 8
+        new Translation2d(14.58, 4.95), // 9
     };
 
     public static final Translation2d[] BLUE_NODE_COORD = {
-        new Translation2d(), // 1
-        new Translation2d(), // 2
-        new Translation2d(), // 3
-        new Translation2d(), // 4
-        new Translation2d(), // 5
-        new Translation2d(), // 6
-        new Translation2d(), // 7
-        new Translation2d(), // 8
-        new Translation2d(), // 9
+        new Translation2d(1.94,4.98), // 1
+        new Translation2d(1.94,4.39), // 2
+        new Translation2d(1.94,3.86), // 3
+        new Translation2d(1.94,3.29), // 4
+        new Translation2d(1.94,2.72), // 5
+        new Translation2d(1.94,2.18), // 6
+        new Translation2d(1.94,1.60), // 7
+        new Translation2d(1.94,1.06), // 8
+        new Translation2d(1.94,0.49), // 9
     };
 
     public static double getInvertedWidthInches(double blueAllianceWidth) {
