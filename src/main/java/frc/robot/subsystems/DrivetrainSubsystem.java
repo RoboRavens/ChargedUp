@@ -40,6 +40,9 @@ import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.awt.geom.Point2D;
 
 import static frc.robot.RobotMap.*;
@@ -111,9 +114,9 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   public final SwerveModule m_frontRightModule;
   public final SwerveModule m_backLeftModule;
   public final SwerveModule m_backRightModule;
-  private final SwerveDriveOdometry _odometryFromKinematics;
+  // private final SwerveDriveOdometry _odometryFromKinematics;
   private final SwerveDriveOdometry  _odometryFromHardware;
-  private final DrivetrainDiagnosticsShuffleboard _diagnostics;
+  // private final DrivetrainDiagnosticsShuffleboard _diagnostics;
 
   // private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   private SwerveModuleState[] _moduleStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0,0,0));
@@ -121,6 +124,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   // private final DriveCharacteristics _driveCharacteristics;
 
   private Pose2d _markedPosition = null;
+  private Field2d _field2d = new Field2d();
 
   public DrivetrainSubsystem() {
     MkModuleConfiguration moduleConfig = new MkModuleConfiguration();
@@ -175,13 +179,13 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     ((WPI_TalonFX) m_backLeftModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay);
     ((WPI_TalonFX) m_backRightModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay);
 
-    _odometryFromKinematics = new SwerveDriveOdometry(m_kinematics, this.getGyroscopeRotation(), 
+    /*_odometryFromKinematics = new SwerveDriveOdometry(m_kinematics, this.getGyroscopeRotation(), 
     new SwerveModulePosition[] {
       m_frontLeftModule.getPosition(),
       m_frontRightModule.getPosition(),
       m_backLeftModule.getPosition(),
       m_backRightModule.getPosition()
-    }, new Pose2d(0, 0, new Rotation2d()));
+    }, new Pose2d(0, 0, new Rotation2d()));*/
 
     _odometryFromHardware = new SwerveDriveOdometry(
       m_kinematics, this.getGyroscopeRotation(), 
@@ -191,8 +195,10 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
         m_backLeftModule.getPosition(),
         m_backRightModule.getPosition()
       }, new Pose2d(0, 0, new Rotation2d()));
-    _diagnostics = new DrivetrainDiagnosticsShuffleboard();
+    // _diagnostics = new DrivetrainDiagnosticsShuffleboard();
     // _driveCharacteristics = new DriveCharacteristics();
+
+    SmartDashboard.putData("HardwareOdometry Field", _field2d);
   }
 
   /**
@@ -203,6 +209,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   public void zeroGyroscope() {
     m_navx.zeroYaw();
     // _odometryFromKinematics.resetPosition(new Pose2d(0, 0, new Rotation2d()), this.getGyroscopeRotation());
+    var hardwarePose = _odometryFromHardware.getPoseMeters();
     _odometryFromHardware.resetPosition(
       this.getGyroscopeRotation(), 
       new SwerveModulePosition[] {
@@ -210,8 +217,10 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
         m_frontRightModule.getPosition(),
         m_backLeftModule.getPosition(),
         m_backRightModule.getPosition()
-      }, new Pose2d(0, 0, new Rotation2d()));
+      }, new Pose2d(hardwarePose.getTranslation(), new Rotation2d()));
     // _driveCharacteristics.reset();
+
+    Robot.POSE_ESTIMATOR_SUBSYSTEM.zeroGyroscope();
   }
 
   public SwerveModulePosition[] getSwerveModulePositions() {
@@ -272,14 +281,14 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     SwerveModuleState[] states = _moduleStates; // states and _modulestates still point to the same data
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-    _odometryFromKinematics.update(this.getGyroscopeRotation(), new SwerveModulePosition[] {
+    /*_odometryFromKinematics.update(this.getGyroscopeRotation(), new SwerveModulePosition[] {
       m_frontLeftModule.getPosition(),
       m_frontRightModule.getPosition(),
       m_backLeftModule.getPosition(),
       m_backRightModule.getPosition()
-    });
+    });*/
 
-    _diagnostics.updateKinematics(_odometryFromKinematics, states);
+    // _diagnostics.updateKinematics(_odometryFromKinematics, states);
 
     var statesHardware = new SwerveModuleState[4];
     statesHardware[0] = SwerveModuleConverter.ToSwerveModuleState(m_frontLeftModule, 0);
@@ -297,7 +306,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
         m_backRightModule.getPosition()
       });
 
-    _diagnostics.updateHardware(_odometryFromHardware, statesHardware);
+    // _diagnostics.updateHardware(_odometryFromHardware, statesHardware);
 
     Deadband.adjustRotationWhenStopped(states, statesHardware);
     
@@ -309,6 +318,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     // _driveCharacteristics.update(_odometryFromHardware.getPoseMeters(), 360 - m_navx.getAngle());
 
     setRobotZoneFromOdometry();
+    _field2d.setRobotPose(_odometryFromHardware.getPoseMeters());
   }
 
   public boolean drivetrainIsAtTargetCoordinates() {
@@ -415,6 +425,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
         m_backLeftModule.getPosition(),
         m_backRightModule.getPosition()
       }, targetPose);
+
+    Robot.POSE_ESTIMATOR_SUBSYSTEM.resetPosition(targetPose);
   }
 
   // used only by SwerveControllerCommand to follow trajectories
