@@ -109,7 +109,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     public void resetOdometryPoseToLimelight() {
         var gyroBasedPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
        // System.out.println("resetOdometryPoseToLimelight: " + gyroBasedPose.getX() + " - " + gyroBasedPose.getY()
-                + " - " + gyroBasedPose.getRotation().getDegrees());
+       //         + " - " + gyroBasedPose.getRotation().getDegrees());
         m_poseEstimator.resetPosition(
             Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation(),
             Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions(),

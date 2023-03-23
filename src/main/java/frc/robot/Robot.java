@@ -371,10 +371,20 @@ public class Robot extends TimedRobot {
 
     // Arm manual controls.
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
+      // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      .whileTrue(new InstantCommand(() -> ARM_SUBSYSTEM.increaseRotationTargetManually()));
+    
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
+      // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      .whileTrue(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseRotationTargetManually()));
+
+      OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-      .whileTrue(new ArmRotateManuallyCommand(true));
-      
+      .whileTrue(new ArmRotateManuallyCommand(false));
+
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
@@ -422,7 +432,7 @@ public class Robot extends TimedRobot {
     new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false && Robot.clawState == ClawState.CLOSED && DriverStation.isAutonomous() == false).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY).andThen(new ClawOpenCommand()));
     
     // While the claw is open, check if we detect a game piece, and if we do, close the claw.
-    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN).onTrue(
+    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN && CLAW_SUBSYSTEM.lockoutHasElapsed()).onTrue(
       new InstantCommand(() -> Robot.overallState = OverallState.LOADING)
       .andThen(new ClawCloseCommand())
       .andThen(new InstantCommand(() -> Robot.overallState = OverallState.LOADED_TRANSIT))
