@@ -1,8 +1,8 @@
 package frc.util;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public abstract interface CommandSupplier {
   
-  public abstract CommandBase getCommand();
+  public abstract Command getCommand();
 }
