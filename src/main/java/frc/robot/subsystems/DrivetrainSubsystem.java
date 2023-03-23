@@ -396,8 +396,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   }
 
   private void setRobotZoneFromOdometry() {
-    double robotX = getPoseX();
-    double robotY = getPoseY();
+    double robotX = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX();
+    double robotY = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY();
 
     // If the odometry override is active, set the coords to -1, -1.
     if (Robot.ODOMETRY_OVERRIDE) {

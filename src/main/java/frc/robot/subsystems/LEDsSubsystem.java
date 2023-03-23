@@ -71,6 +71,7 @@ public class LEDsSubsystem extends SubsystemBase {
 
     //sets the leds to a rainbow based off the total length of the leds
     public void rainbowLeds() {
+      System.out.println("LED");
       int m_rainbowFirstPixelHue = 0;
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
         var hue = (m_rainbowFirstPixelHue + (i * 180 / m_ledBuffer.getLength())) % 180;

@@ -67,6 +67,28 @@ public class DrivetrainDefaultCommand extends CommandBase {
             // Set the robot to score
             // TODO: update _targetPose based on the selected scoring location
             // Get rid of the above three lines after testing
+            
+            double targetAngle = r;
+
+            if (Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.DOUBLE_SUBSTATION) {
+                double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 180 : 0;  // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
+                targetAngle = Math.toRadians(targetAngleDegrees);
+            }
+            else if (Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.SINGLE_SUBSTATION) {
+                double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 90 : -90; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
+                targetAngle = Math.toRadians(targetAngleDegrees);
+            }
+            else if (Robot.loadState == LoadState.LOADED) {
+                double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 0 : 180; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
+                targetAngle = Math.toRadians(targetAngleDegrees);
+            }
+
+            if (Robot.ODOMETRY_OVERRIDE == false) {
+                r = getAngularVelocityForAlignment(targetAngle);
+            }
+
+            /* 
+
             if (true || //Robot.overallState == OverallState.PREPARING_TO_SCORE || 
             (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.DOUBLE_SUBSTATION)) {
                 double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 0 : 180;
@@ -82,6 +104,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
                 x = getXVelocity();
                 y = getYVelocity();
             }
+            */
         }
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
         else if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
@@ -92,8 +115,6 @@ public class DrivetrainDefaultCommand extends CommandBase {
             if (Robot.ODOMETRY_OVERRIDE == false) {
                 r = getAngularVelocityForAlignment(targetAngle); 
             }
-
-            SmartDashboard.putNumber("angular velocity pid", r);
         }
         else if (Robot.overallState == OverallState.LOADING) {
             Robot.drivetrainState = DrivetrainState.ACTIVELY_LOADING;
@@ -110,6 +131,10 @@ public class DrivetrainDefaultCommand extends CommandBase {
         else {
             Robot.drivetrainState = DrivetrainState.FREEHAND;
         }
+
+        
+
+        SmartDashboard.putNumber("angular velocity pid", r);
 
         r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
 

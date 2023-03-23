@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
   public LEDsSolidColorCommand ledsSignalConeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.ORANGE);
   public LEDsSolidColorCommand ledsSignalCubeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.PURPLE);
   public LEDsSolidColorCommand ledsSignalOdometryFailureCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.RED);
+  public LEDsSolidColorCommand ledsSignalCommunityCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.BLUE);
   public LEDsSolidColorCommand ledsSignalAlignedCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.GREEN);
 
   // Sets the default robot mechanism states (may need to be changed)
@@ -216,6 +217,10 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  public boolean robotIsInOwnCommunity() {
+    return zoneState == ZoneState.ALLIANCE_CHARGE_STATION || zoneState == ZoneState.ALLIANCE_COMMUNITY;
+  }
 
   private void setNonButtonDependentOverallStates() {
     // Check the load state of the robot.
@@ -470,6 +475,9 @@ public class Robot extends TimedRobot {
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
     
+    new Trigger(() -> Robot.loadState == LoadState.LOADED && robotIsInOwnCommunity()).onTrue(ledsSignalCommunityCommand);
+    
+
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
@@ -482,6 +490,8 @@ public class Robot extends TimedRobot {
   private void setZoneStateFromFieldZone() {
     FieldZone fieldZone = fieldSubzone.getFieldZone();
     boolean allianceOwnsZone = allianceColor == fieldZone.getZoneOwner();
+
+    SmartDashboard.putString("FieldZone", fieldZone.getName());
 
     switch (fieldZone.getMacroZone()) {
       case NONE:
