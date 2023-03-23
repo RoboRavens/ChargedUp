@@ -3,17 +3,17 @@ package frc.robot.subsystems;
 import java.util.Map;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.auto.*;
 import frc.robot.Robot;
+import frc.robot.commands.auto.*;
 import frc.util.CommandSupplier;
 
 public class AutoChooserSubsystem extends SubsystemBase {
@@ -46,7 +46,6 @@ public class AutoChooserSubsystem extends SubsystemBase {
   private SendableChooser<AutoMode> _chooser = new SendableChooser<AutoMode>();
   private String _tabName = "Autonomous";
   private ShuffleboardTab _tab = Shuffleboard.getTab(_tabName);
-  private String _dashboardName = "AutoChooser";
   private GenericEntry _chosenAutoText;
   private GenericEntry _scoringTabGo;
   private GenericEntry _gameTimeEntry;
@@ -56,31 +55,31 @@ public class AutoChooserSubsystem extends SubsystemBase {
       case Blue:
       this.addDefaultOption(
         new AutoMode("B1: Preload + mobility + balance",
-        () -> (CommandBase) PreloadMobilityAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
+        () -> PreloadMobilityAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
       );
       this.addOption(
         new AutoMode("B2: LZ-side 2 cone + balance",
-        () -> (CommandBase) TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
+        () -> TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
       );
       this.addOption(
         new AutoMode("B3: LZ-side 2.5 cone balance", 
-        () -> (CommandBase) TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
+        () -> TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
       );
       this.addOption(
         new AutoMode("B4: LZ-side 3 cone", 
-        () -> (CommandBase) ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
+        () -> ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
       );
       this.addOption(
         new AutoMode("B5: Cable-side 2 cone balance",
-        () -> (CommandBase) TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
+        () -> TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
       );
       this.addOption(
         new AutoMode("B6: Cable-side 2.5 balance",
-        () -> (CommandBase) TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
+        () -> TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
       );
       this.addOption(
         new AutoMode("B7: Cable-side 3 cone",
-        () -> (CommandBase) ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
+        () -> ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
       );
 
       _tab
@@ -98,31 +97,31 @@ public class AutoChooserSubsystem extends SubsystemBase {
       case Red:
       this.addDefaultOption(
         new AutoMode("R1: Preload + mobility + balance",
-        () -> (CommandBase) PreloadMobilityAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
+        () -> PreloadMobilityAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
       );
       this.addOption(
         new AutoMode("R2: LZ-side 2 cone + balance",
-        () -> (CommandBase) TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
+        () -> TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
       );
       this.addOption(
         new AutoMode("R3: LZ-side 2.5 cone balance", 
-        () -> (CommandBase) TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
+        () -> TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
       );
       this.addOption(
         new AutoMode("R4: LZ-side 3 cone", 
-        () -> (CommandBase) ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
+        () -> ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
       );
       this.addOption(
         new AutoMode("R5: Cable-side 2 cone balance",
-        () -> (CommandBase) TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
+        () -> TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
       );
       this.addOption(
         new AutoMode("R6: Cable-side 2.5 balance",
-        () -> (CommandBase) TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
+        () -> TwoPointFiveConeAndBalanceCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
       );
       this.addOption(
         new AutoMode("R7: Cable-side 3 cone",
-        () -> (CommandBase) ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
+        () -> ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
       );
 
       _tab
@@ -179,7 +178,7 @@ public class AutoChooserSubsystem extends SubsystemBase {
     Shuffleboard.selectTab(_tabName);
   }
 
-  public CommandBase GetAuto() {
+  public Command GetAuto() {
     var chosen = _chooser.getSelected();
     return chosen.getCommandSupplier().getCommand();
   }
