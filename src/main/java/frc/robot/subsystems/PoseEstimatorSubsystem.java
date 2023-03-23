@@ -38,24 +38,24 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         double ta2 = Robot.LIMELIGHT_SUBSYSTEM_TWO.getTa();
         Pose2d firstLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
         Pose2d secondLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation();
-        Pose2d robotPose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
-        Robot.LIMELIGHT_SUBSYSTEM_ONE.getPureLimelightRobotPose();
-        Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
-        Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
-        Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
+        //Pose2d robotPose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
+        //Robot.LIMELIGHT_SUBSYSTEM_ONE.getPureLimelightRobotPose();
+        //Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
+        //Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
+        //Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
 
         boolean hasVisionTarget = Robot.LIMELIGHT_SUBSYSTEM_ONE.hasVisionTarget() == 1;
         boolean hasVisionTarget2 = Robot.LIMELIGHT_SUBSYSTEM_TWO.hasVisionTarget() == 1;
-        boolean firstLimelightIsWithinXDistance = Math.abs(robotPose.getX() - firstLimelightPose.getX()) < 2;
-        boolean firstLimelightIsWithinYDistance = Math.abs(robotPose.getY() - firstLimelightPose.getY()) < 2;
-        boolean secondLimelightIsWithinXDistance = Math.abs(robotPose.getX() - secondLimelightPose.getX()) < 2;
-        boolean secondLimelightIsWithinYDistance = Math.abs(robotPose.getY() - secondLimelightPose.getY()) < 2;
-        boolean targetAreaIsSufficient = ta >= 0.2;
-        boolean targetAreaIsSufficient2 = ta2 >= 0.2;
-        boolean fiducialIdIsCorrect2 = LimelightHelpers.getFiducialID("limelighttwo") <= 8;
+        //boolean firstLimelightIsWithinXDistance = Math.abs(robotPose.getX() - firstLimelightPose.getX()) < 2;
+        //boolean firstLimelightIsWithinYDistance = Math.abs(robotPose.getY() - firstLimelightPose.getY()) < 2;
+        //boolean secondLimelightIsWithinXDistance = Math.abs(robotPose.getX() - secondLimelightPose.getX()) < 2;
+        //boolean secondLimelightIsWithinYDistance = Math.abs(robotPose.getY() - secondLimelightPose.getY()) < 2;
+        boolean targetAreaIsSufficient = ta >= 0.4;
+        boolean targetAreaIsSufficient2 = ta2 >= 0.4;
+        boolean fiducialIdIsCorrect2 = LimelightHelpers.getFiducialID("limelight-two") <= 8;
         boolean fiducialIdIsCorrect = LimelightHelpers.getFiducialID("limelight") <= 8;
 
-        if (hasVisionTarget && firstLimelightIsWithinXDistance && firstLimelightIsWithinYDistance
+        if (hasVisionTarget /*&& firstLimelightIsWithinXDistance && firstLimelightIsWithinYDistance*/
                 && targetAreaIsSufficient && fiducialIdIsCorrect) {
             SmartDashboard.putBoolean("limelight has target", true);
             var vsStdDvs = PoseEstimatorSubsystem.GetVisionStdDevs(ta);
@@ -64,7 +64,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             SmartDashboard.putBoolean("limelight has target", false);
         }
 
-        if (hasVisionTarget2 && secondLimelightIsWithinXDistance && secondLimelightIsWithinYDistance
+        if (hasVisionTarget2 /*&& secondLimelightIsWithinXDistance && secondLimelightIsWithinYDistance*/
                 && targetAreaIsSufficient2 && fiducialIdIsCorrect2) {
             SmartDashboard.putBoolean("limelight2 has target", true);
             var vsStdDvs = PoseEstimatorSubsystem.GetVisionStdDevs(ta2);
