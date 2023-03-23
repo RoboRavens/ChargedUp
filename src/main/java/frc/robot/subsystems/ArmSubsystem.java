@@ -21,6 +21,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
+import frc.robot.subsystems.TabletScoring.ScoringShape;
 import frc.robot.subsystems.TabletScoring.Substation;
 import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.PieceState;
@@ -383,6 +384,22 @@ public class ArmSubsystem extends SubsystemBase {
         return extensionMotor.getSelectedSensorPosition();
     }
 
+    public void increaseRotationTargetManually() {
+        armRotationFinalTargetNativeUnits += Constants.ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
+    }
+
+    public void decreaseRotationTargetManually() {
+        armRotationFinalTargetNativeUnits -= Constants.ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
+    }
+
+    public void increaseExtensionTargetManually() {
+        armExtensionFinalTargetNativeUnits += Constants.ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_TICK;
+    }
+
+    public void decreaseExtensionTargetManually() {
+        armExtensionFinalTargetNativeUnits -= Constants.ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_TICK;
+    }
+
     /*
     public double getAngleFromPosition(double position) {
         double angle =  (360 * (((position) / Constants.COUNTS_PER_REVOLUTION) % 360));
@@ -442,12 +459,24 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void moveArmToTarget() {
         ArmSetpoint targetArmSetpoint;
+
+        // If no piece is selected, it will default to the cube pickup setpoint.
         if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() != Substation.NONE) {
             if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() == Substation.DOUBLE_LEFT) {
-                targetArmSetpoint = Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT;
+                if (Robot.TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CONE) {
+                    targetArmSetpoint = Constants.ARM_DOUBLE_SUBSTATION_CONE_PICKUP_SETPOINT;   
+                }
+                else {
+                    targetArmSetpoint = Constants.ARM_DOUBLE_SUBSTATION_CONE_PICKUP_SETPOINT;
+                }
             }
             else if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() == Substation.DOUBLE_RIGHT) {
-                targetArmSetpoint = Constants.ARM_DOUBLE_SUBSTATION_PICKUP_SETPOINT;
+                if (Robot.TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CONE) {
+                    targetArmSetpoint = Constants.ARM_DOUBLE_SUBSTATION_CONE_PICKUP_SETPOINT;   
+                }
+                else {
+                    targetArmSetpoint = Constants.ARM_DOUBLE_SUBSTATION_CONE_PICKUP_SETPOINT;
+                }
             }
             else if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() == Substation.SINGLE) {
                 targetArmSetpoint = Constants.ARM_SINGLE_SUBSTATION_PICKUP_SETPOINT;
