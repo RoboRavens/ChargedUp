@@ -20,6 +20,7 @@ public class AngularPositionHolder {
 
   public AngularPositionHolder(){
     _holdRobotAngleTimer.start();
+    _holdRobotAnglePID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   /**

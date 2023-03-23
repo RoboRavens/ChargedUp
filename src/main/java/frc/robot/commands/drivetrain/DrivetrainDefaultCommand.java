@@ -24,8 +24,8 @@ import frc.util.drive.ChassisSpeedsExtensions;
 
 public class DrivetrainDefaultCommand extends CommandBase {
     private PIDController _scoringRotationAlignPID = new PIDController(0.3, 0, 0);
-    private PIDController _yPID = new PIDController(1, 0, 0);
-    private PIDController _xPID = new PIDController(1, 0, 0);
+    private PIDController _yPID = new PIDController(.3, 0, 0);
+    private PIDController _xPID = new PIDController(.3, 0, 0);
 
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
@@ -38,6 +38,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
     public DrivetrainDefaultCommand() {
         addRequirements(Robot.DRIVE_TRAIN_SUBSYSTEM);
+        _scoringRotationAlignPID.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
@@ -48,8 +49,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double x = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKY) * -1; // Positive x is away from your alliance wall.
-        double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * -1; // Positive y is to your left when standing behind the alliance wall.
+        double controllerDIrection = Robot.allianceColor == Alliance.Red ? 1 : -1;
+        double x = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKY) * controllerDIrection; // Positive x is away from your alliance wall.
+        double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * controllerDIrection; // Positive y is to your left when standing behind the alliance wall.
         double r = Robot.GAMEPAD.getAxis(AxisCode.RIGHTSTICKX) * -1; // The angular rate of the robot.
         Rotation2d a = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.
 
@@ -65,11 +67,14 @@ public class DrivetrainDefaultCommand extends CommandBase {
             // Set the robot to score
             // TODO: update _targetPose based on the selected scoring location
             // Get rid of the above three lines after testing
-            if (Robot.overallState == OverallState.PREPARING_TO_SCORE || 
+            if (true || //Robot.overallState == OverallState.PREPARING_TO_SCORE || 
             (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.DOUBLE_SUBSTATION)) {
-                r = getAngularVelocityForAlignment(3.1415);
+                double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 0 : 180;
+                double targetAngle = Math.toRadians(targetAngleDegrees);
+                r = getAngularVelocityForAlignment(targetAngle);
                 x = getXVelocity();
                 y = getYVelocity();
+                SmartDashboard.putNumber("R 1", r);
             }
             else if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.SINGLE_SUBSTATION) {
                 double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 90 : -90; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
@@ -77,6 +82,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
                 r = getAngularVelocityForAlignment(targetAngle);
                 x = getXVelocity();
                 y = getYVelocity();
+                SmartDashboard.putNumber("R 2", r);
             }
         }
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
@@ -87,6 +93,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
             
             if (Robot.ODOMETRY_OVERRIDE == false) {
                 r = getAngularVelocityForAlignment(targetAngle); 
+                SmartDashboard.putNumber("R 3", r);
             }
 
             SmartDashboard.putNumber("angular velocity pid", r);
@@ -107,7 +114,11 @@ public class DrivetrainDefaultCommand extends CommandBase {
             Robot.drivetrainState = DrivetrainState.FREEHAND;
         }
 
-        r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
+        double r2 = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
+        if (r2 != 0) {
+            r = r2;
+            SmartDashboard.putNumber("R 4", r);
+        }
 
         // scale drive velocity and rotation
         double scale = 1;
