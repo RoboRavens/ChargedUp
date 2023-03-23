@@ -37,7 +37,13 @@ public class ArmGoToSetpointDangerousCommand extends CommandBase {
     arm.setFinalRotationSetpoint(finalSetpoint.getRotationSetpoint());
     arm.setFinalExtensionSetpoint(finalSetpoint.getExtensionSetpoint());
     arm.brakeDisable();
-
+    //System.out.println("default position command run");
+    //subSetpoints = new ArrayList<ArmSetpoint>();
+    //setpointIterator = 0;
+    //calculateSubSetpoints();
+    //setArmTargets();
+    //arm.periodic();
+    
     timeoutSeconds = arm.getCommandTimeoutSeconds();
 
     arm.motionMagic();
