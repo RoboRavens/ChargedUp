@@ -15,7 +15,7 @@ public class ArmRotateToRetrievalPositionCommand extends CommandBase {
       // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("default position command run");
+   // System.out.println("default position command run");
     Robot.ARM_SUBSYSTEM.motionMagic();
 
   }

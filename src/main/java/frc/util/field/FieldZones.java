@@ -198,8 +198,8 @@ public class FieldZones {
             zone.outputSubzones();
         }
 
-        System.out.println();
-        System.out.println();
+       // System.out.println();
+        //System.out.println();
     }
 
     public FieldZone getNoneZone() {
