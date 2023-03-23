@@ -281,13 +281,12 @@ public class Robot extends TimedRobot {
     GAMEPAD.getPOVTrigger(GamepadPOV.Up).toggleOnTrue(new DriveTwoInchesCommand('F'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Down).toggleOnTrue(new DriveTwoInchesCommand('B'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Left).toggleOnTrue(new DriveTwoInchesCommand('L'));
-    GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
-
-    GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.POSE_ESTIMATOR_SUBSYSTEM.resetOdometryPoseToLimelight()));
+    // GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
+    // GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.POSE_ESTIMATOR_SUBSYSTEM.resetOdometryPoseToLimelight()));
 
     // Claw override commands.
-    GAMEPAD.getButton(ButtonCode.START).onTrue(new ClawOpenCommand());
-    GAMEPAD.getButton(ButtonCode.BACK).onTrue(new ClawCloseCommand());
+    GAMEPAD.getButton(ButtonCode.B).onTrue(new ClawOpenCommand());
+    GAMEPAD.getButton(ButtonCode.X).onTrue(new ClawCloseCommand());
 
     // Ground pickup.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
