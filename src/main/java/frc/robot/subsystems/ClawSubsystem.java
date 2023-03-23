@@ -2,9 +2,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.util.StateManagement.ClawState;
@@ -14,6 +16,11 @@ public class ClawSubsystem extends SubsystemBase {
     DoubleSolenoid leftDoubleSolenoid = new DoubleSolenoid(RobotMap.REV_PNEUMATICS_MODULE_ID, PneumaticsModuleType.REVPH, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
     DoubleSolenoid rightDoubleSolenoid = new DoubleSolenoid(RobotMap.REV_PNEUMATICS_MODULE_ID, PneumaticsModuleType.REVPH, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
     BufferedDigitalInput pieceSensor = new BufferedDigitalInput(RobotMap.PIECE_SENSOR, 1, false, false);
+    Timer closeLockoutTimer = new Timer();
+
+    public ClawSubsystem() {
+        startTimer();
+    }
 
     // Returns true if the sensor detects a game piece,
     // and false if a game piece is not detected.
@@ -25,6 +32,15 @@ public class ClawSubsystem extends SubsystemBase {
         else {
             return false;
         }
+    }
+
+    public void startTimer() {
+        closeLockoutTimer.reset();
+        closeLockoutTimer.start();
+    }
+
+    public boolean lockoutHasElapsed() {
+        return closeLockoutTimer.hasElapsed(Constants.CLAW_LOCKOUT_DURATION_SECONDS);
     }
 
     // Returns true if the claw is open,

@@ -33,6 +33,8 @@ public class ClawOpenCommand extends CommandBase {
     public void end(boolean interrupted) {
         claw.setClawState(ClawState.OPEN);
         timer.stop();
+
+        claw.startTimer();
     }
   
     // Returns true when the command should end.
