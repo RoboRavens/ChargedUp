@@ -74,7 +74,6 @@ public class DrivetrainDefaultCommand extends CommandBase {
                 r = getAngularVelocityForAlignment(targetAngle);
                 x = getXVelocity();
                 y = getYVelocity();
-                SmartDashboard.putNumber("R 1", r);
             }
             else if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.SINGLE_SUBSTATION) {
                 double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 90 : -90; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
@@ -82,7 +81,6 @@ public class DrivetrainDefaultCommand extends CommandBase {
                 r = getAngularVelocityForAlignment(targetAngle);
                 x = getXVelocity();
                 y = getYVelocity();
-                SmartDashboard.putNumber("R 2", r);
             }
         }
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
@@ -93,7 +91,6 @@ public class DrivetrainDefaultCommand extends CommandBase {
             
             if (Robot.ODOMETRY_OVERRIDE == false) {
                 r = getAngularVelocityForAlignment(targetAngle); 
-                SmartDashboard.putNumber("R 3", r);
             }
 
             SmartDashboard.putNumber("angular velocity pid", r);
@@ -114,11 +111,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
             Robot.drivetrainState = DrivetrainState.FREEHAND;
         }
 
-        double r2 = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
-        if (r2 != 0) {
-            r = r2;
-            SmartDashboard.putNumber("R 4", r);
-        }
+        r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
 
         // scale drive velocity and rotation
         double scale = 1;
