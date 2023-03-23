@@ -35,7 +35,6 @@ public class ArmGoToSetpointCommand extends CommandBase {
   @Override
   public void initialize() {
     arm.brakeDisable();
-    System.out.println("default position command run");
     subSetpoints = new ArrayList<ArmSetpoint>();
     setpointIterator = 0;
     calculateSubSetpoints();

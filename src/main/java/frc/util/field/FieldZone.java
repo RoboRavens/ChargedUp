@@ -57,7 +57,7 @@ public class FieldZone {
         Optional<FieldSubzone> result =
             subzones.stream().filter(subzone -> subzone.containsPoint(point) ).findFirst();
         
-            System.out.println();
+         
         
         if (result.isPresent()) {
             return result.get();
@@ -80,25 +80,14 @@ public class FieldZone {
     }
 
     public void output() {
-        System.out.println("Zone: " + name);
-        System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
-        System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
-        
-        System.out.println();
-        System.out.println();
+   
     }
 
     public void outputSubzones() {
-        System.out.println("Zone: " + name);
-        System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
-        System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
-        System.out.println();
-
+    
         for (FieldSubzone subzone : subzones) {
             subzone.output();
         }
 
-        System.out.println();
-        System.out.println();
     }
 }

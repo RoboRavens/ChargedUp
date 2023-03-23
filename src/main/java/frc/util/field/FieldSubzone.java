@@ -51,11 +51,6 @@ public class FieldSubzone {
     }
 
     public void output() {
-        System.out.println("Zone: " + name);
-        System.out.println("SW Corner: " + southwestCorner.getX() + ", " + southwestCorner.getY());
-        System.out.println("NE Corner: " + northeastCorner.getX() + ", " + northeastCorner.getY());
-
-        System.out.println();
-        System.out.println();
+      
     }
 }

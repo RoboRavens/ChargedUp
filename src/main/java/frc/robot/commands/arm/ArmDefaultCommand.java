@@ -32,11 +32,10 @@ public class ArmDefaultCommand extends CommandBase {
     }
 
     if (Robot.ARM_EXTENSION_MANUAL_OVERRIDE == false) {
-      // System.out.println("TRUE");
       arm.setArmExtensionPosition(arm.getArmExtensionFinalTargetNativeUnits(), Constants.ARM_EXTENSION_VELOCITY, Constants.ARM_EXTENSION_ACCELERATION);
     }
     else {
-      // System.out.println("FALSE");
+  
       arm.stopExtension();
     }
   }
