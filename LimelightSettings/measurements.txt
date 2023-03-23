@@ -1,0 +1,12 @@
+limelight 1:
+7 1/2 forward from center (0.1905 meters) aka LL Forward
+3 3/4 from side (0.09525 meters)
+21 3/4 from floor (0.55245 meters) aka LL Up
+
+limelight 2:
+7 5/8 forward from center (0.193675 meters) aka LL Forward
+4 in from the side (0.1016 meters)
+22 inches from floor (0.5588) aka LL Up
+
+
+1 inch = 0.0254 meters
