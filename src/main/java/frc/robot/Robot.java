@@ -259,6 +259,8 @@ public class Robot extends TimedRobot {
         overallState = OverallState.EMPTY_TRANSIT;
       }
     }
+
+    /* 
     // Sets the robot state to PREPARING_TO_SCORE only once when the robot has a piece and is in the alliance community.
     // This conditional is designed as such so it does not continuously set itself when a different overall state such as FINAL_SCORING_ALIGNMENT or SCORING is set.
     if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.overallState == OverallState.LOADED_TRANSIT) {
@@ -274,6 +276,7 @@ public class Robot extends TimedRobot {
     if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.overallState == OverallState.EMPTY_TRANSIT) {
       Robot.overallState = OverallState.DOUBLE_SUBSTATION_PICKUP;
     }
+    */
 
     // If we're relying on odometry and the zone state is none,
     // there is a problem with odometry so alert the drive team.
@@ -313,7 +316,9 @@ public class Robot extends TimedRobot {
     
     // GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
 
-    GAMEPAD.getButton(ButtonCode.A).onTrue(new ScorePieceCommand());
+    GAMEPAD.getButton(ButtonCode.A).onTrue(
+      new ScorePieceCommand().withTimeout(Constants.CLAW_OPEN_TIMEOUT_SECONDS)
+      .andThen(new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT)));
 
     // Ground intake.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).onTrue(new InstantCommand(() -> {
@@ -490,12 +495,16 @@ public class Robot extends TimedRobot {
     // - has just scored
     // - is not in our alliance community or loading zone
     // and the robot is not currently in autonomous
+    /*
     new Trigger(() -> ((Robot.overallState == OverallState.LOADED_TRANSIT && Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY) 
                         || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
                         || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
                         && DriverStation.isAutonomous() == false)
+                      
       .onTrue(new ArmSequencedRetractionCommand().withName("Retract arm"));
-
+*/
+    new Trigger(() -> (Robot.overallState == OverallState.LOADED_TRANSIT && DriverStation.isAutonomous() == false))
+      .onTrue(new ArmSequencedRetractionCommand().withName("Retract arm"));
     // new Trigger(() -> Robot.hasCone()).whileTrue(RUMBLE_COMMAND);
     // new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);
     
