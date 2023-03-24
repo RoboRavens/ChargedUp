@@ -307,8 +307,13 @@ public class Robot extends TimedRobot {
     // Arm control.
     OP_PAD_SWITCHES.getButton(ButtonCode.EJECT_PIECE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_HIGH_SETPOINT));
     OP_PAD_BUTTONS.getButton(ButtonCode.SET_ARM_TO_SCORE_TARGET_STATE).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.moveArmToTarget()));
-    OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-    GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
+    // OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
+    
+    OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmSequencedRetractionCommand());
+    
+    // GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
+
+    GAMEPAD.getButton(ButtonCode.A).onTrue(new ScorePieceCommand());
 
     // Ground intake.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).onTrue(new InstantCommand(() -> {
@@ -385,17 +390,27 @@ public class Robot extends TimedRobot {
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-      .whileTrue(new InstantCommand(() -> ARM_SUBSYSTEM.increaseRotationTargetManually()));
-    
-    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
-      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
-      // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-      .whileTrue(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseRotationTargetManually()));
+      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseRotationTargetManually())));
 
-      OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
+    // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+    .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseRotationTargetManually())));
+
+    OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
+    // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseExtensionTargetManually())));
+
+    OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
+      // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseExtensionTargetManually())));
+
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-      .whileTrue(new ArmRotateManuallyCommand(false));
+      .whileTrue(new ArmRotateManuallyCommand(true));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
@@ -411,8 +426,8 @@ public class Robot extends TimedRobot {
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE))
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
       .whileTrue(new ArmExtendManuallyCommand(false));
-
-    // Old stuff to delete when we're done with the competition code.
+    
+      // Old stuff to delete when we're done with the competition code.
     
     // GAMEPAD.getButton(ButtonCode.A).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
     // GAMEPAD.getButton(ButtonCode.B).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
@@ -431,9 +446,12 @@ public class Robot extends TimedRobot {
 
   // Checking for a cone specifically, as opposed to any game piece, is relevant
   // since cones have weight and cubes mostly don't.
+
+  /*
   public static boolean hasCone() {
     return loadState == LoadState.LOADED && pieceState == PieceState.CONE;
   }
+  */
   
   private void configureTriggers() {
     // CLAW
@@ -441,8 +459,11 @@ public class Robot extends TimedRobot {
     // new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.CLOSED).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.LOADED));
 
     // If the claw closes but we do NOT have a game piece, pickup failed, so open the claw again.
-    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false && (Robot.clawState == ClawState.CLOSED || Robot.clawState == ClawState.OPEN) && DriverStation.isAutonomous() == false).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY).andThen(new ClawOpenCommand()));
+    // new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false && (Robot.clawState == ClawState.CLOSED || Robot.clawState == ClawState.OPEN) && DriverStation.isAutonomous() == false).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY).andThen(new ClawOpenCommand()));
     
+    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false && (Robot.clawState == ClawState.CLOSED || Robot.clawState == ClawState.OPEN) && DriverStation.isAutonomous() == false).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY));
+    
+
     // While the claw is open, check if we detect a game piece, and if we do, close the claw.
     new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN && CLAW_SUBSYSTEM.lockoutHasElapsed()).onTrue(
       new InstantCommand(() -> Robot.overallState = OverallState.LOADING)
@@ -452,7 +473,7 @@ public class Robot extends TimedRobot {
     );
     
     // ARM
-    new Trigger(() -> Robot.overallState == OverallState.EJECTING).onTrue(new EjectPieceCommand());
+    // new Trigger(() -> Robot.overallState == OverallState.EJECTING).onTrue(new EjectPieceCommand());
 
     // // Extend and rotate the arm to the loading target
     // new Trigger(() -> Robot.loadState == LoadState.EMPTY && (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE || Robot.overallState == OverallState.GROUND_PICKUP))
@@ -473,7 +494,7 @@ public class Robot extends TimedRobot {
                         || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
                         || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
                         && DriverStation.isAutonomous() == false)
-      .onTrue(new ArmGoToSetpointCommand(Constants.ARM_FULL_RETRACT_SETPOINT).withName("Retract arm"));
+      .onTrue(new ArmSequencedRetractionCommand().withName("Retract arm"));
 
     // new Trigger(() -> Robot.hasCone()).whileTrue(RUMBLE_COMMAND);
     // new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);
