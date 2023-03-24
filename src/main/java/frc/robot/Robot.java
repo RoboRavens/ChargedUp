@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
   public static ArmExtensionState armExtensionState = ArmExtensionState.RETRACTED;
   public static PieceState pieceState = PieceState.NONE;
   public static LoadState loadState = LoadState.EMPTY;
-  public static LoadTargetState loadTargetState = LoadTargetState.DOUBLE_SUBSTATION;
+  public static LoadTargetState loadTargetState = LoadTargetState.SUBSTATION;
   public static DrivetrainState drivetrainState = DrivetrainState.FREEHAND;
   public static ClawState clawState = ClawState.CLOSED;
   public static LimelightState limelightState = LimelightState.TAG_TRACKING;
@@ -335,11 +335,11 @@ public class Robot extends TimedRobot {
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnFalse(new InstantCommand(() -> {
       if (loadState == LoadState.EMPTY) {
         overallState = OverallState.EMPTY_TRANSIT;
-      }
-      else {
+      } else {
         overallState = OverallState.LOADED_TRANSIT;
       }
-      loadTargetState = LoadTargetState.DOUBLE_SUBSTATION;
+
+      loadTargetState = LoadTargetState.SUBSTATION;
     }));
 
     // Piece ejection.
@@ -482,6 +482,7 @@ public class Robot extends TimedRobot {
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
     
+
     new Trigger(() -> Robot.loadState == LoadState.LOADED && robotIsInOwnCommunity() && DRIVE_TRAIN_SUBSYSTEM.robotIsAtTargetCoordinates() == false).whileTrue(ledsSignalCommunityCommand);
     new Trigger(() -> DRIVE_TRAIN_SUBSYSTEM.robotIsAtTargetCoordinates()).onTrue(ledsSignalAlignedCommand);
 
