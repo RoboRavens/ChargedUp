@@ -402,22 +402,22 @@ public class Robot extends TimedRobot {
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseRotationTargetManually())));
+      .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseRotationTargetManually()))));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
     // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-    .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseRotationTargetManually())));
+    .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseRotationTargetManually()))));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
     // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseExtensionTargetManually())));
+      .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseExtensionTargetManually()))));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseExtensionTargetManually())));
+      .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseExtensionTargetManually()))));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
