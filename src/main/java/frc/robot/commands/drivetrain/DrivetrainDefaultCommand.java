@@ -188,8 +188,14 @@ public class DrivetrainDefaultCommand extends CommandBase {
             return 0;
         }
 
+        
         SmartDashboard.putNumber("Score Target Y", target.getY());
         double yOffsetFromTarget = target.getY() - Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY();
+        
+        if (Math.abs(yOffsetFromTarget) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
+            return 0;
+        }
+
         double ySpeed = _yPID.calculate(yOffsetFromTarget) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * -1;
         double velocityDirection = ySpeed < 0 ? -1 : 1;
         if (Math.abs(ySpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {
@@ -215,6 +221,11 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
         SmartDashboard.putNumber("Score Target X", target.getX());
         double xOffsetFromTarget = target.getX() - Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX();
+        
+        if (Math.abs(xOffsetFromTarget) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
+            return 0;
+        }
+        
         double xSpeed = _xPID.calculate(xOffsetFromTarget) * Robot.DRIVE_TRAIN_SUBSYSTEM.MAX_VELOCITY_METERS_PER_SECOND * -1;
         double velocityDirection = xSpeed < 0 ? -1 : 1;
         if (Math.abs(xSpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {

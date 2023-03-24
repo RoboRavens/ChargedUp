@@ -34,8 +34,14 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         updateVisionMeasurementTimestamp();
+        updateVisionMeasurmentTimestampSecondLimelight();
         double ta = Robot.LIMELIGHT_SUBSYSTEM_ONE.getTa();
         double ta2 = Robot.LIMELIGHT_SUBSYSTEM_TWO.getTa();
+
+        SmartDashboard.putNumber("ta", ta);
+
+        SmartDashboard.putNumber("ta2", ta2);
+
         Pose2d firstLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
         Pose2d secondLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation();
         //Pose2d robotPose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
@@ -79,9 +85,12 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     private static Matrix<N3, N1> GetVisionStdDevs(double ta) {
         // Scale the confidence of the vision estimate by how much ApilTag we see.
+        ta = Math.min(ta, 1);
         double inverseArea = 1 - ta;
         double inverseCubed = Math.pow(inverseArea, 3);
         double clampedCube = Math.max(inverseCubed, Constants.MINIMUM_VISION_STANDARD_DEVIATION);
+
+        SmartDashboard.putNumber("VisionStdDev", clampedCube);
 
         Matrix<N3, N1> visionStdDevs = VecBuilder.fill(clampedCube, clampedCube, clampedCube);
 
