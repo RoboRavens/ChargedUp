@@ -1,12 +1,12 @@
 ==limelight right==
-http://10.11.88.28:5801/
+http://10.11.88.11:5801/
 networktables: limelight
 LL Forward: 0.1905
 LL Right: 0.219075
 LL Up: 0.55245
 
 ==limelight left==
-http://10.11.88.29:5801/
+http://10.11.88.12:5801/
 networktables: limelight-two
 LL Forward: 0.193675
 LL Right: -0.212725
