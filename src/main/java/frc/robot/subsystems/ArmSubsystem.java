@@ -271,12 +271,12 @@ public class ArmSubsystem extends SubsystemBase {
         armPose.setArmAngleDegrees(getCurrentAngleDegrees());
 
         
-        SmartDashboard.putNumber("Ext Encder", extensionMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Extension Encoder Actual Position", extensionMotor.getSelectedSensorPosition());
 
-        SmartDashboard.putNumber("LeaderEncoderPosition", rotationMotorsLeader.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Rotation Motor Actual Position", rotationMotorsLeader.getSelectedSensorPosition());
 
-        SmartDashboard.putNumber("RotationEncoderActualPosition", armRotationFinalTargetNativeUnits / Constants.ARM_DEGREES_TO_ENCODER_UNITS);
-        SmartDashboard.putNumber("ExtensionEncoderActualPosition", armExtensionFinalTargetNativeUnits / Constants.ARM_DEGREES_TO_ENCODER_UNITS);
+        // SmartDashboard.putNumber("RotationEncoderActualPosition", armRotationFinalTargetNativeUnits / Constants.ARM_DEGREES_TO_ENCODER_UNITS);
+        // SmartDashboard.putNumber("ExtensionEncoderActualPosition", armExtensionFinalTargetNativeUnits);
         
         SmartDashboard.putNumber("Absolute position", rotationMotorsLeader.getSensorCollection().getPulseWidthPosition());
         //SmartDashboard.putNumber("motor1position", rotationMotor1.getSelectedSensorPosition());
@@ -385,19 +385,27 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void increaseRotationTargetManually() {
-        armRotationFinalTargetNativeUnits += Constants.ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
-    }
-
-    public void decreaseRotationTargetManually() {
+        System.out.println("IN");
+        SmartDashboard.putNumber("Rotation final target native units", armRotationFinalTargetNativeUnits);
         armRotationFinalTargetNativeUnits -= Constants.ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
     }
 
+    public void decreaseRotationTargetManually() {
+        System.out.println("IN");
+        SmartDashboard.putNumber("Rotation final target native units", armRotationFinalTargetNativeUnits);
+        armRotationFinalTargetNativeUnits += Constants.ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
+    }
+
     public void increaseExtensionTargetManually() {
-        armExtensionFinalTargetNativeUnits += Constants.ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_TICK;
+        System.out.println("IN");
+        SmartDashboard.putNumber("Extension final target native units", armExtensionFinalTargetNativeUnits);
+        armExtensionFinalTargetNativeUnits = Math.min(armExtensionFinalTargetNativeUnits + Constants.ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_TICK, Constants.ARM_MAX_EXTENSION_ENCODER_UNITS);
     }
 
     public void decreaseExtensionTargetManually() {
-        armExtensionFinalTargetNativeUnits -= Constants.ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_TICK;
+        System.out.println("IN");
+        SmartDashboard.putNumber("Extension final target native units", armExtensionFinalTargetNativeUnits);
+        armExtensionFinalTargetNativeUnits = Math.max(armExtensionFinalTargetNativeUnits - Constants.ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_TICK, 0);
     }
 
     /*
