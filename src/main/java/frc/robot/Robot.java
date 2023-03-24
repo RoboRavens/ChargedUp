@@ -441,7 +441,7 @@ public class Robot extends TimedRobot {
     // new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.CLOSED).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.LOADED));
 
     // If the claw closes but we do NOT have a game piece, pickup failed, so open the claw again.
-    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false && Robot.clawState == ClawState.CLOSED && DriverStation.isAutonomous() == false).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY).andThen(new ClawOpenCommand()));
+    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false && (Robot.clawState == ClawState.CLOSED || Robot.clawState == ClawState.OPEN) && DriverStation.isAutonomous() == false).onTrue(new InstantCommand(() -> Robot.loadState = LoadState.EMPTY).andThen(new ClawOpenCommand()));
     
     // While the claw is open, check if we detect a game piece, and if we do, close the claw.
     new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN && CLAW_SUBSYSTEM.lockoutHasElapsed()).onTrue(
@@ -482,7 +482,8 @@ public class Robot extends TimedRobot {
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
     
-    new Trigger(() -> Robot.loadState == LoadState.LOADED && robotIsInOwnCommunity()).onTrue(ledsSignalCommunityCommand);
+
+    new Trigger(() -> Robot.loadState == LoadState.LOADED && robotIsInOwnCommunity() && DRIVE_TRAIN_SUBSYSTEM.robotIsAtTargetCoordinates() == false).whileTrue(ledsSignalCommunityCommand);
     new Trigger(() -> DRIVE_TRAIN_SUBSYSTEM.robotIsAtTargetCoordinates()).onTrue(ledsSignalAlignedCommand);
 
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
