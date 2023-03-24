@@ -477,7 +477,7 @@ public class Robot extends TimedRobot {
     
 
     // While the claw is open, check if we detect a game piece, and if we do, close the claw.
-    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN && CLAW_SUBSYSTEM.lockoutHasElapsed()).onTrue(
+    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN && CLAW_SUBSYSTEM.lockoutHasElapsed() && DriverStation.isAutonomous()).onTrue(
       new InstantCommand(() -> Robot.overallState = OverallState.LOADING)
       .andThen(new ClawCloseCommand())
       .andThen(new InstantCommand(() -> Robot.overallState = OverallState.LOADED_TRANSIT))
