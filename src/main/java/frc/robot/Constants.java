@@ -123,7 +123,7 @@ public final class Constants {
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
   public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 54;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 65;
-  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 49;
+  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 53;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 60;
 
   public static final double ARM_SEQUENCED_RETRACTION_STAGING_ANGLE = 45;

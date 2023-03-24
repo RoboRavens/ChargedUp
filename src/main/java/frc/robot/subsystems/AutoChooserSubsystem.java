@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.commands.auto.*;
+import frc.robot.commands.auto.AutoEnums.AutoAlliance;
 import frc.util.CommandSupplier;
 
 public class AutoChooserSubsystem extends SubsystemBase {
@@ -81,6 +82,10 @@ public class AutoChooserSubsystem extends SubsystemBase {
         new AutoMode("B7: Cable-side 3 cone",
         () -> ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
       );
+      this.addOption(
+        new AutoMode("B8: Mobility",
+        () -> MobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
+      );
 
       _tab
         .add("blue", true)
@@ -122,6 +127,10 @@ public class AutoChooserSubsystem extends SubsystemBase {
       this.addOption(
         new AutoMode("R7: Cable-side 3 cone",
         () -> ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
+      );
+      this.addOption(
+        new AutoMode("R8: Mobility",
+        () -> MobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
       );
 
       _tab
