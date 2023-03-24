@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
+import frc.robot.commands.arm.ArmSequencedRetractionCommand;
 import frc.robot.commands.claw.AutoClawOpenCommand;
+import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
 
 public class PreloadMobilityAndBalanceAutoCommand extends CommandBase {
@@ -32,10 +34,10 @@ public class PreloadMobilityAndBalanceAutoCommand extends CommandBase {
 
         Command scoreTwoAndBalanceCommand = 
         Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path)
-        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT))
-        .andThen(new AutoClawOpenCommand())
-        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
-        .andThen(pathCommand)
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT)).withTimeout(3)
+        .andThen(new ClawOpenCommand().withTimeout(3))
+        .andThen(new ArmSequencedRetractionCommand()).withTimeout(3)
+        .andThen(pathCommand).withTimeout(10)
         .andThen(new DrivetrainChargeStationBalancingCommand()); 
 
         return scoreTwoAndBalanceCommand;

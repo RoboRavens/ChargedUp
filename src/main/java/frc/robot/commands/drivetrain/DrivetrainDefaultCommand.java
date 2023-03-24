@@ -19,7 +19,6 @@ import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ZoneState;
-import frc.util.drive.AngularPositionHolder;
 import frc.util.drive.ChassisSpeedsExtensions;
 
 public class DrivetrainDefaultCommand extends CommandBase {
@@ -43,7 +42,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        AngularPositionHolder.GetInstance().reset();
+        // AngularPositionHolder.GetInstance().reset();
         _chassisSpeeds = new ChassisSpeeds(0, 0, 0);
     }
 
@@ -142,7 +141,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
         SmartDashboard.putNumber("angular velocity pid", r);
 
-        r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
+        // r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
 
         // scale drive velocity and rotation
         double scale = 1;
