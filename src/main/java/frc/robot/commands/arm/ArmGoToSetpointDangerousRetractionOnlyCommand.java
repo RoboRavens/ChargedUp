@@ -35,18 +35,41 @@ public class ArmGoToSetpointDangerousRetractionOnlyCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    timer.reset();
+    timer.start();
+    System.out.println("TIMER: " + timer.get());
     // If the arm is extended further than the setpoint given,
     // replace the setpoint with the current arm extension.
     // This command is to retract the arm only, NEVER to extend it.
-    finalSetpoint.setExtensionSetpoint(Math.min(finalSetpoint.getExtensionSetpoint(), arm.getArmExtensionFinalTargetNativeUnits()));
+    
+    SmartDashboard.putNumber("Final Ext Starting", finalSetpoint.getExtensionSetpoint());
+    SmartDashboard.putNumber("Current Ext Starting", arm.getCurrentExtensionNativeUnits());
+    
+    
+    finalSetpoint.setExtensionSetpoint(Math.min(finalSetpoint.getExtensionSetpoint(), arm.getCurrentExtensionNativeUnits()));
   
+    SmartDashboard.putNumber("New Final Ext", finalSetpoint.getExtensionSetpoint());
+    
+
+    SmartDashboard.putNumber("FS get rotation SP", finalSetpoint.getRotationSetpoint());
+
+    SmartDashboard.putNumber("Current rotation NU", arm.getCurrentRotationNativeUnits());
+
     // Same with rotation.
     // This logic will need to be updated to handle setpoints on the other side of 0,
     // which could have a lower absolute value but cause the arm to rotate significantly.
     // Right now it is only to be used to retract on the same side of 0.
-    if (Math.abs(finalSetpoint.getRotationSetpoint()) > Math.abs(arm.getArmRotationFinalTargetNativeUnits())) {
-      finalSetpoint.setRotationSetpoint(arm.getArmRotationFinalTargetNativeUnits());
+    
+    /*
+    if (Math.abs(finalSetpoint.getRotationSetpoint()) > Math.abs(arm.getCurrentRotationNativeUnits())) {
+      finalSetpoint.setRotationSetpoint(arm.getCurrentRotationNativeUnits());
     }
+    */
+//    finalSetpoint.setRotationSetpoint(_timeoutSeconds);
+
+    
+    SmartDashboard.putNumber("New FS Rotation", finalSetpoint.getRotationSetpoint());
+
 
     arm.setFinalRotationSetpoint(finalSetpoint.getRotationSetpoint());
     arm.setFinalExtensionSetpoint(finalSetpoint.getExtensionSetpoint());
@@ -61,7 +84,9 @@ public class ArmGoToSetpointDangerousRetractionOnlyCommand extends CommandBase {
   @Override
   public void execute() {
     SmartDashboard.putString("ArmSetpoint", finalSetpoint.getName());
-    SmartDashboard.putNumber("Arm Target", finalSetpoint.getRotationSetpointDegrees());
+    SmartDashboard.putNumber("Arm Rotation Target", finalSetpoint.getRotationSetpointDegrees());
+    
+    SmartDashboard.putNumber("Arm Extension Target", finalSetpoint.getExtensionSetpoint());
     
     arm.brakeDisable();
 
@@ -97,6 +122,7 @@ public class ArmGoToSetpointDangerousRetractionOnlyCommand extends CommandBase {
     // Note that terminating this command early, for example due to a timeout,
     // does not change the target of the arm, so if the next command issued
     // continues moving the arm to its target, it will do so.
-    return setpointIsFinished(finalSetpoint) || timer.hasElapsed(_timeoutSeconds);
+    // return setpointIsFinished(finalSetpoint) || timer.hasElapsed(_timeoutSeconds);
+    return timer.hasElapsed(_timeoutSeconds);
   }
 }

@@ -5,6 +5,7 @@
 package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -16,7 +17,8 @@ public class ArmSequencedRetractionCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ArmGoToSetpointDangerousRetractionOnlyCommand(Constants.ARM_SEQUENCED_RETRACTION_STAGING_SETPOINT, 2),
+      new ArmGoToSetpointDangerousRetractionOnlyCommand(Constants.ARM_SEQUENCED_RETRACTION_STAGING_SETPOINT, 1.25),
+      // new WaitCommand(1),
       new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT)
     );
   }
