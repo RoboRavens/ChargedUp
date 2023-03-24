@@ -307,7 +307,10 @@ public class Robot extends TimedRobot {
     // Arm control.
     OP_PAD_SWITCHES.getButton(ButtonCode.EJECT_PIECE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_HIGH_SETPOINT));
     OP_PAD_BUTTONS.getButton(ButtonCode.SET_ARM_TO_SCORE_TARGET_STATE).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.moveArmToTarget()));
-    OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
+    // OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
+    
+    OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmSequencedRetractionCommand());
+    
     // GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
 
     GAMEPAD.getButton(ButtonCode.A).onTrue(new ScorePieceCommand());
@@ -491,7 +494,7 @@ public class Robot extends TimedRobot {
                         || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
                         || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
                         && DriverStation.isAutonomous() == false)
-      .onTrue(new ArmGoToSetpointCommand(Constants.ARM_FULL_RETRACT_SETPOINT).withName("Retract arm"));
+      .onTrue(new ArmSequencedRetractionCommand().withName("Retract arm"));
 
     // new Trigger(() -> Robot.hasCone()).whileTrue(RUMBLE_COMMAND);
     // new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);

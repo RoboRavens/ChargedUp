@@ -28,4 +28,12 @@ public class ArmSetpoint {
     public double getRotationSetpointDegrees() {
         return rotationSetpoint / Constants.ARM_DEGREES_TO_ENCODER_UNITS;
     }
+
+    public void setExtensionSetpoint(double newExtensionSetpoint) {
+        this.extensionSetpoint = newExtensionSetpoint;
+    }
+
+    public void setRotationSetpoint(double newRotationSetpoint) {
+        this.rotationSetpoint = newRotationSetpoint;
+    }
 }
