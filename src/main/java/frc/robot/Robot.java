@@ -315,10 +315,17 @@ public class Robot extends TimedRobot {
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmSequencedRetractionCommand());
     
     // GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
-
     GAMEPAD.getButton(ButtonCode.A).onTrue(
-      new ScorePieceCommand().withTimeout(Constants.CLAW_OPEN_TIMEOUT_SECONDS)
-      .andThen(new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT)));
+        new ScorePieceCommand()
+        .withTimeout(Constants.CLAW_OPEN_TIMEOUT_SECONDS)
+        .andThen(new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT))
+        .handleInterrupt(() -> {
+            Robot.overallState = OverallState.EMPTY_TRANSIT;
+            Robot.pieceState = PieceState.NONE;
+            Robot.scoringTargetState = ScoringTargetState.NONE;
+            Robot.loadState = LoadState.EMPTY;
+        })
+    );
 
     // Ground intake.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).onTrue(new InstantCommand(() -> {
