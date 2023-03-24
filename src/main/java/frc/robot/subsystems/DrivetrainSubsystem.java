@@ -396,8 +396,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   }
 
   private void setRobotZoneFromOdometry() {
-    double robotX = getPoseX();
-    double robotY = getPoseY();
+    double robotX = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX();
+    double robotY = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY();
 
     // If the odometry override is active, set the coords to -1, -1.
     if (Robot.ODOMETRY_OVERRIDE) {
@@ -542,5 +542,43 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       var cmd = this.CreateFollowTrajectoryCommandSwerveOptimized(trajectory);
       cmd.schedule();
     });
+  }
+
+  public boolean robotIsAtTargetCoordinates() {
+    return robotIsAtTargetXCoordinate() && robotIsAtTargetYCoordinate();
+  }
+
+  public boolean robotIsAtTargetXCoordinate() {
+    boolean isWithinErrorMargin = false;
+
+    var target = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
+    if (target == null) {
+        return false;
+    }
+
+    double robotX = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX();
+
+    if (Math.abs(robotX - target.getX()) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
+      isWithinErrorMargin = true;
+    }
+
+    return isWithinErrorMargin;
+  }
+
+  public boolean robotIsAtTargetYCoordinate() {
+    boolean isWithinErrorMargin = false;
+
+    var target = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
+    if (target == null) {
+        return false;
+    }
+
+    double robotX = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY();
+
+    if (Math.abs(robotX - target.getY()) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
+      isWithinErrorMargin = true;
+    }
+
+    return isWithinErrorMargin;
   }
 }

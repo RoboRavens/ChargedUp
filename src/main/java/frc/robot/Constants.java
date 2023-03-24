@@ -194,15 +194,16 @@ public final class Constants {
   public static final double ROTATION_SIDEWAYS_LOADED_AFF = .055;
 
   // CLAW
-  public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .75;
+  public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
   public static final double CLAW_OPEN_TIMEOUT_SECONDS = .75;
-  public static final double AUTO_CLAW_CLOSE_TIMEOUT_SECONDS = .25;
-  public static final double AUTO_CLAW_OPEN_TIMEOUT_SECONDS = .75;
+  public static final double AUTO_CLAW_CLOSE_TIMEOUT_SECONDS = CLAW_CLOSE_TIMEOUT_SECONDS;
+  public static final double AUTO_CLAW_OPEN_TIMEOUT_SECONDS = CLAW_OPEN_TIMEOUT_SECONDS;
   public static final double RUMBLE_TIME = 0.2;
-  public static final double CLAW_LOCKOUT_DURATION_SECONDS = .75;
+  public static final double CLAW_LOCKOUT_DURATION_SECONDS = 0.75;
 
   // Limelight/vision-based odometry
   public static final double STATE_STANDARD_DEVIATION = .1;
   public static final double STARTING_VISION_STANDARD_DEVIATION = .9;
   public static final double MINIMUM_VISION_STANDARD_DEVIATION = .05;
+  public static final double ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS = Units.inchesToMeters(2.5);
 }
