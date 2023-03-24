@@ -24,7 +24,7 @@ public class ScorePieceCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT),
                 new InstantCommand(() -> Robot.pieceState = PieceState.NONE),
                 new InstantCommand(() -> Robot.scoringTargetState = ScoringTargetState.NONE),
-                new InstantCommand(() -> Robot.loadState = LoadState.NONE),
+                new InstantCommand(() -> Robot.loadState = LoadState.EMPTY),
                 new LEDsSolidColorCommand(Robot.LED_SUBSYSTEM, Colors.LIGHT_GREEN)
             )
         );
