@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
   public LEDsSolidColorCommand ledsSignalConeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.ORANGE);
   public LEDsSolidColorCommand ledsSignalCubeCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.PURPLE);
   public LEDsSolidColorCommand ledsSignalOdometryFailureCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.RED);
+  public LEDsSolidColorCommand ledsSignalCommunityCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.BLUE);
   public LEDsSolidColorCommand ledsSignalAlignedCommand = new LEDsSolidColorCommand(LED_SUBSYSTEM, Colors.GREEN);
 
   // Sets the default robot mechanism states (may need to be changed)
@@ -116,6 +117,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Ext Override", ARM_EXTENSION_MANUAL_OVERRIDE);
     setDriverStationData();
 
+    SmartDashboard.putString("Alliance color", allianceColor.name());
+
     
     SmartDashboard.putString("TABLET PIECE", TABLET_SCORING_SUBSYSTEM.GetScoringShape().name());
     SmartDashboard.putString("TABLET SUBSTATION", TABLET_SCORING_SUBSYSTEM.GetSubstation().name());
@@ -157,11 +160,16 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    ledsRainbowCommand.schedule();
+  }
 
   @Override
   public void disabledPeriodic() {
+    LED_SUBSYSTEM.rainbowLeds();
+    // ledsRainbowCommand.schedule();
     ////System.out.println("OUTPUT!");
+    
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -216,6 +224,10 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  public boolean robotIsInOwnCommunity() {
+    return zoneState == ZoneState.ALLIANCE_CHARGE_STATION || zoneState == ZoneState.ALLIANCE_COMMUNITY;
+  }
 
   private void setNonButtonDependentOverallStates() {
     // Check the load state of the robot.
@@ -470,18 +482,21 @@ public class Robot extends TimedRobot {
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CONE).onTrue(new InstantCommand(() -> pieceState = PieceState.CONE).andThen(ledsSignalConeCommand));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
     
+    new Trigger(() -> Robot.loadState == LoadState.LOADED && robotIsInOwnCommunity()).onTrue(ledsSignalCommunityCommand);
+    new Trigger(() -> DRIVE_TRAIN_SUBSYSTEM.robotIsAtTargetCoordinates()).onTrue(ledsSignalAlignedCommand);
+
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
 
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
-
-
   }
 
   private void setZoneStateFromFieldZone() {
     FieldZone fieldZone = fieldSubzone.getFieldZone();
     boolean allianceOwnsZone = allianceColor == fieldZone.getZoneOwner();
+
+    SmartDashboard.putString("FieldZone", fieldZone.getName());
 
     switch (fieldZone.getMacroZone()) {
       case NONE:
