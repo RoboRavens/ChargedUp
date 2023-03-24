@@ -102,6 +102,19 @@ public class TabletScoringSubsystem extends SubsystemBase {
     return _selectedSubstation;
   }
 
+  public Translation2d GetSubstationCoordinates() {
+    if (_selectedSubstation == Substation.NONE) {
+      return null;
+    }
+
+    if (Robot.allianceColor == Alliance.Invalid) {
+      return null;
+    }
+
+    return Robot.allianceColor == Alliance.Blue ?
+      FieldMeasurements.BLUE_SUBSTATIONS[_selectedSubstation.Index] : FieldMeasurements.RED_SUBSTATIONS[_selectedSubstation.Index];
+  }
+
   private void CheckConeCubeButtons() {
     boolean cone = _coneMode.getBoolean(false);
     boolean cube = _cubeMode.getBoolean(false);

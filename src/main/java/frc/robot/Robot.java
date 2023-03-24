@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
   public static ArmExtensionState armExtensionState = ArmExtensionState.RETRACTED;
   public static PieceState pieceState = PieceState.NONE;
   public static LoadState loadState = LoadState.EMPTY;
-  public static LoadTargetState loadTargetState = LoadTargetState.DOUBLE_SUBSTATION;
+  public static LoadTargetState loadTargetState = LoadTargetState.SUBSTATION;
   public static DrivetrainState drivetrainState = DrivetrainState.FREEHAND;
   public static ClawState clawState = ClawState.CLOSED;
   public static LimelightState limelightState = LimelightState.TAG_TRACKING;
@@ -335,11 +335,11 @@ public class Robot extends TimedRobot {
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).toggleOnFalse(new InstantCommand(() -> {
       if (loadState == LoadState.EMPTY) {
         overallState = OverallState.EMPTY_TRANSIT;
-      }
-      else {
+      } else {
         overallState = OverallState.LOADED_TRANSIT;
       }
-      loadTargetState = LoadTargetState.DOUBLE_SUBSTATION;
+
+      loadTargetState = LoadTargetState.SUBSTATION;
     }));
 
     // Piece ejection.

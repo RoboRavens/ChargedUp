@@ -2,6 +2,7 @@ package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -16,7 +17,6 @@ import frc.util.Scale;
 import frc.util.Slew;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.LoadState;
-import frc.util.StateManagement.LoadTargetState;
 import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ZoneState;
 import frc.util.drive.AngularPositionHolder;
@@ -64,31 +64,31 @@ public class DrivetrainDefaultCommand extends CommandBase {
         r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
 
         if (Robot.drivetrainState == DrivetrainState.ROBOT_ALIGN) {
-            // Set the robot to score
-            // TODO: update _targetPose based on the selected scoring location
-            // Get rid of the above three lines after testing
-            
             double targetAngle = r;
-
-            if (Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.DOUBLE_SUBSTATION) {
+            var selectedSubstation = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation();
+            Translation2d targetCoords = null;
+            if (Robot.loadState == LoadState.EMPTY && selectedSubstation.isDoubleSubstation()) {
                 double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 180 : 0;  // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
                 targetAngle = Math.toRadians(targetAngleDegrees);
+                targetCoords = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstationCoordinates();
             }
-            else if (Robot.loadState == LoadState.EMPTY && Robot.loadTargetState == LoadTargetState.SINGLE_SUBSTATION) {
+            else if (Robot.loadState == LoadState.EMPTY && selectedSubstation.isSingleSubstation()) {
                 double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 90 : -90; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
                 targetAngle = Math.toRadians(targetAngleDegrees);
+                targetCoords = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstationCoordinates();
             }
             else if (Robot.loadState == LoadState.LOADED) {
                 double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 0 : 180; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
                 targetAngle = Math.toRadians(targetAngleDegrees);
+                targetCoords = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
             }
 
             if (Robot.ODOMETRY_OVERRIDE == false) {
                 r = getAngularVelocityForAlignment(targetAngle);
             }
 
-            x = getXVelocity();
-            y = getYVelocity();
+            x = getXVelocity(targetCoords);
+            y = getYVelocity(targetCoords);
 
             /* 
 
@@ -181,8 +181,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
         }
     }
 
-    public double getYVelocity() {
-        var target = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
+    public double getYVelocity(Translation2d target) {
         if (target == null) {
             SmartDashboard.putNumber("Score Target Y", -1);
             return 0;
@@ -206,8 +205,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
         return ySpeed;
     }
 
-    public double getXVelocity() {
-        var target = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
+    public double getXVelocity(Translation2d target) {
         if (target == null) {
             SmartDashboard.putNumber("Score Target X", -1);
             return 0;

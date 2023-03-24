@@ -227,6 +227,18 @@ public class FieldMeasurements {
         new Translation2d(1.94,0.49), // 9
     };
 
+    public static final Translation2d[] BLUE_SUBSTATIONS = {
+        new Translation2d(15.2,7.33), // LEFT DOUBLE SUBSTATION FOR BLUE ALLIANCE SCORING
+        new Translation2d(15.2,6.03), //RIGHT DOUBLE SUBSTATION FOR BLUE ALLIANCE SCORING
+        new Translation2d(14.308,7.507) // SINGLE SUBSTATION FOR SCORING BLUE ALLIANCE
+    };
+
+    public static final Translation2d[] RED_SUBSTATIONS = {
+        new Translation2d(1.28, 6.14), // LEFT DOUBLE SUBSTATION FOR RED ALLIANCE SCORING
+        new Translation2d(1.43, 7.47), // RIGHT DOUBLE SUBSTATION FOR RED ALLIANCE SCORING
+        new Translation2d(2.352,7.389) // SINGLE SUBSTATION FOR RED ALLIANCE SCORING 
+    };
+
     public static double getInvertedWidthInches(double blueAllianceWidth) {
         return HALF_FIELD_WIDTH_TIMES_2_INCHES - blueAllianceWidth;
     }
