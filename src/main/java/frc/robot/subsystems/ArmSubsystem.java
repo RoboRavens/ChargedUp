@@ -461,7 +461,7 @@ public class ArmSubsystem extends SubsystemBase {
         ArmSetpoint targetArmSetpoint;
 
         // If no piece is selected, it will default to the cube pickup setpoint.
-        if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() != Substation.NONE) {
+        if (Robot.CLAW_SUBSYSTEM.detectsGamePiece() == false) {
             if (Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation() == Substation.DOUBLE_LEFT) {
                 if (Robot.TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CONE) {
                     targetArmSetpoint = Constants.ARM_DOUBLE_SUBSTATION_CONE_PICKUP_SETPOINT;   
