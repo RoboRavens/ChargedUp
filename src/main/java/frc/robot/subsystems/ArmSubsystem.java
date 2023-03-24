@@ -344,10 +344,11 @@ public class ArmSubsystem extends SubsystemBase {
         double rotationScaling = Math.sin(Math.abs(armPose.getArmAngleRadians()));
 
         double maxAFF = Constants.ROTATION_SIDEWAYS_EMPTY_AFF;
-
+/*
         if (Robot.hasCone()) {
             maxAFF = Constants.ROTATION_SIDEWAYS_LOADED_AFF;
         }
+        */
 
         if (this.getCurrentAngleDegrees() > 0) {
             maxAFF = maxAFF * -1;
@@ -359,9 +360,11 @@ public class ArmSubsystem extends SubsystemBase {
     public void updateExtensionAFF() {
         double maxAFF = Constants.EXTENSION_UPRIGHT_EMPTY_AFF;
 
+        /*
         if (Robot.hasCone()) {
             maxAFF = Constants.EXTENSION_UPRIGHT_LOADED_AFF;
         }
+        */
         
         double rotationScaling = Math.sin(Math.abs(armPose.getArmAngleRadians()));
 

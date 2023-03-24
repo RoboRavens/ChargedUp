@@ -111,6 +111,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
             */
         }
         // Set the drivetrain states and the x, y, and r values based on the overall robot state
+        /*
         else if (Robot.overallState == OverallState.PREPARING_TO_SCORE) {
             Robot.drivetrainState = DrivetrainState.FREEHAND_WITH_ROTATION_LOCK;
             double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 0 : 180; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
@@ -120,6 +121,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
                 r = getAngularVelocityForAlignment(targetAngle); 
             }
         }
+        */
         else if (Robot.overallState == OverallState.LOADING) {
             Robot.drivetrainState = DrivetrainState.ACTIVELY_LOADING;
             x = 0;

@@ -308,7 +308,9 @@ public class Robot extends TimedRobot {
     OP_PAD_SWITCHES.getButton(ButtonCode.EJECT_PIECE).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_HIGH_SETPOINT));
     OP_PAD_BUTTONS.getButton(ButtonCode.SET_ARM_TO_SCORE_TARGET_STATE).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.moveArmToTarget()));
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT));
-    GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
+    // GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
+
+    GAMEPAD.getButton(ButtonCode.A).onTrue(new ScorePieceCommand());
 
     // Ground intake.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).onTrue(new InstantCommand(() -> {
@@ -441,9 +443,12 @@ public class Robot extends TimedRobot {
 
   // Checking for a cone specifically, as opposed to any game piece, is relevant
   // since cones have weight and cubes mostly don't.
+
+  /*
   public static boolean hasCone() {
     return loadState == LoadState.LOADED && pieceState == PieceState.CONE;
   }
+  */
   
   private void configureTriggers() {
     // CLAW
@@ -465,7 +470,7 @@ public class Robot extends TimedRobot {
     );
     
     // ARM
-    new Trigger(() -> Robot.overallState == OverallState.EJECTING).onTrue(new EjectPieceCommand());
+    // new Trigger(() -> Robot.overallState == OverallState.EJECTING).onTrue(new EjectPieceCommand());
 
     // // Extend and rotate the arm to the loading target
     // new Trigger(() -> Robot.loadState == LoadState.EMPTY && (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE || Robot.overallState == OverallState.GROUND_PICKUP))

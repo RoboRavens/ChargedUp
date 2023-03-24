@@ -10,7 +10,7 @@ import frc.robot.commands.arm.ArmRotateToRetrievalPositionCommand;
 import frc.robot.commands.arm.ArmExtendToRetrievalPositionCommand;
 import frc.robot.commands.arm.ArmExtendToRowPositionCommand;
 import frc.robot.commands.arm.ArmRetractCommand;
-import frc.robot.commands.claw.ClawOpenCommand;
+//import frc.robot.commands.claw.ClawOpenCommand;
 import frc.util.StateManagement.ArmRotationState;
 import frc.util.StateManagement.LoadTargetState;
 import frc.util.StateManagement.OverallState;
@@ -18,6 +18,7 @@ import frc.util.StateManagement.PieceState;
 import frc.util.StateManagement.ScoringTargetState;
 
 public class EjectPieceCommand extends SequentialCommandGroup {
+    /*
     public EjectPieceCommand() {
         addRequirements(Robot.ARM_SUBSYSTEM, Robot.CLAW_SUBSYSTEM);
         // TODO: set the arm rotation and extension state
@@ -32,4 +33,5 @@ public class EjectPieceCommand extends SequentialCommandGroup {
             new InstantCommand(() -> Robot.scoringTargetState = ScoringTargetState.NONE)
         );
     }
+    */
 }

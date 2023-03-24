@@ -194,7 +194,7 @@ public final class Constants {
   public static final double ROTATION_SIDEWAYS_LOADED_AFF = .055;
 
   // CLAW
-  public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .25;
+  public static final double CLAW_CLOSE_TIMEOUT_SECONDS = .35;
   public static final double CLAW_OPEN_TIMEOUT_SECONDS = .75;
   public static final double AUTO_CLAW_CLOSE_TIMEOUT_SECONDS = CLAW_CLOSE_TIMEOUT_SECONDS;
   public static final double AUTO_CLAW_OPEN_TIMEOUT_SECONDS = CLAW_OPEN_TIMEOUT_SECONDS;
