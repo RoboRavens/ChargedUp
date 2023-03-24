@@ -49,9 +49,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double controllerDIrection = Robot.allianceColor == Alliance.Red ? 1 : -1;
-        double x = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKY) * controllerDIrection; // Positive x is away from your alliance wall.
-        double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * controllerDIrection; // Positive y is to your left when standing behind the alliance wall.
+        double controllerDirection = Robot.allianceColor == Alliance.Red ? 1 : -1;
+        double x = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKY) * controllerDirection; // Positive x is away from your alliance wall.
+        double y = Robot.GAMEPAD.getAxis(AxisCode.LEFTSTICKX) * controllerDirection; // Positive y is to your left when standing behind the alliance wall.
         double r = Robot.GAMEPAD.getAxis(AxisCode.RIGHTSTICKX) * -1; // The angular rate of the robot.
         Rotation2d a = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.
 
@@ -86,6 +86,9 @@ public class DrivetrainDefaultCommand extends CommandBase {
             if (Robot.ODOMETRY_OVERRIDE == false) {
                 r = getAngularVelocityForAlignment(targetAngle);
             }
+
+            x = getXVelocity();
+            y = getYVelocity();
 
             /* 
 

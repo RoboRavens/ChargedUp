@@ -205,4 +205,5 @@ public final class Constants {
   public static final double STATE_STANDARD_DEVIATION = .1;
   public static final double STARTING_VISION_STANDARD_DEVIATION = .9;
   public static final double MINIMUM_VISION_STANDARD_DEVIATION = .05;
+  public static final double ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS = Units.inchesToMeters(2.5);
 }

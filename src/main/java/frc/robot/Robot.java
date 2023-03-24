@@ -117,6 +117,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Ext Override", ARM_EXTENSION_MANUAL_OVERRIDE);
     setDriverStationData();
 
+    SmartDashboard.putString("Alliance color", allianceColor.name());
+
     
     SmartDashboard.putString("TABLET PIECE", TABLET_SCORING_SUBSYSTEM.GetScoringShape().name());
     SmartDashboard.putString("TABLET SUBSTATION", TABLET_SCORING_SUBSYSTEM.GetSubstation().name());
@@ -481,15 +483,13 @@ public class Robot extends TimedRobot {
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringShape() == ScoringShape.CUBE).onTrue(new InstantCommand(() -> pieceState = PieceState.CUBE).andThen(ledsSignalCubeCommand));
     
     new Trigger(() -> Robot.loadState == LoadState.LOADED && robotIsInOwnCommunity()).onTrue(ledsSignalCommunityCommand);
-    
+    new Trigger(() -> DRIVE_TRAIN_SUBSYSTEM.robotIsAtTargetCoordinates()).onTrue(ledsSignalAlignedCommand);
 
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
 
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
-
-
   }
 
   private void setZoneStateFromFieldZone() {
