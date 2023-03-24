@@ -32,7 +32,7 @@ public class PreloadMobilityAndBalanceAutoCommand extends CommandBase {
 
         Command scoreTwoAndBalanceCommand = 
         Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path)
-        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT))
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT))
         .andThen(new AutoClawOpenCommand())
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_FULL_RETRACT_SETPOINT))
         .andThen(pathCommand)
