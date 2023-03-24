@@ -259,6 +259,8 @@ public class Robot extends TimedRobot {
         overallState = OverallState.EMPTY_TRANSIT;
       }
     }
+
+    /* 
     // Sets the robot state to PREPARING_TO_SCORE only once when the robot has a piece and is in the alliance community.
     // This conditional is designed as such so it does not continuously set itself when a different overall state such as FINAL_SCORING_ALIGNMENT or SCORING is set.
     if (Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && Robot.overallState == OverallState.LOADED_TRANSIT) {
@@ -274,6 +276,7 @@ public class Robot extends TimedRobot {
     if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.overallState == OverallState.EMPTY_TRANSIT) {
       Robot.overallState = OverallState.DOUBLE_SUBSTATION_PICKUP;
     }
+    */
 
     // If we're relying on odometry and the zone state is none,
     // there is a problem with odometry so alert the drive team.
@@ -312,8 +315,17 @@ public class Robot extends TimedRobot {
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmSequencedRetractionCommand());
     
     // GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
-
-    GAMEPAD.getButton(ButtonCode.A).onTrue(new ScorePieceCommand());
+    GAMEPAD.getButton(ButtonCode.A).onTrue(
+        new ScorePieceCommand()
+        .withTimeout(Constants.CLAW_OPEN_TIMEOUT_SECONDS)
+        .andThen(new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT))
+        .handleInterrupt(() -> {
+            Robot.overallState = OverallState.EMPTY_TRANSIT;
+            Robot.pieceState = PieceState.NONE;
+            Robot.scoringTargetState = ScoringTargetState.NONE;
+            Robot.loadState = LoadState.EMPTY;
+        })
+    );
 
     // Ground intake.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).and(() -> overallState != OverallState.ENDGAME).onTrue(new InstantCommand(() -> {
@@ -390,22 +402,22 @@ public class Robot extends TimedRobot {
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-      .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseRotationTargetManually()))));
+      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseRotationTargetManually())));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
     // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-    .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseRotationTargetManually()))));
+    .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseRotationTargetManually())));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
     // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-      .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseExtensionTargetManually()))));
+      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseExtensionTargetManually())));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-      .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseExtensionTargetManually()))));
+      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseExtensionTargetManually())));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))
@@ -490,12 +502,16 @@ public class Robot extends TimedRobot {
     // - has just scored
     // - is not in our alliance community or loading zone
     // and the robot is not currently in autonomous
+    /*
     new Trigger(() -> ((Robot.overallState == OverallState.LOADED_TRANSIT && Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY) 
                         || (Robot.overallState == OverallState.EMPTY_TRANSIT && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY)
                         || (Robot.zoneState != ZoneState.ALLIANCE_COMMUNITY && Robot.zoneState != ZoneState.ALLIANCE_LOADING_ZONE))
                         && DriverStation.isAutonomous() == false)
+                      
       .onTrue(new ArmSequencedRetractionCommand().withName("Retract arm"));
-
+*/
+    new Trigger(() -> (Robot.overallState == OverallState.LOADED_TRANSIT && DriverStation.isAutonomous() == false))
+      .onTrue(new ArmSequencedRetractionCommand().withName("Retract arm"));
     // new Trigger(() -> Robot.hasCone()).whileTrue(RUMBLE_COMMAND);
     // new Trigger(() -> loadState == LoadState.EMPTY && Robot.CLAW_SUBSYSTEM.detectsGamePiece()).onTrue(RUMBLE_COMMAND);
     
