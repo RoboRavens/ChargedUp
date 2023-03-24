@@ -11,4 +11,12 @@ public enum Substation {
   private Substation(int index) {
     this.Index = index;
   }
+
+  public boolean isDoubleSubstation() {
+    return this == Substation.DOUBLE_LEFT || this == Substation.DOUBLE_RIGHT;
+  }
+
+  public boolean isSingleSubstation() {
+    return this == Substation.SINGLE;
+  }
 }

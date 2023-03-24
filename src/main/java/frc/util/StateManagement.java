@@ -73,8 +73,7 @@ public class StateManagement {
 
     // Set in configureButtonBindings() in Robot.java
     public enum LoadTargetState {
-        SINGLE_SUBSTATION,
-        DOUBLE_SUBSTATION,
+        SUBSTATION,
         GROUND
     }
 
