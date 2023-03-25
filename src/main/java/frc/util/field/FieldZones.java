@@ -192,7 +192,7 @@ public class FieldZones {
     }
 
     public void output() {
-        System.out.println("Zones:");
+        //System.out.println("Zones:");
 
         for (FieldZone zone : fieldZones) {
             zone.outputSubzones();

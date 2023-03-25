@@ -37,23 +37,23 @@ public class ArmGoToSetpointDangerousRetractionOnlyCommand extends CommandBase {
   public void initialize() {
     timer.reset();
     timer.start();
-    System.out.println("TIMER: " + timer.get());
+    //System.out.println("TIMER: " + timer.get());
     // If the arm is extended further than the setpoint given,
     // replace the setpoint with the current arm extension.
     // This command is to retract the arm only, NEVER to extend it.
     
-    SmartDashboard.putNumber("Final Ext Starting", finalSetpoint.getExtensionSetpoint());
-    SmartDashboard.putNumber("Current Ext Starting", arm.getCurrentExtensionNativeUnits());
+    //SmartDashboard.putNumber("Final Ext Starting", finalSetpoint.getExtensionSetpoint());
+    //SmartDashboard.putNumber("Current Ext Starting", arm.getCurrentExtensionNativeUnits());
     
     
     finalSetpoint.setExtensionSetpoint(Math.min(finalSetpoint.getExtensionSetpoint(), arm.getCurrentExtensionNativeUnits()));
   
-    SmartDashboard.putNumber("New Final Ext", finalSetpoint.getExtensionSetpoint());
+    //SmartDashboard.putNumber("New Final Ext", finalSetpoint.getExtensionSetpoint());
     
 
-    SmartDashboard.putNumber("FS get rotation SP", finalSetpoint.getRotationSetpoint());
+    //SmartDashboard.putNumber("FS get rotation SP", finalSetpoint.getRotationSetpoint());
 
-    SmartDashboard.putNumber("Current rotation NU", arm.getCurrentRotationNativeUnits());
+//    SmartDashboard.putNumber("Current rotation NU", arm.getCurrentRotationNativeUnits());
 
     // Same with rotation.
     // This logic will need to be updated to handle setpoints on the other side of 0,
@@ -68,7 +68,7 @@ public class ArmGoToSetpointDangerousRetractionOnlyCommand extends CommandBase {
 //    finalSetpoint.setRotationSetpoint(_timeoutSeconds);
 
     
-    SmartDashboard.putNumber("New FS Rotation", finalSetpoint.getRotationSetpoint());
+    //SmartDashboard.putNumber("New FS Rotation", finalSetpoint.getRotationSetpoint());
 
 
     arm.setFinalRotationSetpoint(finalSetpoint.getRotationSetpoint());
@@ -83,10 +83,10 @@ public class ArmGoToSetpointDangerousRetractionOnlyCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putString("ArmSetpoint", finalSetpoint.getName());
-    SmartDashboard.putNumber("Arm Rotation Target", finalSetpoint.getRotationSetpointDegrees());
+    //SmartDashboard.putString("ArmSetpoint", finalSetpoint.getName());
+    //SmartDashboard.putNumber("Arm Rotation Target", finalSetpoint.getRotationSetpointDegrees());
     
-    SmartDashboard.putNumber("Arm Extension Target", finalSetpoint.getExtensionSetpoint());
+    //SmartDashboard.putNumber("Arm Extension Target", finalSetpoint.getExtensionSetpoint());
     
     arm.brakeDisable();
 

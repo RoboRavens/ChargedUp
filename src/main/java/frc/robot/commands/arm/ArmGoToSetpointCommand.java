@@ -53,11 +53,11 @@ public class ArmGoToSetpointCommand extends CommandBase {
   @Override
   public void execute() {
     
-    SmartDashboard.putString("ArmSetpoint", finalSetpoint.getName());
+    //SmartDashboard.putString("ArmSetpoint", finalSetpoint.getName());
     arm.brakeDisable();
 
 
-    SmartDashboard.putBoolean("SetPIF", setpointIsFinished(currentSubSetpoint));
+    //SmartDashboard.putBoolean("SetPIF", setpointIsFinished(currentSubSetpoint));
 
     if (setpointIsFinished(currentSubSetpoint)) {
       setpointIterator++;

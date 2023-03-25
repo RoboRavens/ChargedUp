@@ -402,22 +402,52 @@ public class Robot extends TimedRobot {
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-      .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseRotationTargetManually()))));
+      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseRotationTargetManually())));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
     // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
-    .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseRotationTargetManually()))));
+    .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseRotationTargetManually())));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
     .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
     // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-      .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseExtensionTargetManually()))));
+      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.increaseExtensionTargetManually())));
 
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
       // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
-      .whileTrue(armDefaultCommand.alongWith(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseExtensionTargetManually()))));
+      .whileTrue(new RepeatCommand(new InstantCommand(() -> ARM_SUBSYSTEM.decreaseExtensionTargetManually())));
+
+
+    // delete plz
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
+      // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      .onTrue(new InstantCommand(() -> {}, ARM_SUBSYSTEM));
+
+    OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_BACKWARD)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE).negate())
+    // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_ROTATION_LIMITS))
+      .onTrue(new InstantCommand(() -> {}, ARM_SUBSYSTEM));
+
+    OP_PAD_BUTTONS.getButton(ButtonCode.EXTEND_ARM)
+    .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
+    // .and(OP_PAD_SWITCHES.getButton(ButtonCode.IGNORE_EXTENSION_LIMITS))
+      .onTrue(new InstantCommand(() -> {}, ARM_SUBSYSTEM));
+
+    OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM)
+      .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_EXTENSION_MANUAL_OVERRIDE).negate())
+      .onTrue(new InstantCommand(() -> {}, ARM_SUBSYSTEM));
+
+
+
+
+
+
+
+      
+
 
     OP_PAD_BUTTONS.getButton(ButtonCode.ROTATE_ARM_FORWARD)
       .and(OP_PAD_SWITCHES.getButton(ButtonCode.ARM_ROTATION_MANUAL_OVERRIDE))

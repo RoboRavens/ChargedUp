@@ -7,8 +7,11 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
@@ -36,7 +39,9 @@ public class PreloadMobilityAndBalanceAutoCommand extends CommandBase {
         Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path)
         .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT)).withTimeout(3)
         .andThen(new ClawOpenCommand().withTimeout(3))
+        .andThen(new InstantCommand(() -> SmartDashboard.putNumber("Before retraction command", Timer.getFPGATimestamp())))
         .andThen(new ArmSequencedRetractionCommand()).withTimeout(6)
+        .andThen(new InstantCommand(() -> SmartDashboard.putNumber("After retraction command", Timer.getFPGATimestamp())))
         .andThen(pathCommand).withTimeout(10)
         .andThen(new DrivetrainChargeStationBalancingCommand()); 
 

@@ -139,7 +139,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
         
 
-        SmartDashboard.putNumber("angular velocity pid", r);
+        //SmartDashboard.putNumber("angular velocity pid", r);
 
         // r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
 
@@ -157,10 +157,10 @@ public class DrivetrainDefaultCommand extends CommandBase {
         r = r * scale;
 
         // give calculated x,y,r to drive command
-        SmartDashboard.putNumber("DriveDefaultCmd x", x);
-        SmartDashboard.putNumber("DriveDefaultCmd y", y);
-        SmartDashboard.putNumber("DriveDefaultCmd r (rotation)", r);
-        SmartDashboard.putNumber("DriveDefaultCmd a (gyro)", a.getDegrees());
+        // SmartDashboard.putNumber("DriveDefaultCmd x", x);
+        // SmartDashboard.putNumber("DriveDefaultCmd y", y);
+        // SmartDashboard.putNumber("DriveDefaultCmd r (rotation)", r);
+        // SmartDashboard.putNumber("DriveDefaultCmd a (gyro)", a.getDegrees());
         
         var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             x, // x translation
@@ -245,13 +245,13 @@ public class DrivetrainDefaultCommand extends CommandBase {
         // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
         double currentRotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians();
         double rotationOffset = currentRotation - targetRotation;
-        SmartDashboard.putNumber("Rotation Offset", rotationOffset);
+        //SmartDashboard.putNumber("Rotation Offset", rotationOffset);
         double angularVelocity = _scoringRotationAlignPID
         .calculate(rotationOffset) 
         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
         double velocityDirection = angularVelocity < 0 ? -1 : 1;
         boolean isWithinTwoHundredthsRadianOfTargetRotation = currentRotation > targetRotation - 0.02 && currentRotation < targetRotation + 0.02;
-        SmartDashboard.putBoolean("isWithinTwoHundredthsRadianOfTargetRotation", isWithinTwoHundredthsRadianOfTargetRotation);
+        //SmartDashboard.putBoolean("isWithinTwoHundredthsRadianOfTargetRotation", isWithinTwoHundredthsRadianOfTargetRotation);
         // If the angular velocity is greater than the max angular velocity, set it to the max angular velocity
         if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
             return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * velocityDirection;
@@ -266,7 +266,7 @@ public class DrivetrainDefaultCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         Robot.DRIVE_TRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
-        SmartDashboard.putString("end method", "end");
+        //SmartDashboard.putString("end method", "end");
     }
 
     private double getDegreesToMovementDirection(double x, double y, double robotAngleDegrees) {

@@ -26,10 +26,10 @@ public class MobilityAutoCommand extends CommandBase {
         Command pathCommand = pathWithEvents;
 
 
-        Command scoreTwoAndBalanceCommand = 
+        Command mobilityCommand = 
         Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path)
         .andThen(pathCommand).withTimeout(10); 
 
-        return scoreTwoAndBalanceCommand;
+        return mobilityCommand;
     }
 }
