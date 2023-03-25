@@ -86,6 +86,10 @@ public class AutoChooserSubsystem extends SubsystemBase {
         new AutoMode("B8: Mobility",
         () -> MobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
       );
+      this.addOption(
+        new AutoMode("Testing",
+        () -> TestingAutoCommand.getAutoMode())
+      );
 
       _tab
         .add("blue", true)
