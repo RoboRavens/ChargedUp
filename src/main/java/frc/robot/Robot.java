@@ -129,7 +129,8 @@ public class Robot extends TimedRobot {
 
     // ARM_SUBSYSTEM.setTestPower(SmartDashboard.getNumber("Power", 0));
 
-    
+    SmartDashboard.putNumber("Robot roll", Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll());
+    SmartDashboard.putNumber("Robot pitch", Robot.DRIVE_TRAIN_SUBSYSTEM.getPitch());
 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
@@ -296,7 +297,7 @@ public class Robot extends TimedRobot {
     GAMEPAD.getPOVTrigger(GamepadPOV.Up).toggleOnTrue(new DriveTwoInchesCommand('F'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Down).toggleOnTrue(new DriveTwoInchesCommand('B'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Left).toggleOnTrue(new DriveTwoInchesCommand('L'));
-    // GAMEPAD.getButton(ButtonCode.X).whileTrue(chargeStationBalancingCommand);
+    GAMEPAD.getButton(ButtonCode.START).whileTrue(chargeStationBalancingCommand);
     // GAMEPAD.getButton(ButtonCode.B).onTrue(new InstantCommand(() -> Robot.POSE_ESTIMATOR_SUBSYSTEM.resetOdometryPoseToLimelight()));
 
     // Claw override commands.
@@ -507,7 +508,7 @@ public class Robot extends TimedRobot {
     
 
     // While the claw is open, check if we detect a game piece, and if we do, close the claw.
-    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN && CLAW_SUBSYSTEM.lockoutHasElapsed() && DriverStation.isAutonomous()).onTrue(
+    new Trigger(() -> Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.OPEN && CLAW_SUBSYSTEM.lockoutHasElapsed() && DriverStation.isAutonomous() == false).onTrue(
       new InstantCommand(() -> Robot.overallState = OverallState.LOADING)
       .andThen(new ClawCloseCommand())
       .andThen(new InstantCommand(() -> Robot.overallState = OverallState.LOADED_TRANSIT))
@@ -616,7 +617,7 @@ public class Robot extends TimedRobot {
   // this method needs to called both periodically AND in the auto/tele init methods.
   private void setDriverStationData() {
     if (allianceColor == Alliance.Invalid) {
-      allianceColor = DriverStation.getAlliance();
+      allianceColor = Alliance.Red;
       AUTO_CHOOSER.BuildAutoChooser(allianceColor);
     }
   }

@@ -87,6 +87,19 @@ public class AutoChooserSubsystem extends SubsystemBase {
         () -> MobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
       );
       this.addOption(
+        new AutoMode("B9: Score and Mobility",
+        () -> MobilityAndScoreConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
+      );
+      this.addOption(
+        new AutoMode("B10: Score 2 Cones",
+        () -> TwoConeAndMobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("B11: Preload + Balance",
+        () -> PreloadBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
+      );
+      
+      this.addOption(
         new AutoMode("Testing",
         () -> TestingAutoCommand.getAutoMode())
       );
@@ -135,6 +148,22 @@ public class AutoChooserSubsystem extends SubsystemBase {
       this.addOption(
         new AutoMode("R8: Mobility",
         () -> MobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
+      );
+      this.addOption(
+        new AutoMode("R9: Score and Mobility",
+        () -> MobilityAndScoreConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
+      );
+      this.addOption(
+        new AutoMode("R10: Score 2 Cones",
+        () -> TwoConeAndMobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("R11: Preload and Balance",
+        () -> PreloadBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
+      );
+      this.addOption(
+        new AutoMode("Drive until charge station red",
+        () -> new BalanceAutoCommand())
       );
 
       _tab

@@ -70,4 +70,10 @@ public class DrivetrainSubsystemMock extends DrivetrainSubsystemBase {
     public boolean isRobotSquareWithField() {
         return false;
     }
+
+    @Override
+    public double getPitch() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }

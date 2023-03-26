@@ -10,10 +10,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
+import frc.robot.commands.arm.ArmSequencedRetractionCommand;
+import frc.robot.commands.arm.ArmSequencedRetractionFromReverseCommand;
+import frc.robot.commands.claw.ClawOpenCommand;
 
-public class MobilityAutoCommand extends CommandBase {
+public class MobilityAndScoreConeAutoCommand extends CommandBase {
     public static Command getAutoMode(AutoEnums.AutoAlliance autoAlliance) {
-        String pathFile = "Mobility " + autoAlliance.toString();
+        String pathFile = "Score + Mobility " + autoAlliance.toString();
         PathPlannerTrajectory path = PathPlanner.loadPath(pathFile, new PathConstraints(1.6, 0.6));
         
         HashMap<String, Command> pathEventMap = new HashMap<>();
@@ -27,6 +31,9 @@ public class MobilityAutoCommand extends CommandBase {
 
         Command mobilityCommand = 
         Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path)
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_REVERSE_SETPOINT)).withTimeout(3)
+        .andThen(new ClawOpenCommand().withTimeout(3))
+        .andThen(new ArmSequencedRetractionFromReverseCommand()).withTimeout(6)
         .andThen(pathCommand).withTimeout(10); 
 
         return mobilityCommand;

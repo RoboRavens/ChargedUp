@@ -34,7 +34,7 @@ public final class Constants {
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
   public static final Gains rotationGains = new Gains(1.35, 0.0007, 0.00000, 0.0, 0, 1.0);
-  public static final Gains extensionGains = new Gains(1.1, 0.0003, 0.00000, 0.0, 0, 1.0);
+  public static final Gains extensionGains = new Gains(1.1, 0.0007, 0.00000, 0.0, 0, 1.0);
   
   // Position to degrees 4096 counts per revolution
   public static final int COUNTS_PER_REVOLUTION = 4096;
@@ -123,12 +123,13 @@ public final class Constants {
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
   public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 54;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 65;
-  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 53;
+  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 55;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 60;
 
   public static final double ARM_SEQUENCED_RETRACTION_STAGING_ANGLE = 45;
-  public static final double ARM_SEQUENCED_RETRACTION_STAGING_EXTENSION_SETPOINT = 30000;
+  public static final double ARM_SEQUENCED_RETRACTION_STAGING_EXTENSION_SETPOINT = 20000;
   public static final ArmSetpoint ARM_SEQUENCED_RETRACTION_STAGING_SETPOINT = new ArmSetpoint("Staging Retract", ARM_SEQUENCED_RETRACTION_STAGING_EXTENSION_SETPOINT, ARM_SEQUENCED_RETRACTION_STAGING_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
+  public static final ArmSetpoint ARM_SEQUENCED_RETRACTION_FROM_REVERSE_STAGING_SETPOINT = new ArmSetpoint("Staging Retract - Reverse", ARM_SEQUENCED_RETRACTION_STAGING_EXTENSION_SETPOINT, ARM_SEQUENCED_RETRACTION_STAGING_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS * -1);
 
   public static final int ARM_FULL_RETRACT_EXTENSION_SETPOINT = 0;
   public static final int ARM_FULL_RETRACT_ROTATION_SETPOINT = (int) Math.round(ARM_FULL_RETRACT_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
@@ -142,7 +143,7 @@ public final class Constants {
   public static final int ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_LOW_EXTENSION_SETPOINT = 0;
   public static final int ARM_SCORE_LOW_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_LOW_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 54000;
+  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 60000;
   public static final int ARM_SCORE_CONE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 36500;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
@@ -171,6 +172,9 @@ public final class Constants {
 
   public static final ArmSetpoint ARM_REVERSE_TEST_SETPOINT = new ArmSetpoint("Reverse Test", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT * -1);
 
+
+  public static final ArmSetpoint ARM_SCORE_CONE_MID_REVERSE_SETPOINT = new ArmSetpoint("Score Cone Mid - Reverse", ARM_SCORE_CONE_MID_EXTENSION_SETPOINT, ARM_SCORE_CONE_MID_ROTATION_SETPOINT * -1);
+  
   
   public static final double ARM_ROTATION_MANUAL_DEGREES_PER_SECOND = 30;
   public static final double ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK = ARM_ROTATION_MANUAL_DEGREES_PER_SECOND * ARM_DEGREES_TO_ENCODER_UNITS / 50;
@@ -210,4 +214,10 @@ public final class Constants {
   public static final double STARTING_VISION_STANDARD_DEVIATION = .9;
   public static final double MINIMUM_VISION_STANDARD_DEVIATION = .05;
   public static final double ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS = Units.inchesToMeters(2.5);
+
+  // Auto balancing
+  public static final double AUTO_BALANCE_APPROACH_DRIVE_SPEED_METERS_PER_SECOND = 2;
+  public static final double AUTO_BALANCE_BALANCE_DRIVE_SPEED_METERS_PER_SECOND = 2;
+  public static final double ROBOT_IS_TILTED_DEGREES = 10;
+  public static final double ROBOT_IS_LEVEL_DEGREES = 4;
 }

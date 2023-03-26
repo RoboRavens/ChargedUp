@@ -21,9 +21,9 @@ import frc.robot.commands.claw.AutoClawOpenCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
 import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
 
-public class PreloadMobilityAndBalanceAutoCommand extends CommandBase {
+public class PreloadBalanceAutoCommand extends CommandBase {
     public static Command getAutoMode(AutoEnums.AutoAlliance autoAlliance) {
-        String pathFile = "Preload Cone + Mobility + Balance " + autoAlliance.toString();
+        String pathFile = "Preload Cone + Balance " + autoAlliance.toString();
         List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup(pathFile, new PathConstraints(1.6, 0.6));
 
         PathPlannerTrajectory path1 = path.get(0);
@@ -34,21 +34,12 @@ public class PreloadMobilityAndBalanceAutoCommand extends CommandBase {
             path1.getMarkers(),
             pathEventMap1);
 
-        PathPlannerTrajectory path2 = path.get(1);
-        HashMap<String, Command> pathEventMap2 = new HashMap<>();
-
-        FollowPathWithEvents path2WithEvents = new FollowPathWithEvents(
-            Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(path2), 
-            path2.getMarkers(),
-            pathEventMap2);
-
         Command scoreTwoAndBalanceCommand = 
         Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path1)
         // .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT)).withTimeout(3)
         // .andThen(new ClawOpenCommand().withTimeout(3))
         // .andThen(new ArmSequencedRetractionCommand()).withTimeout(6)
         .andThen(path1WithEvents)
-        .andThen(path2WithEvents)
         .andThen(new DrivetrainChargeStationBalancingCommand()); 
 
         return scoreTwoAndBalanceCommand;

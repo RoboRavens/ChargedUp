@@ -15,7 +15,7 @@ import frc.ravenhardware.BufferedDigitalInput;
 public class ClawSubsystem extends SubsystemBase {
     DoubleSolenoid leftDoubleSolenoid = new DoubleSolenoid(RobotMap.REV_PNEUMATICS_MODULE_ID, PneumaticsModuleType.REVPH, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_LEFT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
     DoubleSolenoid rightDoubleSolenoid = new DoubleSolenoid(RobotMap.REV_PNEUMATICS_MODULE_ID, PneumaticsModuleType.REVPH, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_FORWARD_CHANNEL, RobotMap.CLAW_RIGHT_DOUBLE_SOLENOID_REVERSE_CHANNEL) ;
-    BufferedDigitalInput pieceSensor = new BufferedDigitalInput(RobotMap.PIECE_SENSOR, 3, false, false);
+    BufferedDigitalInput pieceSensor = new BufferedDigitalInput(RobotMap.PIECE_SENSOR, 9, false, false);
     Timer closeLockoutTimer = new Timer();
 
     public ClawSubsystem() {
@@ -40,6 +40,7 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public boolean lockoutHasElapsed() {
+        // System.out.println();
         return closeLockoutTimer.hasElapsed(Constants.CLAW_LOCKOUT_DURATION_SECONDS);
     }
 
