@@ -24,7 +24,7 @@ public class DriveBackwardUntilLevelCommand extends CommandBase {
   public void execute() {
     Robot.DRIVE_TRAIN_SUBSYSTEM.drive(
       new ChassisSpeeds(
-        .5,
+        -.25,
         0,
         0
       )

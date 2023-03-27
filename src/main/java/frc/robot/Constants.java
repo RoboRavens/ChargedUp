@@ -33,8 +33,8 @@ public final class Constants {
 	public static final int kSlotIdx = 0;
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
-  public static final Gains rotationGains = new Gains(1.35, 0.0007, 0.00000, 0.0, 0, 1.0);
-  public static final Gains extensionGains = new Gains(1.1, 0.0007, 0.00000, 0.0, 0, 1.0);
+  public static final Gains rotationGains = new Gains(1.35, 0.0008, 0.00000, 0.0, 0, 1.0);
+  public static final Gains extensionGains = new Gains(1.1, 0.0008, 0.00000, 0.0, 0, 1.0);
   
   // Position to degrees 4096 counts per revolution
   public static final int COUNTS_PER_REVOLUTION = 4096;
@@ -118,12 +118,12 @@ public final class Constants {
   public static final int ARM_FULL_RETRACT_ROTATION_ANGLE = 0;
   public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 119;
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 75;
-  public static final double ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE = 65;
+  public static final double ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE = 63;
   public static final double ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_ANGLE = ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
   public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 54;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 65;
-  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 55;
+  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 57;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 60;
 
   public static final double ARM_SEQUENCED_RETRACTION_STAGING_ANGLE = 45;
@@ -147,7 +147,7 @@ public final class Constants {
   public static final int ARM_SCORE_CONE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 36500;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 117000;
+  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 119000;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 108000;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
@@ -155,6 +155,10 @@ public final class Constants {
   public static final int ARM_SCORE_CONE_HIGH_OPPOSITE_ROTATION_SETPOINT = (int) Math.round((ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * -1) * ARM_DEGREES_TO_ENCODER_UNITS);
 
   public static final ArmSetpoint ARM_EXTENSION_TEST_SETPOINT = new ArmSetpoint("Arm Extend", ARM_MAX_EXTENSION_ENCODER_UNITS, ARM_FULL_RETRACT_ROTATION_SETPOINT);
+
+
+  public static final ArmSetpoint ARM_SEQUENCED_EXTENSION_STAGING_SETPOINT = new ArmSetpoint("Staging Extend", 60000, 45 * ARM_DEGREES_TO_ENCODER_UNITS * -1);
+  
 
   
   public static final ArmSetpoint ARM_FULL_RETRACT_SETPOINT = new ArmSetpoint("Full Retract", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_FULL_RETRACT_ROTATION_SETPOINT);
@@ -168,14 +172,17 @@ public final class Constants {
   public static final ArmSetpoint ARM_SCORE_CONE_HIGH_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT);
   public static final ArmSetpoint ARM_SCORE_CUBE_HIGH_SETPOINT = new ArmSetpoint("Score Cube High", ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT);
 
-  public static final ArmSetpoint ARM_SCORE_CONE_HIGH_OPPOSITE_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_OPPOSITE_ROTATION_SETPOINT);
 
   public static final ArmSetpoint ARM_REVERSE_TEST_SETPOINT = new ArmSetpoint("Reverse Test", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT * -1);
 
 
   public static final ArmSetpoint ARM_SCORE_CONE_MID_REVERSE_SETPOINT = new ArmSetpoint("Score Cone Mid - Reverse", ARM_SCORE_CONE_MID_EXTENSION_SETPOINT, ARM_SCORE_CONE_MID_ROTATION_SETPOINT * -1);
+  public static final ArmSetpoint ARM_SCORE_CONE_HIGH_REVERSE_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_OPPOSITE_ROTATION_SETPOINT);
   
+  public static final ArmSetpoint ARM_SCORE_CONE_HIGH_REVERSE_STAGING_SETPOINT = new ArmSetpoint("Score Cone High Staging", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, 0);
+ 
   
+
   public static final double ARM_ROTATION_MANUAL_DEGREES_PER_SECOND = 30;
   public static final double ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK = ARM_ROTATION_MANUAL_DEGREES_PER_SECOND * ARM_DEGREES_TO_ENCODER_UNITS / 50;
 

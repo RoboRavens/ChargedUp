@@ -98,10 +98,9 @@ public class AutoChooserSubsystem extends SubsystemBase {
         new AutoMode("B11: Preload + Balance",
         () -> PreloadBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
       );
-      
       this.addOption(
-        new AutoMode("Testing",
-        () -> TestingAutoCommand.getAutoMode())
+        new AutoMode("B12: Balance Auto V3",
+        () -> BalanceAutoV3Command.getAutoMode(AutoEnums.AutoAlliance.Blue))
       );
 
       _tab
@@ -162,8 +161,8 @@ public class AutoChooserSubsystem extends SubsystemBase {
         () -> PreloadBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
       );
       this.addOption(
-        new AutoMode("Drive until charge station red",
-        () -> new BalanceAutoCommand())
+        new AutoMode("R12: Balance Auto V3",
+        () -> BalanceAutoV3Command.getAutoMode(AutoEnums.AutoAlliance.Red))
       );
 
       _tab

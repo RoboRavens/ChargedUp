@@ -617,7 +617,7 @@ public class Robot extends TimedRobot {
   // this method needs to called both periodically AND in the auto/tele init methods.
   private void setDriverStationData() {
     if (allianceColor == Alliance.Invalid) {
-      allianceColor = Alliance.Red;
+      allianceColor = Alliance.Blue;
       AUTO_CHOOSER.BuildAutoChooser(allianceColor);
     }
   }

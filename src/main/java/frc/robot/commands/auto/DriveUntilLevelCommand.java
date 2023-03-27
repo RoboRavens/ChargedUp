@@ -24,7 +24,7 @@ public class DriveUntilLevelCommand extends CommandBase {
   public void execute() {
     Robot.DRIVE_TRAIN_SUBSYSTEM.drive(
       new ChassisSpeeds(
-        2,
+        .5,
         0,
         0
       )
