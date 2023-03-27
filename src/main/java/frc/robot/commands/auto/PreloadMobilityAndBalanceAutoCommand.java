@@ -1,14 +1,18 @@
 package frc.robot.commands.auto;
 
 import java.util.HashMap;
+import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.commands.arm.ArmGoToSetpointDangerousCommand;
@@ -20,24 +24,31 @@ import frc.robot.commands.drivetrain.DrivetrainChargeStationBalancingCommand;
 public class PreloadMobilityAndBalanceAutoCommand extends CommandBase {
     public static Command getAutoMode(AutoEnums.AutoAlliance autoAlliance) {
         String pathFile = "Preload Cone + Mobility + Balance " + autoAlliance.toString();
-        PathPlannerTrajectory path = PathPlanner.loadPath(pathFile, new PathConstraints(1.6, 0.6));
-        
-        HashMap<String, Command> pathEventMap = new HashMap<>();
+        List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup(pathFile, new PathConstraints(1.6, 0.6));
 
-        FollowPathWithEvents pathWithEvents = new FollowPathWithEvents(
-            Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(path), 
-            path.getMarkers(),
-            pathEventMap);
+        PathPlannerTrajectory path1 = path.get(0);
+        HashMap<String, Command> pathEventMap1 = new HashMap<>();
 
-        Command pathCommand = pathWithEvents;
+        FollowPathWithEvents path1WithEvents = new FollowPathWithEvents(
+            Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(path1), 
+            path1.getMarkers(),
+            pathEventMap1);
 
+        PathPlannerTrajectory path2 = path.get(1);
+        HashMap<String, Command> pathEventMap2 = new HashMap<>();
+
+        FollowPathWithEvents path2WithEvents = new FollowPathWithEvents(
+            Robot.DRIVE_TRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(path2), 
+            path2.getMarkers(),
+            pathEventMap2);
 
         Command scoreTwoAndBalanceCommand = 
-        Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path)
-        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT)).withTimeout(3)
-        .andThen(new ClawOpenCommand().withTimeout(3))
-        .andThen(new ArmSequencedRetractionCommand()).withTimeout(3)
-        .andThen(pathCommand).withTimeout(10)
+        Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path1)
+        // .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_OPPOSITE_SETPOINT)).withTimeout(3)
+        // .andThen(new ClawOpenCommand().withTimeout(3))
+        // .andThen(new ArmSequencedRetractionCommand()).withTimeout(6)
+        .andThen(path1WithEvents)
+        .andThen(path2WithEvents)
         .andThen(new DrivetrainChargeStationBalancingCommand()); 
 
         return scoreTwoAndBalanceCommand;

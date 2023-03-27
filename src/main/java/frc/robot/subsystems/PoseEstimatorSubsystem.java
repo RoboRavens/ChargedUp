@@ -38,9 +38,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         double ta = Robot.LIMELIGHT_SUBSYSTEM_ONE.getTa();
         double ta2 = Robot.LIMELIGHT_SUBSYSTEM_TWO.getTa();
 
-        SmartDashboard.putNumber("ta", ta);
+        //SmartDashboard.putNumber("ta", ta);
 
-        SmartDashboard.putNumber("ta2", ta2);
+  //      SmartDashboard.putNumber("ta2", ta2);
 
         Pose2d firstLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
         Pose2d secondLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation();
@@ -63,20 +63,20 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         if (hasVisionTarget /*&& firstLimelightIsWithinXDistance && firstLimelightIsWithinYDistance*/
                 && targetAreaIsSufficient && fiducialIdIsCorrect) {
-            SmartDashboard.putBoolean("limelight has target", true);
+            //SmartDashboard.putBoolean("limelight has target", true);
             var vsStdDvs = PoseEstimatorSubsystem.GetVisionStdDevs(ta);
             m_poseEstimator.addVisionMeasurement(firstLimelightPose, _timeStamp, vsStdDvs);
         } else {
-            SmartDashboard.putBoolean("limelight has target", false);
+            //SmartDashboard.putBoolean("limelight has target", false);
         }
 
         if (hasVisionTarget2 /*&& secondLimelightIsWithinXDistance && secondLimelightIsWithinYDistance*/
                 && targetAreaIsSufficient2 && fiducialIdIsCorrect2) {
-            SmartDashboard.putBoolean("limelight2 has target", true);
+            //SmartDashboard.putBoolean("limelight2 has target", true);
             var vsStdDvs = PoseEstimatorSubsystem.GetVisionStdDevs(ta2);
             m_poseEstimator.addVisionMeasurement(secondLimelightPose, _timeStamp2, vsStdDvs);
         } else {
-            SmartDashboard.putBoolean("limelight2 has target", false);
+            //SmartDashboard.putBoolean("limelight2 has target", false);
         }
 
         updateOdometry();
@@ -90,7 +90,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         double inverseCubed = Math.pow(inverseArea, 3);
         double clampedCube = Math.max(inverseCubed, Constants.MINIMUM_VISION_STANDARD_DEVIATION);
 
-        SmartDashboard.putNumber("VisionStdDev", clampedCube);
+//        SmartDashboard.putNumber("VisionStdDev", clampedCube);
 
         Matrix<N3, N1> visionStdDevs = VecBuilder.fill(clampedCube, clampedCube, clampedCube);
 

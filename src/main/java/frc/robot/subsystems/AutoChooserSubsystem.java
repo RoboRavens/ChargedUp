@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.commands.auto.*;
+import frc.robot.commands.auto.AutoEnums.AutoAlliance;
 import frc.util.CommandSupplier;
 
 public class AutoChooserSubsystem extends SubsystemBase {
@@ -81,6 +82,26 @@ public class AutoChooserSubsystem extends SubsystemBase {
         new AutoMode("B7: Cable-side 3 cone",
         () -> ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.Cable))
       );
+      this.addOption(
+        new AutoMode("B8: Mobility",
+        () -> MobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
+      );
+      this.addOption(
+        new AutoMode("B9: Score and Mobility",
+        () -> MobilityAndScoreConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
+      );
+      this.addOption(
+        new AutoMode("B10: Score 2 Cones",
+        () -> TwoConeAndMobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("B11: Preload + Balance",
+        () -> PreloadBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Blue))
+      );
+      this.addOption(
+        new AutoMode("B12: Balance Auto V3",
+        () -> BalanceAutoV3Command.getAutoMode(AutoEnums.AutoAlliance.Blue))
+      );
 
       _tab
         .add("blue", true)
@@ -122,6 +143,26 @@ public class AutoChooserSubsystem extends SubsystemBase {
       this.addOption(
         new AutoMode("R7: Cable-side 3 cone",
         () -> ThreeConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.Cable))
+      );
+      this.addOption(
+        new AutoMode("R8: Mobility",
+        () -> MobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
+      );
+      this.addOption(
+        new AutoMode("R9: Score and Mobility",
+        () -> MobilityAndScoreConeAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
+      );
+      this.addOption(
+        new AutoMode("R10: Score 2 Cones",
+        () -> TwoConeAndMobilityAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
+      );
+      this.addOption(
+        new AutoMode("R11: Preload and Balance",
+        () -> PreloadBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
+      );
+      this.addOption(
+        new AutoMode("R12: Balance Auto V3",
+        () -> BalanceAutoV3Command.getAutoMode(AutoEnums.AutoAlliance.Red))
       );
 
       _tab

@@ -20,6 +20,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -415,7 +416,11 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   }
 
   public void resetOdometry(Pose2d pose) {
+    Transform2d transform = new Transform2d(new Translation2d(0, 0), new Rotation2d(Math.PI));
+    //pose.transformBy(transform);
     var targetPose = new Pose2d(pose.getTranslation(), pose.getRotation());
+
+
     // _odometryFromKinematics.resetPosition(targetPose, this.getGyroscopeRotation());
     _odometryFromHardware.resetPosition(
       this.getGyroscopeRotation(), 
@@ -446,6 +451,10 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   @Override
   public double getRoll() {
     return m_navx.getRoll();
+  }
+
+  public double getPitch() {
+    return m_navx.getPitch();
   }
 
   @Override
