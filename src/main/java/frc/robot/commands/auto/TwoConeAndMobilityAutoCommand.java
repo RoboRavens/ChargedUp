@@ -49,24 +49,31 @@ public class TwoConeAndMobilityAutoCommand extends CommandBase {
             loadCone1ToScoreHighTrajectory.getMarkers(),
             loadCone1ToScoreHighEventMap);
 
-        SmartDashboard.putBoolean("Finish claw open", false);
-        SmartDashboard.putBoolean("Finished retract", false);
-        SmartDashboard.putBoolean("Finished path 1", false);
-
 
         Command scoreTwoAndBalanceCommand = 
         Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(scorePreloadHighToLoadCone1Trajectory)
+        // Score a cone high at the reverse setpoint
         .andThen(new ArmScoreConeHighStagingSetpointCommand().withTimeout(3.5))
         .andThen(new ClawOpenCommand().withTimeout(3))
-        .andThen(new InstantCommand(() -> SmartDashboard.putBoolean("Finish claw open", true)))
-        .andThen(new ArmSequencedRetractionFromReverseCommand().withTimeout(3))
-        .andThen(new InstantCommand(() -> SmartDashboard.putBoolean("Finished retract", true)))
-        .andThen(scorePreloadHighToLoadCone1WithEvents.alongWith(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT).withTimeout(3)))
-        .andThen(new InstantCommand(() -> SmartDashboard.putBoolean("Finished path 1", true)))
+        // While the robot is driving to the next cone, retract the arm and then move the arm to the ground setpoint 
+        .andThen(
+            scorePreloadHighToLoadCone1WithEvents
+            .alongWith(
+                (new ArmSequencedRetractionFromReverseCommand().withTimeout(3))
+                .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT).withTimeout(3))
+            )
+        )
+        // Close the claw around the cone
         .andThen(new ClawCloseCommand().withTimeout(3))
-        .andThen(new ArmSequencedRetractionCommand().withTimeout(3))
-        .andThen(loadCone1ToScoreHighWithEvents)
-        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT).withTimeout(3.5))
+        // While the robot is driving to the next scoring node, retract the arm and then move the arm to the high cone setpoint
+        .andThen(
+            loadCone1ToScoreHighWithEvents
+            .alongWith(    
+                (new ArmSequencedRetractionCommand().withTimeout(3))
+                .andThen((new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_HIGH_SETPOINT).withTimeout(3.5)))
+            )
+        )
+        // Score the cone and retract
         .andThen(new ClawOpenCommand().withTimeout(3))
         .andThen(new ArmSequencedRetractionCommand().withTimeout(3));
         
