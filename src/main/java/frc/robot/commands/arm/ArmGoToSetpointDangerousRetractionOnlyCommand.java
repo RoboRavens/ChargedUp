@@ -60,11 +60,13 @@ public class ArmGoToSetpointDangerousRetractionOnlyCommand extends CommandBase {
     // which could have a lower absolute value but cause the arm to rotate significantly.
     // Right now it is only to be used to retract on the same side of 0.
     
-    /*
-    if (Math.abs(finalSetpoint.getRotationSetpoint()) > Math.abs(arm.getCurrentRotationNativeUnits())) {
-      finalSetpoint.setRotationSetpoint(arm.getCurrentRotationNativeUnits());
-    }
-    */
+    finalSetpoint.setRotationSetpoint(Math.min(finalSetpoint.getRotationSetpoint(), arm.getCurrentRotationNativeUnits()));
+  
+    
+    // if (Math.abs(finalSetpoint.getRotationSetpoint()) > Math.abs(arm.getCurrentRotationNativeUnits())) {
+    //  finalSetpoint.setRotationSetpoint(arm.getCurrentRotationNativeUnits());
+    // }
+    
 //    finalSetpoint.setRotationSetpoint(_timeoutSeconds);
 
     
