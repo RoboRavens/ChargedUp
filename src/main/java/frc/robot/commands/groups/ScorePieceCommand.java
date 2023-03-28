@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Robot;
 import frc.robot.commands.LEDs.LEDsSolidColorCommand;
 import frc.robot.commands.claw.ClawOpenCommand;
+import frc.robot.subsystems.TabletScoring.ScoringPosition;
 import frc.util.Colors;
 import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.OverallState;
@@ -23,7 +24,7 @@ public class ScorePieceCommand extends SequentialCommandGroup {
             new ParallelCommandGroup(
                 new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT),
                 new InstantCommand(() -> Robot.pieceState = PieceState.NONE),
-                new InstantCommand(() -> Robot.scoringTargetState = ScoringTargetState.NONE),
+                new InstantCommand(() -> Robot.TABLET_SCORING_SUBSYSTEM.SetSelectedScoringPosition(ScoringPosition.NONE)),
                 new InstantCommand(() -> Robot.loadState = LoadState.EMPTY),
                 new LEDsSolidColorCommand(Robot.LED_SUBSYSTEM, Colors.LIGHT_GREEN)
             )

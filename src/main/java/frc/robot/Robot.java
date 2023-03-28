@@ -79,7 +79,6 @@ public class Robot extends TimedRobot {
   public static DrivetrainState drivetrainState = DrivetrainState.FREEHAND;
   public static ClawState clawState = ClawState.CLOSED;
   public static LimelightState limelightState = LimelightState.TAG_TRACKING;
-  public static ScoringTargetState scoringTargetState = ScoringTargetState.NONE;
   public static ZoneState zoneState = ZoneState.NEUTRAL;
 
   public static FieldZones fieldZones = new FieldZones();
@@ -142,7 +141,7 @@ public class Robot extends TimedRobot {
     setNonButtonDependentOverallStates();
     // Button input dependent states
     SmartDashboard.putString("Piece State", pieceState.toString());
-    SmartDashboard.putString("Scoring Target State", scoringTargetState.toString());
+    SmartDashboard.putString("Scoring Target State", Robot.TABLET_SCORING_SUBSYSTEM.GetScoringState().toString());
     SmartDashboard.putString("Load Target State", loadTargetState.toString());
     SmartDashboard.putString("Zone State", zoneState.toString());
     SmartDashboard.putString("Load State", loadState.toString());
@@ -323,7 +322,7 @@ public class Robot extends TimedRobot {
         .handleInterrupt(() -> {
             Robot.overallState = OverallState.EMPTY_TRANSIT;
             Robot.pieceState = PieceState.NONE;
-            Robot.scoringTargetState = ScoringTargetState.NONE;
+            Robot.TABLET_SCORING_SUBSYSTEM.SetSelectedScoringPosition(ScoringPosition.NONE);
             Robot.loadState = LoadState.EMPTY;
         })
     );
@@ -553,10 +552,6 @@ public class Robot extends TimedRobot {
 
     new Trigger(() -> Robot.loadState == LoadState.LOADED && robotIsInOwnCommunity() && DRIVE_TRAIN_SUBSYSTEM.robotIsAtTargetCoordinates() == false).whileTrue(ledsSignalCommunityCommand);
     new Trigger(() -> DRIVE_TRAIN_SUBSYSTEM.robotIsAtTargetCoordinates()).onTrue(ledsSignalAlignedCommand);
-
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
   }
 
   private void setZoneStateFromFieldZone() {
@@ -615,7 +610,7 @@ public class Robot extends TimedRobot {
   // this method needs to called both periodically AND in the auto/tele init methods.
   private void setDriverStationData() {
     if (allianceColor == Alliance.Invalid) {
-      allianceColor = Alliance.Blue;
+      allianceColor = Alliance.Red;
       AUTO_CHOOSER.BuildAutoChooser(allianceColor);
     }
   }

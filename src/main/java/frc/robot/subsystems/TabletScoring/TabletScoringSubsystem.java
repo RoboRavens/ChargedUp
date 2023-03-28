@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.util.StateManagement.ScoringTargetState;
 import frc.util.field.FieldMeasurements;
 
 public class TabletScoringSubsystem extends SubsystemBase {
@@ -80,6 +81,19 @@ public class TabletScoringSubsystem extends SubsystemBase {
     return _selectedScoringPosition;
   }
 
+  public ScoringTargetState GetScoringState() {
+    switch (_selectedScoringPosition.GetRow()) {
+      case 0:
+      return ScoringTargetState.HIGH;
+      case 1:
+      return ScoringTargetState.MID;
+      case 2:
+      return ScoringTargetState.LOW;
+      default:
+      return ScoringTargetState.NONE;
+    }
+  }
+
   public Translation2d GetScoringCoordinates() {
     if (_selectedScoringPosition.IsNoneSelected()) {
       return null;
@@ -142,14 +156,18 @@ public class TabletScoringSubsystem extends SubsystemBase {
     }
   }
 
-  private void SetSelectedScoringPosition(ScoringPosition sp){
-    _selectedScoringPosition = sp;
+  public void SetSelectedScoringPosition(ScoringPosition sp){
     if (sp == ScoringPosition.NONE) {
       _selectedRowEntry.setString("none");
       _selectedColumnEntry.setString("none");
+      if (_selectedScoringPosition.GetRow() >= 0 && _selectedScoringPosition.GetColumn() >= 0) {
+        _entries[_selectedScoringPosition.GetRow()][_selectedScoringPosition.GetColumn()].setBoolean(false);
+      }
+      _selectedScoringPosition = sp;
     } else {
       _selectedRowEntry.setString(Integer.toString(sp.GetRow()));
       _selectedColumnEntry.setString(Integer.toString(sp.GetColumn()));
+      _selectedScoringPosition = sp;
     }
   }
 
