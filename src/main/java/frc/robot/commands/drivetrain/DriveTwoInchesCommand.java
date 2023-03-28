@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
@@ -38,18 +39,19 @@ public class DriveTwoInchesCommand extends CommandBase {
         double currentXPosition = Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseX();
         double currentYPostition = Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseY();
         Rotation2d currentRotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getPoseRotation();
+        double allianceMultiplier = Robot.allianceColor == Alliance.Red ? -1 : 1;
         switch (_direction) {
             case 'F':
-                _targetPose = new Pose2d(currentXPosition + _twoInchesInMeters, currentYPostition, currentRotation);
+                _targetPose = new Pose2d(currentXPosition + (_twoInchesInMeters * allianceMultiplier), currentYPostition, currentRotation);
                 break;
             case 'B':
-                _targetPose = new Pose2d(currentXPosition - _twoInchesInMeters, currentYPostition, currentRotation);
+                _targetPose = new Pose2d(currentXPosition - (_twoInchesInMeters * allianceMultiplier), currentYPostition, currentRotation);
                 break;
             case 'L':
-                _targetPose = new Pose2d(currentXPosition, currentYPostition + _twoInchesInMeters, currentRotation);
+                _targetPose = new Pose2d(currentXPosition, currentYPostition + (_twoInchesInMeters * allianceMultiplier), currentRotation);
                 break;
             case 'R':
-                _targetPose = new Pose2d(currentXPosition, currentYPostition - _twoInchesInMeters, currentRotation);
+                _targetPose = new Pose2d(currentXPosition, currentYPostition - (_twoInchesInMeters * allianceMultiplier), currentRotation);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid direction");

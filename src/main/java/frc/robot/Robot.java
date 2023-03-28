@@ -557,8 +557,6 @@ public class Robot extends TimedRobot {
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(2)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.LOW));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(1)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.MID));
     new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
-
-    new Trigger(() -> TABLET_SCORING_SUBSYSTEM.GetScoringPosition().RowEquals(0)).onTrue(new InstantCommand(() -> scoringTargetState = ScoringTargetState.HIGH));
   }
 
   private void setZoneStateFromFieldZone() {

@@ -68,17 +68,17 @@ public class DrivetrainDefaultCommand extends CommandBase {
             var selectedSubstation = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation();
             Translation2d targetCoords = null;
             if (Robot.loadState == LoadState.EMPTY && selectedSubstation.isDoubleSubstation()) {
-                double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 180 : 0;  // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
+                double targetAngleDegrees = Robot.allianceColor == Alliance.Red ? 180 : 0;  // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
                 targetAngle = Math.toRadians(targetAngleDegrees);
                 targetCoords = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstationCoordinates();
             }
             else if (Robot.loadState == LoadState.EMPTY && selectedSubstation.isSingleSubstation()) {
-                double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 90 : -90; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
+                double targetAngleDegrees = Robot.allianceColor == Alliance.Red ? 90 : -90; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
                 targetAngle = Math.toRadians(targetAngleDegrees);
                 targetCoords = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstationCoordinates();
             }
             else if (Robot.loadState == LoadState.LOADED) {
-                double targetAngleDegrees = DriverStation.getAlliance() == Alliance.Red ? 0 : 180; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
+                double targetAngleDegrees = Robot.allianceColor == Alliance.Red ? 0 : 180; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
                 targetAngle = Math.toRadians(targetAngleDegrees);
                 targetCoords = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
             }
