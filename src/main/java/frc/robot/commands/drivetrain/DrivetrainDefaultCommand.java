@@ -23,8 +23,8 @@ import frc.util.drive.ChassisSpeedsExtensions;
 
 public class DrivetrainDefaultCommand extends CommandBase {
     private PIDController _scoringRotationAlignPID = new PIDController(0.3, 0, 0);
-    private PIDController _yPID = new PIDController(.3, 0, 0);
-    private PIDController _xPID = new PIDController(.3, 0, 0);
+    private PIDController _yPID = new PIDController(.4, 0, 0);
+    private PIDController _xPID = new PIDController(.4, 0, 0);
 
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
@@ -66,24 +66,30 @@ public class DrivetrainDefaultCommand extends CommandBase {
 
             double targetAngle = r;
             var selectedSubstation = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation();
+
+            boolean autodriveAngle = false;
+
             Translation2d targetCoords = null;
-            if (Robot.loadState == LoadState.EMPTY && selectedSubstation.isDoubleSubstation()) {
+            if (Robot.loadState == LoadState.EMPTY && selectedSubstation.isDoubleSubstation() && Robot.zoneState.isValidZoneForSubstationAutoDrive()) {
+                autodriveAngle = true;
                 double targetAngleDegrees = Robot.allianceColor == Alliance.Red ? 180 : 0;  // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
                 targetAngle = Math.toRadians(targetAngleDegrees);
                 targetCoords = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstationCoordinates();
             }
-            else if (Robot.loadState == LoadState.EMPTY && selectedSubstation.isSingleSubstation()) {
+            else if (Robot.loadState == LoadState.EMPTY && selectedSubstation.isSingleSubstation() && Robot.zoneState.isValidZoneForSubstationAutoDrive()) {
+                autodriveAngle = true;
                 double targetAngleDegrees = Robot.allianceColor == Alliance.Red ? 90 : -90; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
                 targetAngle = Math.toRadians(targetAngleDegrees);
                 targetCoords = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstationCoordinates();
             }
-            else if (Robot.loadState == LoadState.LOADED) {
+            else if (Robot.loadState == LoadState.LOADED && Robot.zoneState.isValidZoneForGridAutoDrive()) {
+                autodriveAngle = true;
                 double targetAngleDegrees = Robot.allianceColor == Alliance.Red ? 0 : 180; // Both Alliance.Blue and Alliance.Invalid are treated as blue alliance
                 targetAngle = Math.toRadians(targetAngleDegrees);
                 targetCoords = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
             }
 
-            if (Robot.ODOMETRY_OVERRIDE == false) {
+            if (Robot.ODOMETRY_OVERRIDE == false && autodriveAngle == true) {
                 r = getAngularVelocityForAlignment(targetAngle);
             }
 
