@@ -116,6 +116,14 @@ public class StateManagement {
         NEUTRAL,
         OPPONENT_LOADING_ZONE,
         OPPONENT_COMMUNITY,
-        OPPONENT_CHARGE_STATION
+        OPPONENT_CHARGE_STATION;
+
+        public boolean isValidZoneForSubstationAutoDrive() {
+            return this == ALLIANCE_LOADING_ZONE || this == NEUTRAL;
+        }
+
+        public boolean isValidZoneForGridAutoDrive() {
+            return this == ALLIANCE_COMMUNITY || this == NEUTRAL;
+        }
     }
 }

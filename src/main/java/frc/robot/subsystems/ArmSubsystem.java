@@ -497,7 +497,7 @@ public class ArmSubsystem extends SubsystemBase {
             }
         }
         else {
-            switch (Robot.scoringTargetState) {
+            switch (Robot.TABLET_SCORING_SUBSYSTEM.GetScoringState()) {
                 case HIGH:
                     if (Robot.TABLET_SCORING_SUBSYSTEM.isCubeColumn() == false) {
                 // if (Robot.pieceState == PieceState.CONE) {

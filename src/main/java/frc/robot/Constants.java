@@ -117,7 +117,9 @@ public final class Constants {
 
   public static final int ARM_FULL_RETRACT_ROTATION_ANGLE = 0;
   public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 119;
-  public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 75;
+
+  public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 62;
+
   public static final double ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE = 63;
   public static final double ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_ANGLE = ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
@@ -214,7 +216,7 @@ public final class Constants {
   public static final double AUTO_CLAW_CLOSE_TIMEOUT_SECONDS = CLAW_CLOSE_TIMEOUT_SECONDS;
   public static final double AUTO_CLAW_OPEN_TIMEOUT_SECONDS = CLAW_OPEN_TIMEOUT_SECONDS;
   public static final double RUMBLE_TIME = 0.2;
-  public static final double CLAW_LOCKOUT_DURATION_SECONDS = 0.75;
+  public static final double CLAW_LOCKOUT_DURATION_SECONDS = 1;
 
   // Limelight/vision-based odometry
   public static final double STATE_STANDARD_DEVIATION = .1;
