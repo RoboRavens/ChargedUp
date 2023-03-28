@@ -117,7 +117,9 @@ public final class Constants {
 
   public static final int ARM_FULL_RETRACT_ROTATION_ANGLE = 0;
   public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 119;
+
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 62;
+
   public static final double ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE = 63;
   public static final double ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_ANGLE = ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
