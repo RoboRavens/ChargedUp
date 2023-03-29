@@ -237,6 +237,13 @@ public class Robot extends TimedRobot {
     return zoneState == ZoneState.ALLIANCE_CHARGE_STATION || zoneState == ZoneState.ALLIANCE_COMMUNITY;
   }
 
+  public static void setStatesToEmpty() {
+    Robot.overallState = OverallState.EMPTY_TRANSIT;
+    Robot.pieceState = PieceState.NONE;
+    Robot.TABLET_SCORING_SUBSYSTEM.SetSelectedScoringPosition(ScoringPosition.NONE);
+    Robot.loadState = LoadState.EMPTY;
+  }
+
   private void setNonButtonDependentOverallStates() {
     // Check the load state of the robot.
     if (Robot.CLAW_SUBSYSTEM.detectsGamePiece() && Robot.clawState == ClawState.CLOSED) {
@@ -327,12 +334,7 @@ public class Robot extends TimedRobot {
         new ScorePieceCommand()
         .withTimeout(Constants.CLAW_OPEN_TIMEOUT_SECONDS)
         .andThen(new InstantCommand(() -> Robot.overallState = OverallState.EMPTY_TRANSIT))
-        .handleInterrupt(() -> {
-            Robot.overallState = OverallState.EMPTY_TRANSIT;
-            Robot.pieceState = PieceState.NONE;
-            Robot.TABLET_SCORING_SUBSYSTEM.SetSelectedScoringPosition(ScoringPosition.NONE);
-            Robot.loadState = LoadState.EMPTY;
-        })
+        .handleInterrupt(() -> { Robot.setStatesToEmpty(); })
     );
 
     // Ground intake.
@@ -523,6 +525,9 @@ public class Robot extends TimedRobot {
     );
     
     // ARM
+    new Trigger(() -> Robot.clawState == ClawState.CLOSED && Robot.zoneState == ZoneState.ALLIANCE_COMMUNITY && DriverStation.isAutonomous() == false).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.moveArmToTarget()));
+    new Trigger(() -> Robot.clawState == ClawState.OPEN && Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && DriverStation.isAutonomous() == false).onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.moveArmToTarget()));
+
     // new Trigger(() -> Robot.overallState == OverallState.EJECTING).onTrue(new EjectPieceCommand());
 
     // // Extend and rotate the arm to the loading target
