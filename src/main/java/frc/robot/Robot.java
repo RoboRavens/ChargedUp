@@ -50,8 +50,14 @@ public class Robot extends TimedRobot {
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight");
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-two");
+
+  // === BEGIN UI SUBSYSTEMS
   public static final AutoChooserSubsystem AUTO_CHOOSER = new AutoChooserSubsystem();
   public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  // --- old above new below
+  public static final AutoChooserSubsystemReact AUTO_CHOOSER_REACT = new AutoChooserSubsystemReact();
+  // === END UI SUBSYSTEMS
+
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
