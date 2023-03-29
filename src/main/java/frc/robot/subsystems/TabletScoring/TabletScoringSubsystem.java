@@ -172,9 +172,12 @@ public class TabletScoringSubsystem extends SubsystemBase {
   }
 
   private void AddRow(String prefix, int rowIndex) {
+    String letters = "ABCDEFGHI";
     for (int i = 0; i < 9; i++) {
+    String letter = String.valueOf(letters.charAt(i));
+
       _entries[rowIndex][i] = _tab
-          .add(prefix + i + GetPieceVisual(i), false)
+          .add(letter + prefix, false)
           .withWidget(BuiltInWidgets.kToggleButton)
           .withPosition(i, rowIndex)
           .getEntry();
@@ -333,9 +336,9 @@ public class TabletScoringSubsystem extends SubsystemBase {
       .withSize(1, 1)
       .getEntry();
 
-    this.AddRow("L", 2);
-    this.AddRow("M", 1);
-    this.AddRow("H", 0);
+    this.AddRow("1", 2);
+    this.AddRow("2", 1);
+    this.AddRow("3", 0);
     this.SetupSubstations();
   }
 }

@@ -33,8 +33,8 @@ public final class Constants {
 	public static final int kSlotIdx = 0;
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
-  public static final Gains rotationGains = new Gains(1.35, 0.0008, 0.00000, 0.0, 0, 1.0);
-  public static final Gains extensionGains = new Gains(1.1, 0.0008, 0.00000, 0.0, 0, 1.0);
+  public static final Gains rotationGains = new Gains(1.35, 0.002, 0.00000, 0.0, 0, 1.0);
+  public static final Gains extensionGains = new Gains(1.5, 0.003, 0.00000, 0.0, 0, 1.0);
   
   // Position to degrees 4096 counts per revolution
   public static final int COUNTS_PER_REVOLUTION = 4096;
@@ -118,7 +118,7 @@ public final class Constants {
   public static final int ARM_FULL_RETRACT_ROTATION_ANGLE = 0;
   public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 119;
 
-  public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 62;
+  public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 64;
 
   public static final double ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE = 63;
   public static final double ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_ANGLE = ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE;
@@ -188,7 +188,7 @@ public final class Constants {
   public static final double ARM_ROTATION_MANUAL_DEGREES_PER_SECOND = 30;
   public static final double ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK = ARM_ROTATION_MANUAL_DEGREES_PER_SECOND * ARM_DEGREES_TO_ENCODER_UNITS / 50;
 
-  public static final double ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_SECOND = 10000;
+  public static final double ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_SECOND = 50000;
   public static final double ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_TICK = ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_SECOND / 50;
 
 
