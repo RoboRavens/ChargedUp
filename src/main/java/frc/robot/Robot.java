@@ -52,10 +52,12 @@ public class Robot extends TimedRobot {
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-two");
 
   // === BEGIN UI SUBSYSTEMS
-  public static final AutoChooserSubsystem AUTO_CHOOSER = new AutoChooserSubsystem();
-  public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  // public static final AutoChooserSubsystem AUTO_CHOOSER = new AutoChooserSubsystem();
+  // public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
   // --- old above new below
-  public static final AutoChooserSubsystemReact AUTO_CHOOSER_REACT = new AutoChooserSubsystemReact();
+  public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM  = new ReactDashSubsystem();
+  public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
+  public static final TeleopSubystem TABLET_SCORING_SUBSYSTEM = new TeleopSubystem();
   // === END UI SUBSYSTEMS
 
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
@@ -125,10 +127,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Alliance color", allianceColor.name());
 
     
-    SmartDashboard.putString("TABLET PIECE", TABLET_SCORING_SUBSYSTEM.GetScoringShape().name());
-    SmartDashboard.putString("TABLET SUBSTATION", TABLET_SCORING_SUBSYSTEM.GetSubstation().name());
-    SmartDashboard.putNumber("TABLET ROW", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetRow());
-    SmartDashboard.putNumber("TABLET COLUMN", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetColumn());
+    // SmartDashboard.putString("TABLET PIECE", TABLET_SCORING_SUBSYSTEM.GetScoringShape().name());
+    // SmartDashboard.putString("TABLET SUBSTATION", TABLET_SCORING_SUBSYSTEM.GetSubstation().name());
+    // SmartDashboard.putNumber("TABLET ROW", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetRow());
+    // SmartDashboard.putNumber("TABLET COLUMN", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetColumn());
     
     // SmartDashboard.putNumber("Power", ARM_SUBSYSTEM.testPower);
 
@@ -182,7 +184,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    m_autonomousCommand = AUTO_CHOOSER.GetAuto();
+    m_autonomousCommand = AUTO_CHOOSER.GetAutoCommand();
     // m_autonomousCommand = ScoreTwoLoadAndBalanceBlueCommand.getAutoMode().getAutoCommand();
 
     // schedule the autonomous command (example)

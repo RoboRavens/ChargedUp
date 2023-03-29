@@ -191,7 +191,7 @@ public class AutoChooserSubsystem extends SubsystemBase {
     Shuffleboard.selectTab(_tabName);
   }
 
-  public Command GetAuto() {
+  public Command GetAutoCommand() {
     var chosen = _chooser.getSelected();
     return chosen.getCommandSupplier().getCommand();
   }
