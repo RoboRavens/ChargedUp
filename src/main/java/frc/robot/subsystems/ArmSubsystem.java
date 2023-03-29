@@ -270,7 +270,14 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         armPose.setArmAngleDegrees(getCurrentAngleDegrees());
 
-        
+        double deadzonedVelocity = extensionMotor.getSelectedSensorVelocity();
+
+        if (Math.abs(deadzonedVelocity) <= 200) {
+            deadzonedVelocity = 0;
+        }
+
+        SmartDashboard.putNumber("Arm Extension Velocity", deadzonedVelocity);
+
         SmartDashboard.putNumber("Extension Encoder Actual Position", extensionMotor.getSelectedSensorPosition());
 
         SmartDashboard.putNumber("Rotation Motor Actual Position", rotationMotorsLeader.getSelectedSensorPosition());

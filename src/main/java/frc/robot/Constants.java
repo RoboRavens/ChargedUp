@@ -34,7 +34,7 @@ public final class Constants {
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
   public static final Gains rotationGains = new Gains(1.35, 0.002, 0.00000, 0.0, 0, 1.0);
-  public static final Gains extensionGains = new Gains(1.5, 0.003, 0.00000, 0.0, 0, 1.0);
+  public static final Gains extensionGains = new Gains(1.1, 0.000, 0.00000, 0.0, 0, 1.0);
   
   // Position to degrees 4096 counts per revolution
   public static final int COUNTS_PER_REVOLUTION = 4096;
@@ -195,7 +195,7 @@ public final class Constants {
 
   public static final double ARM_ROTATION_VELOCITY = 198;
   public static final double ARM_ROTATION_ACCELERATION = 4000;
-  public static final double ARM_EXTENSION_VELOCITY = 4000;
+  public static final double ARM_EXTENSION_VELOCITY = 10000;
   public static final double ARM_EXTENSION_ACCELERATION = 10000;
 
   public static final double ARM_ROTATION_IS_AT_SETPOINT_MARGIN_ENCODER_TICKS = 500;
