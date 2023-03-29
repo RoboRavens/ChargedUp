@@ -270,7 +270,14 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         armPose.setArmAngleDegrees(getCurrentAngleDegrees());
 
-        
+        double deadzonedVelocity = extensionMotor.getSelectedSensorVelocity();
+
+        if (Math.abs(deadzonedVelocity) <= 200) {
+            deadzonedVelocity = 0;
+        }
+
+        SmartDashboard.putNumber("Arm Extension Velocity", deadzonedVelocity);
+
         SmartDashboard.putNumber("Extension Encoder Actual Position", extensionMotor.getSelectedSensorPosition());
 
         SmartDashboard.putNumber("Rotation Motor Actual Position", rotationMotorsLeader.getSelectedSensorPosition());
@@ -391,23 +398,28 @@ public class ArmSubsystem extends SubsystemBase {
         // System.out.println("IN");
         SmartDashboard.putNumber("Rotation final target native units", armRotationFinalTargetNativeUnits);
         armRotationFinalTargetNativeUnits -= Constants.ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
+        SmartDashboard.putNumber("Rotation actual position native units", this.getCurrentRotationNativeUnits());
     }
 
     public void decreaseRotationTargetManually() {
         // System.out.println("IN");
         SmartDashboard.putNumber("Rotation final target native units", armRotationFinalTargetNativeUnits);
         armRotationFinalTargetNativeUnits += Constants.ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
+        SmartDashboard.putNumber("Rotation actual position native units", this.getCurrentRotationNativeUnits());
     }
 
     public void increaseExtensionTargetManually() {
         // System.out.println("IN");
         SmartDashboard.putNumber("Extension final target native units", armExtensionFinalTargetNativeUnits);
         armExtensionFinalTargetNativeUnits = Math.min(armExtensionFinalTargetNativeUnits + Constants.ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_TICK, Constants.ARM_MAX_EXTENSION_ENCODER_UNITS);
+        SmartDashboard.putNumber("Extension actual position native units", this.getCurrentExtensionNativeUnits());
     }
 
     public void decreaseExtensionTargetManually() {
         //System.out.println("IN");
         SmartDashboard.putNumber("Extension final target native units", armExtensionFinalTargetNativeUnits);
+        SmartDashboard.putNumber("Extension actual position native units", this.getCurrentExtensionNativeUnits());
+        
         armExtensionFinalTargetNativeUnits = Math.max(armExtensionFinalTargetNativeUnits - Constants.ARM_EXTENSION_MANUAL_NATIVE_UNITS_PER_TICK, 0);
     }
 
