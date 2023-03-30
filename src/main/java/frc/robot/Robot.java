@@ -240,7 +240,7 @@ public class Robot extends TimedRobot {
   public static void setStatesToEmpty() {
     Robot.overallState = OverallState.EMPTY_TRANSIT;
     Robot.pieceState = PieceState.NONE;
-    Robot.TABLET_SCORING_SUBSYSTEM.SetSelectedScoringPosition(ScoringPosition.NONE);
+    Robot.TABLET_SCORING_SUBSYSTEM.ClearSelectedPositionAndShape();
     Robot.loadState = LoadState.EMPTY;
   }
 

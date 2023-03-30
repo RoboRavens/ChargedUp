@@ -3,6 +3,7 @@ package frc.robot.subsystems.TabletScoring;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.networktables.StringSubscriber;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,8 +26,7 @@ public class TeleopSubystem extends SubsystemBase {
   private StringEntry _shapePub;
   private StringEntry _substationPub;
 
-  private boolean _positionLock = false;
-  private Command _positionLockCmd;
+  private Timer _lockTimer = new Timer();
 
   public TeleopSubystem(){
     var autoTable = ReactDashSubsystem.ReactDash.getSubTable("Teleop");
@@ -39,16 +39,18 @@ public class TeleopSubystem extends SubsystemBase {
     _rowPub = autoTable.getStringTopic("rpub/row").getEntry("-1");
     _shapePub = autoTable.getStringTopic("rpub/shape").getEntry("NONE");
     _substationPub = autoTable.getStringTopic("rpub/substation").getEntry("NONE");
+
+    _lockTimer.start();
   }
 
   @Override
   public void periodic(){
-    if (_positionLock == false) {
+    if (_lockTimer.get() > .5) {
       _columnPub.set(_columnSub.get("-1"));
       _rowPub.set(_rowSub.get("-1"));
+      _shapePub.set(_shapeSub.get("NONE"));;
     }
 
-    _shapePub.set(_shapeSub.get("NONE"));;
     _substationPub.set(_substationSub.get("SINGLE"));
   }
 
@@ -56,12 +58,12 @@ public class TeleopSubystem extends SubsystemBase {
     Robot.REACT_DASH_SUBSYSTEM.SwitchTab(ReactDashSubsystem.TELEOP_TAB_NAME);
   }
 
-  public void SetSelectedScoringPosition(ScoringPosition sp){
-    _positionLock = true;
-    _columnPub.set(Integer.toString(sp.GetColumn()));
-    _rowPub.set(Integer.toString(sp.GetRow()));
-    _positionLockCmd = new WaitCommand(.5).andThen(new InstantCommand(() -> _positionLock = false));
-    _positionLockCmd.schedule();
+  public void ClearSelectedPositionAndShape(){
+    _lockTimer.reset();
+    _lockTimer.start();
+    _columnPub.set("-1");
+    _rowPub.set("-1");
+    _shapePub.set("NONE");
   }
 
   public boolean isCubeColumn() {
