@@ -80,7 +80,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         }
 
         updateOdometry();
-        _field.setRobotPose(getCurrentPose());
+        var pose = getCurrentPose();
+        _field.setRobotPose(pose);
+        SmartDashboard.putNumber("PoseEstimator X", pose.getX());
+        SmartDashboard.putNumber("PoseEstimator Y", pose.getY());
     }
 
     private static Matrix<N3, N1> GetVisionStdDevs(double ta) {

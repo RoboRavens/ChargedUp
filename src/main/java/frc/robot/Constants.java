@@ -31,11 +31,16 @@ public final class Constants {
 
   //Motion Magic
 	public static final int kSlotIdx = 0;
+	public static final int kSlotPIDIdx = 1;
+
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
   public static final Gains rotationGains = new Gains(1.35, 0.001, 0.00000, 0.0, 0, 1.0);
   public static final Gains extensionGains = new Gains(.8, 0.002, 0.00000, 0.0, 0, 1.0);
   
+  public static final Gains extensionGainsPID = new Gains(.1, 0.002, 0.00000, 0.0, 0, 1.0);
+  
+
   // Position to degrees 4096 counts per revolution
   public static final int COUNTS_PER_REVOLUTION = 4096;
   public static final double ARM_DEGREES_TO_ENCODER_UNITS = COUNTS_PER_REVOLUTION / 360;

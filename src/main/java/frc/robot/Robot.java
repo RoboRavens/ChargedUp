@@ -639,10 +639,8 @@ public class Robot extends TimedRobot {
   // which differs between the shop and match play,
   // this method needs to called both periodically AND in the auto/tele init methods.
   private void setDriverStationData() {
-    if (allianceColor == Alliance.Invalid) {
-      allianceColor = Alliance.Red;
-      AUTO_CHOOSER.BuildAutoChooser(allianceColor);
-    }
+    allianceColor = DriverStation.getAlliance();
+    AUTO_CHOOSER.BuildAutoChooser(allianceColor);
   }
 
   public boolean getODOMETRY_OVERRIDE() {
