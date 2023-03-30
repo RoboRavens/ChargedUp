@@ -22,9 +22,9 @@ import frc.util.StateManagement.ZoneState;
 import frc.util.drive.ChassisSpeedsExtensions;
 
 public class DrivetrainDefaultCommand extends CommandBase {
-    private PIDController _scoringRotationAlignPID = new PIDController(0.3, 0, 0);
-    private PIDController _yPID = new PIDController(.4, 0, 0);
-    private PIDController _xPID = new PIDController(.4, 0, 0);
+    private PIDController _scoringRotationAlignPID = new PIDController(0.35, 0.0, 0);
+    private PIDController _yPID = new PIDController(.35, 0.0, 0);
+    private PIDController _xPID = new PIDController(.35, 0.0, 0);
 
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
@@ -141,6 +141,19 @@ public class DrivetrainDefaultCommand extends CommandBase {
         }
         else {
             Robot.drivetrainState = DrivetrainState.FREEHAND;
+            
+            // scale drive velocity and rotation
+            double scale = 1;
+            if (this.CutPower) {
+                scale = Robot.overallState == OverallState.ENDGAME ? .25 : .5;
+            }
+
+            double scaleForArmExt = Scale.FromPercentage(1.0 - Robot.ARM_SUBSYSTEM.getExtensionPercentOfMaximumNativeUnits(), Constants.DRIVE_SPEED_SCALE_AT_ARM_MAX_EXTENSION, 1);
+            scale = Math.min(scale, scaleForArmExt);
+
+            x = x * scale;
+            y = y * scale;
+            r = r * scale;
         }
 
         
@@ -148,19 +161,6 @@ public class DrivetrainDefaultCommand extends CommandBase {
         //SmartDashboard.putNumber("angular velocity pid", r);
 
         // r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
-
-        // scale drive velocity and rotation
-        double scale = 1;
-        if (this.CutPower) {
-            scale = Robot.overallState == OverallState.ENDGAME ? .25 : .5;
-        }
-
-        double scaleForArmExt = Scale.FromPercentage(1.0 - Robot.ARM_SUBSYSTEM.getExtensionPercentOfMaximumNativeUnits(), Constants.DRIVE_SPEED_SCALE_AT_ARM_MAX_EXTENSION, 1);
-        scale = Math.min(scale, scaleForArmExt);
-
-        x = x * scale;
-        y = y * scale;
-        r = r * scale;
 
         // give calculated x,y,r to drive command
         // SmartDashboard.putNumber("DriveDefaultCmd x", x);
