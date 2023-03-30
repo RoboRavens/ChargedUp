@@ -33,8 +33,8 @@ public final class Constants {
 	public static final int kSlotIdx = 0;
 	public static final int kPIDLoopIdx = 0;
 	public static final int kTimeoutMs = 0;
-  public static final Gains rotationGains = new Gains(1.35, 0.002, 0.00000, 0.0, 0, 1.0);
-  public static final Gains extensionGains = new Gains(1.1, 0.000, 0.00000, 0.0, 0, 1.0);
+  public static final Gains rotationGains = new Gains(1.35, 0.001, 0.00000, 0.0, 0, 1.0);
+  public static final Gains extensionGains = new Gains(.8, 0.002, 0.00000, 0.0, 0, 1.0);
   
   // Position to degrees 4096 counts per revolution
   public static final int COUNTS_PER_REVOLUTION = 4096;
@@ -122,7 +122,7 @@ public final class Constants {
 
   public static final double ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE = 63;
   public static final double ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_ANGLE = ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE;
-  public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 114;
+  public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 45;
   public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 54;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 65;
   public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 57;

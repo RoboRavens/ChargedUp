@@ -10,40 +10,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.commands.auto.*;
-import frc.robot.commands.auto.AutoEnums.AutoAlliance;
-import frc.util.CommandSupplier;
+import frc.util.AutoMode;
 
 public class AutoChooserSubsystem extends SubsystemBase {
-  public class AutoMode {
-    public String _text;
-    public CommandSupplier _commandSupplier;
-
-    public AutoMode(String text) {
-      this(text, null);
-    }
-    
-    public AutoMode(String text, CommandSupplier commandSupplier) {
-      _text = text;
-      if (commandSupplier == null) {
-        _commandSupplier = () -> { return new InstantCommand(() -> System.out.println(text)); };
-      } else {
-        _commandSupplier = commandSupplier;
-      }
-    }
-
-    public String getText() {
-      return _text;
-    }
-
-    public CommandSupplier getCommandSupplier() {
-      return _commandSupplier;
-    }
-  }
-
   private SendableChooser<AutoMode> _chooser = new SendableChooser<AutoMode>();
   private String _tabName = "Autonomous";
   private ShuffleboardTab _tab = Shuffleboard.getTab(_tabName);
@@ -219,7 +191,7 @@ public class AutoChooserSubsystem extends SubsystemBase {
     Shuffleboard.selectTab(_tabName);
   }
 
-  public Command GetAuto() {
+  public Command GetAutoCommand() {
     var chosen = _chooser.getSelected();
     return chosen.getCommandSupplier().getCommand();
   }

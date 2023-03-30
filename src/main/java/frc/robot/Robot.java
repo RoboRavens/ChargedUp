@@ -50,8 +50,16 @@ public class Robot extends TimedRobot {
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight");
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-two");
-  public static final AutoChooserSubsystem AUTO_CHOOSER = new AutoChooserSubsystem();
-  public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+
+  // === BEGIN UI SUBSYSTEMS
+  // public static final AutoChooserSubsystem AUTO_CHOOSER = new AutoChooserSubsystem();
+  // public static final TabletScoringSubsystem TABLET_SCORING_SUBSYSTEM = new TabletScoringSubsystem();
+  // --- old above new below
+  public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM  = new ReactDashSubsystem();
+  public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
+  public static final TeleopSubystem TABLET_SCORING_SUBSYSTEM = new TeleopSubystem();
+  // === END UI SUBSYSTEMS
+
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final RumbleCommand RUMBLE_COMMAND = new RumbleCommand();
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
@@ -119,10 +127,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Alliance color", allianceColor.name());
 
     
-    SmartDashboard.putString("TABLET PIECE", TABLET_SCORING_SUBSYSTEM.GetScoringShape().name());
-    SmartDashboard.putString("TABLET SUBSTATION", TABLET_SCORING_SUBSYSTEM.GetSubstation().name());
-    SmartDashboard.putNumber("TABLET ROW", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetRow());
-    SmartDashboard.putNumber("TABLET COLUMN", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetColumn());
+    // SmartDashboard.putString("TABLET PIECE", TABLET_SCORING_SUBSYSTEM.GetScoringShape().name());
+    // SmartDashboard.putString("TABLET SUBSTATION", TABLET_SCORING_SUBSYSTEM.GetSubstation().name());
+    // SmartDashboard.putNumber("TABLET ROW", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetRow());
+    // SmartDashboard.putNumber("TABLET COLUMN", TABLET_SCORING_SUBSYSTEM.GetScoringPosition().GetColumn());
     
     // SmartDashboard.putNumber("Power", ARM_SUBSYSTEM.testPower);
 
@@ -176,7 +184,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    m_autonomousCommand = AUTO_CHOOSER.GetAuto();
+    m_autonomousCommand = AUTO_CHOOSER.GetAutoCommand();
     // m_autonomousCommand = ScoreTwoLoadAndBalanceBlueCommand.getAutoMode().getAutoCommand();
 
     // schedule the autonomous command (example)
@@ -232,7 +240,7 @@ public class Robot extends TimedRobot {
   public static void setStatesToEmpty() {
     Robot.overallState = OverallState.EMPTY_TRANSIT;
     Robot.pieceState = PieceState.NONE;
-    Robot.TABLET_SCORING_SUBSYSTEM.SetSelectedScoringPosition(ScoringPosition.NONE);
+    Robot.TABLET_SCORING_SUBSYSTEM.ClearSelectedPositionAndShape();
     Robot.loadState = LoadState.EMPTY;
   }
 
