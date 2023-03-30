@@ -23,6 +23,8 @@ public class LimelightSubsystem extends SubsystemBase {
   private NetworkTableEntry cl;
   private int camMode = 0;
 
+  private NetworkTableEntry ledMode;
+
   public boolean isAlignedWithScoringNode() {
     // TODO: Implement this method
     return false;
@@ -42,6 +44,8 @@ public class LimelightSubsystem extends SubsystemBase {
     tv = _baseNetworkTable.getEntry("tv");
     tl = _baseNetworkTable.getEntry("tl");
     cl = _baseNetworkTable.getEntry("cl");
+
+    ledMode = _baseNetworkTable.getEntry("ledMode");
   }
 
   public void periodic() {
@@ -116,5 +120,13 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public double getTy() {
     return ty.getDouble(0.0);
+  }
+
+  public void turnLedOn() {
+    ledMode.setNumber(3);
+  }
+
+  public void turnLedOff() {
+    ledMode.setNumber(1);
   }
 }

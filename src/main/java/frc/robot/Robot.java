@@ -303,6 +303,23 @@ public class Robot extends TimedRobot {
     if (Robot.DRIVE_TRAIN_SUBSYSTEM.drivetrainIsAtTargetPose() && ODOMETRY_OVERRIDE == false) {
       ledsSignalAlignedCommand.schedule();
     }
+
+    if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY) {
+      turnLedsOn();
+    }
+    else {
+      turnLedsOff();
+    }
+  }
+
+  private void turnLedsOn() {
+    LIMELIGHT_SUBSYSTEM_ONE.turnLedOn();
+    LIMELIGHT_SUBSYSTEM_TWO.turnLedOn();
+  }
+
+  private void turnLedsOff() {
+    LIMELIGHT_SUBSYSTEM_ONE.turnLedOff();
+    LIMELIGHT_SUBSYSTEM_TWO.turnLedOff();
   }
 
   private void configureButtonBindings() {
