@@ -4,7 +4,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.networktables.StringSubscriber;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.subsystems.ReactDashSubsystem;
 import frc.util.StateManagement.ScoringTargetState;
@@ -22,6 +25,9 @@ public class TeleopSubystem extends SubsystemBase {
   private StringEntry _shapePub;
   private StringEntry _substationPub;
 
+  private boolean _positionLock = false;
+  private Command _positionLockCmd;
+
   public TeleopSubystem(){
     var autoTable = ReactDashSubsystem.ReactDash.getSubTable("Teleop");
     _columnSub = autoTable.getStringTopic("dpub/column").subscribe("-1");
@@ -37,8 +43,11 @@ public class TeleopSubystem extends SubsystemBase {
 
   @Override
   public void periodic(){
-    _columnPub.set(_columnSub.get("-1"));
-    _rowPub.set(_rowSub.get("-1"));
+    if (_positionLock == false) {
+      _columnPub.set(_columnSub.get("-1"));
+      _rowPub.set(_rowSub.get("-1"));
+    }
+
     _shapePub.set(_shapeSub.get("NONE"));;
     _substationPub.set(_substationSub.get("SINGLE"));
   }
@@ -48,8 +57,11 @@ public class TeleopSubystem extends SubsystemBase {
   }
 
   public void SetSelectedScoringPosition(ScoringPosition sp){
+    _positionLock = true;
     _columnPub.set(Integer.toString(sp.GetColumn()));
     _rowPub.set(Integer.toString(sp.GetRow()));
+    _positionLockCmd = new WaitCommand(.5).andThen(new InstantCommand(() -> _positionLock = false));
+    _positionLockCmd.schedule();
   }
 
   public boolean isCubeColumn() {
