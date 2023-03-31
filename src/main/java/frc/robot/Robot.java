@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putBoolean("Ext Override", ARM_EXTENSION_MANUAL_OVERRIDE);
+    // SmartDashboard.putBoolean("Ext Override", ARM_EXTENSION_MANUAL_OVERRIDE);
     setDriverStationData();
 
     SmartDashboard.putString("Alliance color", allianceColor.name());
@@ -136,15 +136,15 @@ public class Robot extends TimedRobot {
 
     // ARM_SUBSYSTEM.setTestPower(SmartDashboard.getNumber("Power", 0));
 
-    SmartDashboard.putNumber("Robot roll", Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll());
-    SmartDashboard.putNumber("Robot pitch", Robot.DRIVE_TRAIN_SUBSYSTEM.getPitch());
+    // SmartDashboard.putNumber("Robot roll", Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll());
+    // SmartDashboard.putNumber("Robot pitch", Robot.DRIVE_TRAIN_SUBSYSTEM.getPitch());
 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
+    // SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
     setNonButtonDependentOverallStates();
     // Button input dependent states
@@ -156,10 +156,10 @@ public class Robot extends TimedRobot {
     // Other states
     SmartDashboard.putString("Overall State", overallState.toString());
     SmartDashboard.putString("Drivetrain State", drivetrainState.toString());
-    SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand() == null ? "No command" : ARM_SUBSYSTEM.getCurrentCommand().getName());
-    SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand() == null ? "No command" : CLAW_SUBSYSTEM.getCurrentCommand().getName());
+    // SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand() == null ? "No command" : ARM_SUBSYSTEM.getCurrentCommand().getName());
+    // SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand() == null ? "No command" : CLAW_SUBSYSTEM.getCurrentCommand().getName());
 
-    SmartDashboard.putString("Scheduled Drivetrain Command", DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand() == null ? "No command" : DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand().getName());
+    // SmartDashboard.putString("Scheduled Drivetrain Command", DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand() == null ? "No command" : DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand().getName());
 
     setZoneStateFromFieldZone();
 

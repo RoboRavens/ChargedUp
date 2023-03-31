@@ -321,7 +321,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         // double actualAngle = getAngleFromPosition((SmartDashboard.getNumber("LeaderEncoderPosition", 0.0)));
         
-        SmartDashboard.putNumber("ActualPositionInDegrees", getCurrentAngleDegrees());
+        SmartDashboard.putNumber("Arm Rotation Actual Position In Degrees", getCurrentAngleDegrees());
         
         // Angle (in 360) = 360 * ((ArmSetPosition / CountsPerRevolution) % 360)
         // ArmSetPosition = (Angle/360) * CountsPerRevolution
