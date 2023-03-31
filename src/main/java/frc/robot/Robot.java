@@ -347,6 +347,22 @@ public class Robot extends TimedRobot {
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmSequencedRetractionCommand());
     
     // GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
+    GAMEPAD.getButton(ButtonCode.A).onTrue(new InstantCommand(() -> {
+      var pose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
+      var col = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringColumn();
+      var row = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringRow();
+      var armRot = Robot.ARM_SUBSYSTEM.getCurrentRotationNativeUnits();
+      var armExt = Robot.ARM_SUBSYSTEM.getCurrentExtensionNativeUnits();
+
+      System.out.println("ButtonCode.A: " +
+        "{alliance: " + Robot.allianceColor.name() +
+        ",x:" + pose.getX() +
+        ",y:" + pose.getY() +
+        ",col: " + col +
+        ",row:" + row +
+        ",armRot:" + armRot +
+        ",armExt: " + armExt + "}");
+    }));
     GAMEPAD.getButton(ButtonCode.A).onTrue(
         new ScorePieceCommand()
         .withTimeout(Constants.CLAW_OPEN_TIMEOUT_SECONDS)
