@@ -117,20 +117,20 @@ public final class Constants {
   public static final double VERTICAL_EXPANSION_ROOM = Constants.MAX_TELEOP_HEIGHT_INCHES - Constants.SAFETY_MARGIN_INCHES;
   public static final double HORIZONTAL_EXPANSION_ROOM = Constants.FULCRUM_TO_FRAME_INCHES + Constants.MAX_TELEOP_HORIZONTAL_EXTENSION_INCHES - Constants.SAFETY_MARGIN_INCHES;
 
-  public static final double ARM_MAX_ROTATION_DEGREES = 120;
+  public static final double ARM_MAX_ROTATION_DEGREES = 121.45;
   public static final double ARM_STARTING_DEGREES = 0;
 
   public static final int ARM_FULL_RETRACT_ROTATION_ANGLE = 0;
-  public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 119;
+  public static final int ARM_GROUND_PICKUP_ROTATION_ANGLE = 122;
 
   public static final int ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_ANGLE = 64;
 
   public static final double ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE = 63;
   public static final double ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_ANGLE = ARM_DOUBLE_SUBSTATION_CONE_PICKUP_ROTATION_ANGLE;
   public static final int ARM_SCORE_LOW_ROTATION_ANGLE = 45;
-  public static final int ARM_SCORE_CONE_MID_ROTATION_ANGLE = 54;
+  public static final double ARM_SCORE_CONE_MID_ROTATION_ANGLE = 61.8;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_ANGLE = 65;
-  public static final int ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 57;
+  public static final double ARM_SCORE_CONE_HIGH_ROTATION_ANGLE = 60.45;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE = 60;
 
   public static final double ARM_SEQUENCED_RETRACTION_STAGING_ANGLE = 45;
@@ -150,14 +150,19 @@ public final class Constants {
   public static final int ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_SETPOINT = (int) Math.round(ARM_DOUBLE_SUBSTATION_CUBE_PICKUP_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_LOW_EXTENSION_SETPOINT = 0;
   public static final int ARM_SCORE_LOW_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_LOW_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 60000;
+  public static final int ARM_SCORE_CONE_MID_EXTENSION_SETPOINT = 51000;
   public static final int ARM_SCORE_CONE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
   public static final int ARM_SCORE_CUBE_MID_EXTENSION_SETPOINT = 36500;
   public static final int ARM_SCORE_CUBE_MID_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_MID_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
-  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 119000;
-  public static final int ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
+  public static final int ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT = 123000;
+  public static final double ARM_SCORE_CONE_HIGH_ROTATION_SETPOINT = ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS;
   public static final int ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT = 108000;
   public static final int ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT = (int) Math.round(ARM_SCORE_CUBE_HIGH_ROTATION_ANGLE * ARM_DEGREES_TO_ENCODER_UNITS);
+
+
+
+  public static final int ARM_SCORE_CUBE_HIGH_OPPOSITE_ROTATION_SETPOINT = ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT * -1;
+
 
   public static final int ARM_SCORE_CONE_HIGH_OPPOSITE_ROTATION_SETPOINT = (int) Math.round((ARM_SCORE_CONE_HIGH_ROTATION_ANGLE * -1) * ARM_DEGREES_TO_ENCODER_UNITS);
 
@@ -180,12 +185,17 @@ public final class Constants {
   public static final ArmSetpoint ARM_SCORE_CUBE_HIGH_SETPOINT = new ArmSetpoint("Score Cube High", ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CUBE_HIGH_ROTATION_SETPOINT);
 
 
+
   public static final ArmSetpoint ARM_REVERSE_TEST_SETPOINT = new ArmSetpoint("Reverse Test", ARM_FULL_RETRACT_EXTENSION_SETPOINT, ARM_SINGLE_SUBSTATION_PICKUP_ROTATION_SETPOINT * -1);
 
 
   public static final ArmSetpoint ARM_SCORE_CONE_MID_REVERSE_SETPOINT = new ArmSetpoint("Score Cone Mid - Reverse", ARM_SCORE_CONE_MID_EXTENSION_SETPOINT, ARM_SCORE_CONE_MID_ROTATION_SETPOINT * -1);
   public static final ArmSetpoint ARM_SCORE_CONE_HIGH_REVERSE_SETPOINT = new ArmSetpoint("Score Cone High", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CONE_HIGH_OPPOSITE_ROTATION_SETPOINT);
   
+  public static final ArmSetpoint ARM_SCORE_CUBE_HIGH_REVERSE_SETPOINT = new ArmSetpoint("Score Cube High Reverse", ARM_SCORE_CUBE_HIGH_EXTENSION_SETPOINT, ARM_SCORE_CUBE_HIGH_OPPOSITE_ROTATION_SETPOINT);
+  
+  
+
   public static final ArmSetpoint ARM_SCORE_CONE_HIGH_REVERSE_STAGING_SETPOINT = new ArmSetpoint("Score Cone High Staging", ARM_SCORE_CONE_HIGH_EXTENSION_SETPOINT, 0);
  
   
@@ -233,5 +243,5 @@ public final class Constants {
   public static final double AUTO_BALANCE_APPROACH_DRIVE_SPEED_METERS_PER_SECOND = 2;
   public static final double AUTO_BALANCE_BALANCE_DRIVE_SPEED_METERS_PER_SECOND = 2;
   public static final double ROBOT_IS_TILTED_DEGREES = 10;
-  public static final double ROBOT_IS_LEVEL_DEGREES = 4;
+  public static final double ROBOT_IS_LEVEL_DEGREES = 3;
 }
