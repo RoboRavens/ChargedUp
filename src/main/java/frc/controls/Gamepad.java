@@ -143,7 +143,7 @@ public class Gamepad {
 		case ODOMETRY_OVERRIDE:
 			buttonNumber = 7;
 			break;
-		case DRIVER_CONTROL_OVERRIDE:
+		case PIECE_SENSOR_OVERRIDE:
 			buttonNumber = 5;
 			break;
 		default:

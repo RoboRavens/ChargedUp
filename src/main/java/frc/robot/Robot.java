@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static final LEDsSubsystem LED_SUBSYSTEM = new LEDsSubsystem();
   // public static boolean DRIVER_CONTROL_OVERRIDE = false;
+  public static boolean PIECE_SENSOR_OVERRIDE = false;
   public static boolean ODOMETRY_OVERRIDE = false;
   public static boolean ARM_ROTATION_MANUAL_OVERRIDE = false;
   public static boolean ARM_EXTENSION_MANUAL_OVERRIDE = false;
@@ -427,6 +428,7 @@ public class Robot extends TimedRobot {
     // Drive assist.
     // OP_PAD_SWITCHES.getButton(ButtonCode.ODOMETRY_OVERRIDE).onTrue(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = true));
     // OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onFalse(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = false));
+    OP_PAD_SWITCHES.getButton(ButtonCode.PIECE_SENSOR_OVERRIDE).onTrue(new InstantCommand(() -> PIECE_SENSOR_OVERRIDE = true)).onFalse(new InstantCommand(() -> PIECE_SENSOR_OVERRIDE = false));
 
     // Vision assist.
     OP_PAD_SWITCHES.getButton(ButtonCode.ODOMETRY_OVERRIDE).onTrue(new InstantCommand(() -> ODOMETRY_OVERRIDE = true)).onFalse(new InstantCommand(() -> ODOMETRY_OVERRIDE = false));
