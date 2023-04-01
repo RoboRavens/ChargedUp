@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.*;
 import frc.controls.*;
 import frc.robot.commands.LEDs.*;
@@ -102,6 +102,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     //sets the relative encoders of the arm rotational motors position based off the position of the absolute encoder
     ARM_SUBSYSTEM.armRotationAbsolutePosition();
+    CameraServer.startAutomaticCapture();
     
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.

@@ -320,6 +320,9 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
     setRobotZoneFromOdometry();
     _field2d.setRobotPose(_odometryFromHardware.getPoseMeters());
+
+    var roll = this.getRoll();
+    SmartDashboard.putNumber("roll", roll);
   }
 
   public boolean drivetrainIsAtTargetCoordinates() {

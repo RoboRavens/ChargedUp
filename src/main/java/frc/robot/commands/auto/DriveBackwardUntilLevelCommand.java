@@ -24,7 +24,7 @@ public class DriveBackwardUntilLevelCommand extends CommandBase {
   public void execute() {
     Robot.DRIVE_TRAIN_SUBSYSTEM.drive(
       new ChassisSpeeds(
-        -.27,
+        -.25,
         0,
         0
       )
@@ -46,7 +46,7 @@ public class DriveBackwardUntilLevelCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    boolean isTilted = (Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll()) <= Constants.ROBOT_IS_LEVEL_DEGREES + 1);
+    boolean isTilted = (Math.abs(Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll()) <= Constants.ROBOT_IS_LEVEL_DEGREES);
     return isTilted;
   }
 }
