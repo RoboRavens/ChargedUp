@@ -10,6 +10,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.util.StateManagement.ClawState;
+import frc.controls.ButtonCode;
 import frc.ravenhardware.BufferedDigitalInput;
 
 public class ClawSubsystem extends SubsystemBase {
@@ -26,6 +27,10 @@ public class ClawSubsystem extends SubsystemBase {
     // and false if a game piece is not detected.
     
     public boolean detectsGamePiece() {
+        if (Robot.PIECE_SENSOR_OVERRIDE) {
+            return Robot.clawState == ClawState.CLOSED || Robot.clawState == ClawState.CLOSING;
+        }
+
         if (pieceSensor.get()) {
             return true;
         }

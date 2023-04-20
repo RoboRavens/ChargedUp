@@ -135,9 +135,9 @@ public class ArmGoToSetpointCommand extends CommandBase {
   }
 
   public void setArmTargets() {
-    SmartDashboard.putNumber("SSP SIZE", subSetpoints.size());
+    // SmartDashboard.putNumber("SSP SIZE", subSetpoints.size());
     
-    SmartDashboard.putNumber("Setpoint Iterator", setpointIterator);
+    // SmartDashboard.putNumber("Setpoint Iterator", setpointIterator);
     // If there sub-setpoints remaining, set the target to be the current point.
     // Otherwise just set to the overall setpoint.
     // No points at all is equivalent to none remaining.

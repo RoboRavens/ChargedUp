@@ -91,6 +91,16 @@ public class ArmSubsystem extends SubsystemBase {
         rotationMotor2.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         extensionMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
+        extensionMotor.selectProfileSlot(Constants.kSlotPIDIdx, Constants.kPIDLoopIdx);
+        extensionMotor.config_kF(Constants.kSlotPIDIdx, Constants.extensionGainsPID.kF, Constants.kTimeoutMs);
+        extensionMotor.config_kP(Constants.kSlotPIDIdx, Constants.extensionGainsPID.kP, Constants.kTimeoutMs);
+        extensionMotor.config_kI(Constants.kSlotPIDIdx, Constants.extensionGainsPID.kI, Constants.kTimeoutMs);
+        extensionMotor.config_kD(Constants.kSlotPIDIdx, Constants.extensionGainsPID.kD, Constants.kTimeoutMs);
+        
+        
+        extensionMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
+
+
         // Set limits. The rotation only has soft limits but the extension has a physical retraction limit switch.
         rotationMotorsLeader.configForwardSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS, 0);
         rotationMotorsLeader.configReverseSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS * -1, 0);
@@ -214,6 +224,19 @@ public class ArmSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("ArmExtensionPosition", setpoint);
     }
 
+    public void setArmExtensionPositionMode(double setpoint, double extensionVelocity, double extensionAcceleration) {
+        extensionMotor.configMotionCruiseVelocity(extensionVelocity, Constants.kTimeoutMs);
+        extensionMotor.configMotionAcceleration(extensionAcceleration, Constants.kTimeoutMs);
+        extensionMotor.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, extensionAFF);
+        // SmartDashboard.putNumber("ArmExtensionPosition", setpoint);
+    }
+
+    public void setArmExtensionPositionPercentOutput(double setpoint, double extensionVelocity, double extensionAcceleration) {
+        // extensionMotor.set(ControlMode.PercentOutput, .5);// , setpoint, DemandType.ArbitraryFeedForward, extensionAFF);
+        // SmartDashboard.putNumber("ArmExtensionPosition", setpoint);
+    }
+
+
     public void stopRotation() {
         brakeEnable();
         rotationMotorsLeader.stopMotor();
@@ -298,7 +321,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         // double actualAngle = getAngleFromPosition((SmartDashboard.getNumber("LeaderEncoderPosition", 0.0)));
         
-        SmartDashboard.putNumber("ActualPositionInDegrees", getCurrentAngleDegrees());
+        SmartDashboard.putNumber("Arm Rotation Actual Position In Degrees", getCurrentAngleDegrees());
         
         // Angle (in 360) = 360 * ((ArmSetPosition / CountsPerRevolution) % 360)
         // ArmSetPosition = (Angle/360) * CountsPerRevolution

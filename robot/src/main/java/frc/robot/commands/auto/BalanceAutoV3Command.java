@@ -33,7 +33,7 @@ public class BalanceAutoV3Command extends CommandBase {
 
         Command balanceAutoCommand = 
         Robot.DRIVE_TRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(path)
-        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CONE_MID_REVERSE_SETPOINT).withTimeout(2.25))
+        .andThen(new ArmGoToSetpointDangerousCommand(Constants.ARM_SCORE_CUBE_HIGH_REVERSE_SETPOINT).withTimeout(2.25))
         .andThen(new ClawOpenCommand().withTimeout(.5))
         .andThen(new ArmSequencedRetractionFromReverseCommand().withTimeout(2))
         .andThen(new DriveUntilTiltedCommand().withTimeout(3))

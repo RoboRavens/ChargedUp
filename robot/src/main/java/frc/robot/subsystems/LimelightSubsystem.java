@@ -23,6 +23,8 @@ public class LimelightSubsystem extends SubsystemBase {
   private NetworkTableEntry cl;
   private int camMode = 0;
 
+  private NetworkTableEntry ledMode;
+
   public boolean isAlignedWithScoringNode() {
     // TODO: Implement this method
     return false;
@@ -42,10 +44,13 @@ public class LimelightSubsystem extends SubsystemBase {
     tv = _baseNetworkTable.getEntry("tv");
     tl = _baseNetworkTable.getEntry("tl");
     cl = _baseNetworkTable.getEntry("cl");
+
+    ledMode = _baseNetworkTable.getEntry("ledMode");
   }
 
   public void periodic() {
     Pose2d robotPose = getPureLimelightRobotPose();
+    /*
     if (robotPose != null) {
       SmartDashboard.putNumber(_tableName + "PoseX", robotPose.getX());
       SmartDashboard.putNumber( _tableName + "PoseY", robotPose.getY());
@@ -55,6 +60,7 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber(_tableName + "PoseY", 0);
       SmartDashboard.putNumber(_tableName + "Rotation", 0);
     }
+    */
   }
 
   public double[] getLimelightBotpose() {
@@ -116,5 +122,13 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public double getTy() {
     return ty.getDouble(0.0);
+  }
+
+  public void turnLedOn() {
+    ledMode.setNumber(3);
+  }
+
+  public void turnLedOff() {
+    ledMode.setNumber(1);
   }
 }

@@ -78,7 +78,7 @@ public class TeleopSubystem extends SubsystemBase {
     }
   }
 
-  private int GetScoringColumn() {
+  public int GetScoringColumn() {
     try {
       return Integer.parseInt(_columnPub.get("-1"));
     } catch(NumberFormatException e) {
@@ -86,7 +86,7 @@ public class TeleopSubystem extends SubsystemBase {
     }
   }
 
-  private int GetScoringRow() {
+  public int GetScoringRow() {
     try {
       return Integer.parseInt(_rowPub.get("-1"));
     } catch(NumberFormatException e) {

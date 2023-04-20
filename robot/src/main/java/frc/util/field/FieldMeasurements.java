@@ -204,39 +204,39 @@ public class FieldMeasurements {
 
     // length = 34.5
     public static final Translation2d[] RED_NODE_COORD = {
-        new Translation2d(14.58,0.47), // 1
-        new Translation2d(14.58,1.03), // 2
-        new Translation2d(14.58,1.62), // 3
-        new Translation2d(14.58,2.15), // 4
-        new Translation2d(14.58,2.73), // 5
-        new Translation2d(14.58,3.28), // 6
-        new Translation2d(14.58, 3.85), // 7
-        new Translation2d(14.58,4.41), // 8
-        new Translation2d(14.58, 4.95), // 9
+        new Translation2d(14.69,0.49), // 1
+        new Translation2d(14.69,1.18), // 2
+        new Translation2d(14.69,1.65), // 3
+        new Translation2d(14.69,2.24), // 4
+        new Translation2d(14.69,2.79), // 5
+        new Translation2d(14.69,3.33), // 6
+        new Translation2d(14.69, 3.92), // 7
+        new Translation2d(14.69,4.41), // 8
+        new Translation2d(14.69, 5.02), // 9
     };
 
     public static final Translation2d[] BLUE_NODE_COORD = {
-        new Translation2d(1.94,4.98), // 1
-        new Translation2d(1.94,4.39), // 2
-        new Translation2d(1.94,3.86), // 3
-        new Translation2d(1.94,3.29), // 4
-        new Translation2d(1.94,2.72), // 5
-        new Translation2d(1.94,2.18), // 6
-        new Translation2d(1.94,1.60), // 7
-        new Translation2d(1.94,1.06), // 8
-        new Translation2d(1.94,0.49), // 9
+        new Translation2d(1.85,4.99), // 1
+        new Translation2d(1.85,4.34), // 2
+        new Translation2d(1.85,3.79), // 3
+        new Translation2d(1.85,3.26), // 4
+        new Translation2d(1.85,2.69), // 5
+        new Translation2d(1.85,2.16), // 6
+        new Translation2d(1.85,1.57), // 7
+        new Translation2d(1.85,1.08), // 8
+        new Translation2d(1.85,0.486), // 9
     };
 
     public static final Translation2d[] BLUE_SUBSTATIONS = {
-        new Translation2d(15.2,7.5208), // LEFT DOUBLE SUBSTATION FOR BLUE ALLIANCE SCORING
-        new Translation2d(15.2,5.9876), //RIGHT DOUBLE SUBSTATION FOR BLUE ALLIANCE SCORING
-        new Translation2d(14.308,7.3382) // SINGLE SUBSTATION FOR SCORING BLUE ALLIANCE
+        new Translation2d(15.2,7.56), // LEFT DOUBLE SUBSTATION FOR BLUE ALLIANCE SCORING
+        new Translation2d(15.2,5.92), //RIGHT DOUBLE SUBSTATION FOR BLUE ALLIANCE SCORING
+        new Translation2d(14.08,7.42) // SINGLE SUBSTATION FOR SCORING BLUE ALLIANCE
     };
 
     public static final Translation2d[] RED_SUBSTATIONS = {
-        new Translation2d(1.2038, 5.9876), // LEFT DOUBLE SUBSTATION FOR RED ALLIANCE SCORING
-        new Translation2d(1.2038, 7.5208), // RIGHT DOUBLE SUBSTATION FOR RED ALLIANCE SCORING
-        new Translation2d(2.352,7.3382) // SINGLE SUBSTATION FOR RED ALLIANCE SCORING 
+        new Translation2d(1.2038, 5.88), // LEFT DOUBLE SUBSTATION FOR RED ALLIANCE SCORING
+        new Translation2d(1.2038, 7.59), // RIGHT DOUBLE SUBSTATION FOR RED ALLIANCE SCORING
+        new Translation2d(2.352,7.31) // SINGLE SUBSTATION FOR RED ALLIANCE SCORING 
     };
 
     public static double getInvertedWidthInches(double blueAllianceWidth) {

@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.*;
 import frc.controls.*;
 import frc.robot.commands.LEDs.*;
@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
   // public static final StateManagement STATE_MANAGEMENT = new StateManagement();
   public static final LEDsSubsystem LED_SUBSYSTEM = new LEDsSubsystem();
   // public static boolean DRIVER_CONTROL_OVERRIDE = false;
+  public static boolean PIECE_SENSOR_OVERRIDE = false;
   public static boolean ODOMETRY_OVERRIDE = false;
   public static boolean ARM_ROTATION_MANUAL_OVERRIDE = false;
   public static boolean ARM_EXTENSION_MANUAL_OVERRIDE = false;
@@ -101,6 +102,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     //sets the relative encoders of the arm rotational motors position based off the position of the absolute encoder
     ARM_SUBSYSTEM.armRotationAbsolutePosition();
+    CameraServer.startAutomaticCapture();
     
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
@@ -121,7 +123,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putBoolean("Ext Override", ARM_EXTENSION_MANUAL_OVERRIDE);
+    // SmartDashboard.putBoolean("Ext Override", ARM_EXTENSION_MANUAL_OVERRIDE);
     setDriverStationData();
 
     SmartDashboard.putString("Alliance color", allianceColor.name());
@@ -136,15 +138,15 @@ public class Robot extends TimedRobot {
 
     // ARM_SUBSYSTEM.setTestPower(SmartDashboard.getNumber("Power", 0));
 
-    SmartDashboard.putNumber("Robot roll", Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll());
-    SmartDashboard.putNumber("Robot pitch", Robot.DRIVE_TRAIN_SUBSYSTEM.getPitch());
+    // SmartDashboard.putNumber("Robot roll", Robot.DRIVE_TRAIN_SUBSYSTEM.getRoll());
+    // SmartDashboard.putNumber("Robot pitch", Robot.DRIVE_TRAIN_SUBSYSTEM.getPitch());
 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
+    // SmartDashboard.putNumber("Odometry rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getDegrees());
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation2dTest().getDegrees());
     setNonButtonDependentOverallStates();
     // Button input dependent states
@@ -156,10 +158,10 @@ public class Robot extends TimedRobot {
     // Other states
     SmartDashboard.putString("Overall State", overallState.toString());
     SmartDashboard.putString("Drivetrain State", drivetrainState.toString());
-    SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand() == null ? "No command" : ARM_SUBSYSTEM.getCurrentCommand().getName());
-    SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand() == null ? "No command" : CLAW_SUBSYSTEM.getCurrentCommand().getName());
+    // SmartDashboard.putString("Scheduled Arm Command", ARM_SUBSYSTEM.getCurrentCommand() == null ? "No command" : ARM_SUBSYSTEM.getCurrentCommand().getName());
+    // SmartDashboard.putString("Scheduled Claw Command", CLAW_SUBSYSTEM.getCurrentCommand() == null ? "No command" : CLAW_SUBSYSTEM.getCurrentCommand().getName());
 
-    SmartDashboard.putString("Scheduled Drivetrain Command", DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand() == null ? "No command" : DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand().getName());
+    // SmartDashboard.putString("Scheduled Drivetrain Command", DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand() == null ? "No command" : DRIVE_TRAIN_SUBSYSTEM.getCurrentCommand().getName());
 
     setZoneStateFromFieldZone();
 
@@ -303,6 +305,23 @@ public class Robot extends TimedRobot {
     if (Robot.DRIVE_TRAIN_SUBSYSTEM.drivetrainIsAtTargetPose() && ODOMETRY_OVERRIDE == false) {
       ledsSignalAlignedCommand.schedule();
     }
+
+    if (Robot.zoneState == ZoneState.ALLIANCE_LOADING_ZONE && Robot.loadState == LoadState.EMPTY) {
+      turnLedsOn();
+    }
+    else {
+      turnLedsOff();
+    }
+  }
+
+  private void turnLedsOn() {
+    LIMELIGHT_SUBSYSTEM_ONE.turnLedOn();
+    LIMELIGHT_SUBSYSTEM_TWO.turnLedOn();
+  }
+
+  private void turnLedsOff() {
+    LIMELIGHT_SUBSYSTEM_ONE.turnLedOff();
+    LIMELIGHT_SUBSYSTEM_TWO.turnLedOff();
   }
 
   private void configureButtonBindings() {
@@ -330,6 +349,22 @@ public class Robot extends TimedRobot {
     OP_PAD_BUTTONS.getButton(ButtonCode.RETRACT_ARM_FULL).onTrue(new ArmSequencedRetractionCommand());
     
     // GAMEPAD.getButton(ButtonCode.A).and((() -> isRobotReadyToScore())).toggleOnTrue(new ScorePieceCommand());
+    GAMEPAD.getButton(ButtonCode.A).onTrue(new InstantCommand(() -> {
+      var pose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
+      var col = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringColumn();
+      var row = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringRow();
+      var armRot = Robot.ARM_SUBSYSTEM.getCurrentRotationNativeUnits();
+      var armExt = Robot.ARM_SUBSYSTEM.getCurrentExtensionNativeUnits();
+
+      System.out.println("ButtonCode.A: " +
+        "{alliance: " + Robot.allianceColor.name() +
+        ",x:" + pose.getX() +
+        ",y:" + pose.getY() +
+        ",col: " + col +
+        ",row:" + row +
+        ",armRot:" + armRot +
+        ",armExt: " + armExt + "}");
+    }));
     GAMEPAD.getButton(ButtonCode.A).onTrue(
         new ScorePieceCommand()
         .withTimeout(Constants.CLAW_OPEN_TIMEOUT_SECONDS)
@@ -394,6 +429,7 @@ public class Robot extends TimedRobot {
     // Drive assist.
     // OP_PAD_SWITCHES.getButton(ButtonCode.ODOMETRY_OVERRIDE).onTrue(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = true));
     // OP_PAD_SWITCHES.getButton(ButtonCode.DRIVER_CONTROL_OVERRIDE).onFalse(new InstantCommand(() -> DRIVER_CONTROL_OVERRIDE = false));
+    OP_PAD_SWITCHES.getButton(ButtonCode.PIECE_SENSOR_OVERRIDE).onTrue(new InstantCommand(() -> PIECE_SENSOR_OVERRIDE = true)).onFalse(new InstantCommand(() -> PIECE_SENSOR_OVERRIDE = false));
 
     // Vision assist.
     OP_PAD_SWITCHES.getButton(ButtonCode.ODOMETRY_OVERRIDE).onTrue(new InstantCommand(() -> ODOMETRY_OVERRIDE = true)).onFalse(new InstantCommand(() -> ODOMETRY_OVERRIDE = false));
@@ -622,10 +658,8 @@ public class Robot extends TimedRobot {
   // which differs between the shop and match play,
   // this method needs to called both periodically AND in the auto/tele init methods.
   private void setDriverStationData() {
-    if (allianceColor == Alliance.Invalid) {
-      allianceColor = Alliance.Red;
-      AUTO_CHOOSER.BuildAutoChooser(allianceColor);
-    }
+    allianceColor = DriverStation.getAlliance();
+    AUTO_CHOOSER.BuildAutoChooser(allianceColor);
   }
 
   public boolean getODOMETRY_OVERRIDE() {
