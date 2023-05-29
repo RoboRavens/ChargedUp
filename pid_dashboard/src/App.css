@@ -1,0 +1,70 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+input {
+  background-color: #414754;
+  border: none;
+  width: 30%;
+  height: 5vh;
+  text-indent: 5%;
+  color: white;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+input:focus {
+  outline: 2px solid #414754 !important;
+}
+
+#input-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+button {
+  margin-top: 3vh;
+  outline: none;
+  background-color: #414754;
+  border: 2px solid white;
+  color: white;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+button:active {
+  background-color: white;
+  color: black;
+  border: 2px solid #414754;
+}
+
+#connection {
+  margin: 4vh;
+}
+
+#connection > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#connection > div > p {
+  margin-right: 10px;
+}

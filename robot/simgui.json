@@ -3,6 +3,8 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/HardwareOdometry Field": "Field2d",
+      "/SmartDashboard/PoseEstimator Field": "Field2d",
       "/SmartDashboard/field": "Field2d"
     },
     "windows": {

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.*;
 import frc.controls.*;
 import frc.robot.commands.LEDs.*;
@@ -18,6 +19,7 @@ import frc.robot.commands.claw.*;
 import frc.robot.commands.drivetrain.*;
 import frc.robot.commands.groups.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Dashboards.PIDTuner;
 import frc.util.*;
 import frc.util.StateManagement.*;
 import frc.robot.subsystems.TabletScoring.*;
@@ -94,6 +96,9 @@ public class Robot extends TimedRobot {
   public static FieldSubzone fieldSubzone = FieldZones.noneSubzone;
   public static DriverStation.Alliance allianceColor = Alliance.Invalid;
 
+  public static final PIDTuner PID_TUNER = new PIDTuner();
+  public static final PIDController PID_CONTROLLER = new PIDController(0, 0, 0);
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -166,6 +171,9 @@ public class Robot extends TimedRobot {
     setZoneStateFromFieldZone();
 
     SmartDashboard.putString("FieldSubzone", fieldSubzone.getName());
+    
+    PID_CONTROLLER.setPID(PID_TUNER.getP(), PID_TUNER.getI(), PID_TUNER.getD());
+    SmartDashboard.putString("PID Values", PID_CONTROLLER.getP() + ", " + PID_CONTROLLER.getI() + ", " + PID_CONTROLLER.getD());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
