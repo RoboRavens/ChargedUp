@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
 // import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
@@ -138,47 +139,48 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
     m_frontLeftModule = new MkSwerveModuleBuilder(moduleConfig)
       .withGearRatio(GearRatio.L1.getConfiguration())
-      .withDriveMotor(MotorType.FALCON, FRONT_LEFT_MODULE_DRIVE_MOTOR)
-      .withSteerMotor(MotorType.FALCON, FRONT_LEFT_MODULE_STEER_MOTOR)
+      .withDriveMotor(MotorType.NEO, FRONT_LEFT_MODULE_DRIVE_MOTOR)
+      .withSteerMotor(MotorType.NEO, FRONT_LEFT_MODULE_STEER_MOTOR)
       .withSteerEncoderPort(FRONT_LEFT_MODULE_STEER_ENCODER)
       .withSteerOffset(FRONT_LEFT_MODULE_STEER_OFFSET)
       .build();
 
     m_frontRightModule = new MkSwerveModuleBuilder(moduleConfig)
       .withGearRatio(GearRatio.L1.getConfiguration())
-      .withDriveMotor(MotorType.FALCON, FRONT_RIGHT_MODULE_DRIVE_MOTOR)
-      .withSteerMotor(MotorType.FALCON, FRONT_RIGHT_MODULE_STEER_MOTOR)
+      .withDriveMotor(MotorType.NEO, FRONT_RIGHT_MODULE_DRIVE_MOTOR)
+      .withSteerMotor(MotorType.NEO, FRONT_RIGHT_MODULE_STEER_MOTOR)
       .withSteerEncoderPort(FRONT_RIGHT_MODULE_STEER_ENCODER)
       .withSteerOffset(FRONT_RIGHT_MODULE_STEER_OFFSET)
       .build();
 
     m_backLeftModule = new MkSwerveModuleBuilder(moduleConfig)
       .withGearRatio(GearRatio.L1.getConfiguration())
-      .withDriveMotor(MotorType.FALCON, BACK_LEFT_MODULE_DRIVE_MOTOR)
-      .withSteerMotor(MotorType.FALCON, BACK_LEFT_MODULE_STEER_MOTOR)
+      .withDriveMotor(MotorType.NEO, BACK_LEFT_MODULE_DRIVE_MOTOR)
+      .withSteerMotor(MotorType.NEO, BACK_LEFT_MODULE_STEER_MOTOR)
       .withSteerEncoderPort(BACK_LEFT_MODULE_STEER_ENCODER)
       .withSteerOffset(BACK_LEFT_MODULE_STEER_OFFSET)
       .build();
 
     m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
       .withGearRatio(GearRatio.L1.getConfiguration())
-      .withDriveMotor(MotorType.FALCON, BACK_RIGHT_MODULE_DRIVE_MOTOR)
-      .withSteerMotor(MotorType.FALCON, BACK_RIGHT_MODULE_STEER_MOTOR)
+      .withDriveMotor(MotorType.NEO, BACK_RIGHT_MODULE_DRIVE_MOTOR)
+      .withSteerMotor(MotorType.NEO, BACK_RIGHT_MODULE_STEER_MOTOR)
       .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
       .withSteerOffset(BACK_RIGHT_MODULE_STEER_OFFSET)
       .build();
 
     double swerveDriveDelay = 0;
     double swerveRotateDelay = 0.25;
-    ((WPI_TalonFX) m_frontLeftModule.getSteerMotor()).configOpenloopRamp(swerveRotateDelay); 
-    ((WPI_TalonFX) m_frontRightModule.getSteerMotor()).configOpenloopRamp(swerveRotateDelay);
-    ((WPI_TalonFX) m_backLeftModule.getSteerMotor()).configOpenloopRamp(swerveRotateDelay);
-    ((WPI_TalonFX) m_backRightModule.getSteerMotor()).configOpenloopRamp(swerveRotateDelay);
 
-    ((WPI_TalonFX) m_frontLeftModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay); 
-    ((WPI_TalonFX) m_frontRightModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay);
-    ((WPI_TalonFX) m_backLeftModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay);
-    ((WPI_TalonFX) m_backRightModule.getDriveMotor()).configOpenloopRamp(swerveDriveDelay);
+    ((CANSparkMax) m_frontLeftModule.getSteerMotor()).setOpenLoopRampRate(swerveRotateDelay); 
+    ((CANSparkMax) m_frontRightModule.getSteerMotor()).setOpenLoopRampRate(swerveRotateDelay);
+    ((CANSparkMax) m_backLeftModule.getSteerMotor()).setOpenLoopRampRate(swerveRotateDelay);
+    ((CANSparkMax) m_backRightModule.getSteerMotor()).setOpenLoopRampRate(swerveRotateDelay);
+
+    ((CANSparkMax) m_frontLeftModule.getDriveMotor()).setOpenLoopRampRate(swerveDriveDelay); 
+    ((CANSparkMax) m_frontRightModule.getDriveMotor()).setOpenLoopRampRate(swerveDriveDelay);
+    ((CANSparkMax) m_backLeftModule.getDriveMotor()).setOpenLoopRampRate(swerveDriveDelay);
+    ((CANSparkMax) m_backRightModule.getDriveMotor()).setOpenLoopRampRate(swerveDriveDelay);
 
     /*_odometryFromKinematics = new SwerveDriveOdometry(m_kinematics, this.getGyroscopeRotation(), 
     new SwerveModulePosition[] {
