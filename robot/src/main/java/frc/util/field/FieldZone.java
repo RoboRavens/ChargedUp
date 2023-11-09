@@ -28,6 +28,10 @@ public class FieldZone {
         this.northeastCorner = initialSubzone.getNortheastCorner();
     }
 
+    public ArrayList<FieldSubzone> getSubzones() {
+        return subzones;
+    }
+
     public void addSubzone(FieldSubzone subzone) {
         this.subzones.add(subzone);
 

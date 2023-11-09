@@ -61,8 +61,12 @@ public class DrivetrainDefaultCommand extends CommandBase {
         x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
         y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
         r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
-
-        if (Robot.drivetrainState == DrivetrainState.ROBOT_ALIGN) {
+        
+        if (Robot.drivetrainState == DrivetrainState.GO_TO_DASHBOARD_COORDINATES) {
+            x = getXVelocity(Robot.TABLET_SCORING_SUBSYSTEM.getTabletFieldCoordinates());
+            y = getYVelocity(Robot.TABLET_SCORING_SUBSYSTEM.getTabletFieldCoordinates());
+        }
+        else if (Robot.drivetrainState == DrivetrainState.ROBOT_ALIGN) {
 
             double targetAngle = r;
             var selectedSubstation = Robot.TABLET_SCORING_SUBSYSTEM.GetSubstation();

@@ -128,6 +128,9 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putString("Alliance color", allianceColor.name());
 
+    SmartDashboard.putString("Drivetrain state", drivetrainState.toString());
+    SmartDashboard.putString("Coordinates from dashboard", TABLET_SCORING_SUBSYSTEM.getTabletFieldCoordinates().toString());
+    SmartDashboard.putString("Robot current position", DRIVE_TRAIN_SUBSYSTEM.getPose().toString());
     
     // SmartDashboard.putString("TABLET PIECE", TABLET_SCORING_SUBSYSTEM.GetScoringShape().name());
     // SmartDashboard.putString("TABLET SUBSTATION", TABLET_SCORING_SUBSYSTEM.GetSubstation().name());
@@ -325,6 +328,10 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
+    GAMEPAD.getButton(ButtonCode.X)
+    .onTrue(new InstantCommand(() -> Robot.drivetrainState = DrivetrainState.GO_TO_DASHBOARD_COORDINATES))
+    .onFalse(new InstantCommand(() -> Robot.drivetrainState = DrivetrainState.FREEHAND));
+
     // Inch commands and auto-balancing.
     GAMEPAD.getPOVTrigger(GamepadPOV.Right).toggleOnTrue(new DriveTwoInchesCommand('R'));
     GAMEPAD.getPOVTrigger(GamepadPOV.Up).toggleOnTrue(new DriveTwoInchesCommand('F'));
@@ -335,7 +342,7 @@ public class Robot extends TimedRobot {
 
     // Claw override commands.
     GAMEPAD.getButton(ButtonCode.B).onTrue(new ClawOpenCommand());
-    GAMEPAD.getButton(ButtonCode.X).onTrue(new ClawCloseCommand());
+    // GAMEPAD.getButton(ButtonCode.X).onTrue(new ClawCloseCommand());
 
     // Ground pickup.
     GAMEPAD.getButton(ButtonCode.RIGHTBUMPER).onTrue(new ArmGoToSetpointDangerousCommand(Constants.ARM_GROUND_PICKUP_SETPOINT));
