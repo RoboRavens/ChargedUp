@@ -29,6 +29,35 @@ public class FieldZones {
     // We'll include a none state in case odometry ever breaks by enough that no zone is returned.
     private FieldZone noneZone;
 
+    // Field Zones for Rapid React
+    public static final FieldSubzone blueInsideSafeZone = new FieldSubzone(
+        "Blue Inside Safe Zone",
+        2.5,
+        4.25,
+        1,
+        1);
+
+    public static final FieldSubzone blueOutsideSafeZone = new FieldSubzone(
+        "Blue Outside Safe Zone",
+        2.5,
+        6.7,
+        1,
+        1);
+
+    public static final FieldSubzone redInsideSafeZone = new FieldSubzone(
+        "Red Inside Safe Zone",
+        13,
+        3,
+        1,
+        1);
+
+    public static final FieldSubzone redOutsideSafeZone = new FieldSubzone(
+        "Blue Outside Safe Zone",
+        13,
+        0.7,
+        1,
+        1);
+
     // Community.
     public static final MirroredSubzone COMMUNITY_NORTHERN_SECTION_MIRRORED_SUBZONE = new MirroredSubzone(
         "Community Northern Section",
@@ -204,5 +233,15 @@ public class FieldZones {
 
     public FieldZone getNoneZone() {
         return noneZone;
+    }
+
+    public ArrayList<FieldZone> getFieldZones() {
+        return fieldZones;
+        // ArrayList<FieldZone> rapidReactFieldZones = new ArrayList<>();
+        // rapidReactFieldZones.add(new FieldZone(Alliance.Blue, FieldMacroZone.NONE, "Blue Inside Safe Zone", blueInsideSafeZone));
+        // rapidReactFieldZones.add(new FieldZone(Alliance.Blue, FieldMacroZone.NONE, "Blue Outside Safe Zone", blueOutsideSafeZone));
+        // rapidReactFieldZones.add(new FieldZone(Alliance.Red, FieldMacroZone.NONE, "Red Inside Safe Zone", redInsideSafeZone));
+        // rapidReactFieldZones.add(new FieldZone(Alliance.Red, FieldMacroZone.NONE, "Red Outside Safe Zone", redOutsideSafeZone));
+        // return rapidReactFieldZones;
     }
 }
